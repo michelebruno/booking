@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Auth::routes();
+
 Route::get('/test', function ()
 {
     return view('test');
@@ -20,7 +23,7 @@ Route::get('/', function () {
     return view('app');
 });
 
-Route::get('/{esercenti?}/{a?}/{b?}', function() {
+Route::get('/esercenti/{a?}/{b?}', function() {
     return view('app');
 });
 
@@ -31,3 +34,7 @@ Route::get('/ordini/{a?}/{b?}', function() {
 Route::get('/prodotti/{a?}/{b?}', function() {
     return view('app');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
