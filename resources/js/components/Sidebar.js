@@ -146,9 +146,9 @@ const UserProfile = () => {
                 </li>
 
                 <li className="list-inline-item">
-                    <Link to="/" className="text-custom">
+                    <a href="/logout" className="text-custom">
                         <i className="mdi mdi-power"></i>
-                    </Link>
+                    </a>
                 </li>
             </ul>
         </div>

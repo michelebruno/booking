@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use Illuminate\Support\Facades\Auth;
+
 Route::get('/test', function ()
 {
     return view('test');
@@ -17,21 +20,33 @@ Route::get('/test', function ()
 
 
 Route::get('/', function () {
-    return view('app');
+    if ( Auth::id() ) return view('app');
+    return redirect('/login');
 });
 
-Route::get('/esercenti/{a?}/{b?}', function() {
-    return view('app');
-});
+Route::middleware('auth')->group(function() {
 
-Route::get('/ordini/{a?}/{b?}', function() {
-    return view('app');
-});
 
-Route::get('/prodotti/{a?}/{b?}', function() {
-    return view('app');
+    Route::get('/esercenti/{a?}/{b?}', function() {
+        return view('app');
+    });
+    
+    Route::get('/ordini/{a?}/{b?}', function() {
+        return view('app');
+    });
+    
+    Route::get('/dashboard', function() {
+        return view('app');
+    });
+    
+    Route::get('/deals/{a?}/{b?}', function() {
+        return view('app');
+    });
+
 });
 
 Auth::routes();
+
+Route::get('/logout', 'Auth\LoginController@logout');
 
 Route::get('/home', 'HomeController@index')->name('home');
