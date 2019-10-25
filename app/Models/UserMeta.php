@@ -10,8 +10,6 @@ class UserMeta extends Model
 
     public $timestamps = false;
 
-    public $touches = [ 'user' ];
-
     public $fillable = [
         'chiave',
         'valore'
@@ -19,7 +17,7 @@ class UserMeta extends Model
 
     public function user()
     {
-        $this->belongsTo('App/User');
+        $this->belongsTo('App\User');
     }
     
 }

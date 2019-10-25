@@ -19,12 +19,13 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('api_token', 80)->unique()->nullable()->default(null);
             $table->string('cf', 16)->unique()->nullable();
             $table->string('piva', 11)->unique()->nullable();
-            $table->string('livello', 20);
-            $table->boolean('abilitato')->default(true);
+            $table->string('livello', 20); 
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         }); 
 
     }

@@ -1,7 +1,7 @@
 <?php
 
+use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
@@ -13,16 +13,13 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'username' => 'Michele Bruno',
-            'email' => 'bm.michelebruno@gmail.com',
-            'cf' => 'BRNMHL97M08A285M',
-            'password' => Hash::make('password'),
-            'livello' => 'admin',
-            'abilitato' => true,
-            'created_at' => '2019-10-21 14:38:37',
-            'updated_at' => '2019-10-21 14:38:37'
-        ]);
+        $admin = new User();
+        $admin->username = 'Michele Bruno';
+        $admin->email = 'bm.michelebruno@gmail.com';
+        $admin->password = Hash::make('password'); 
+        $admin->livello = 'admin';
+        $admin->api_token = 'secret_token';
+        $admin->save();
 
         factory(App\User::class, 10)
             ->create()

@@ -3,12 +3,13 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +49,8 @@ class User extends Authenticatable
 
         $array['meta'] = $this->meta;
 
+        $array['abilitato'] = $this->abilitato;
+
         return $array;
     }
 
@@ -56,9 +59,14 @@ class User extends Authenticatable
         $meta = [];
 
         foreach ($this->meta()->get() as $m ) {
-            $meta[$m->chiave] = $m->value;
+            $meta[$m->chiave] = $m->valore;
         }
 
         return $meta;
+    }
+
+    public function getAbilitatoAttribute()
+    {
+        return $this->attributes['abilitato'] = ! $this->trashed();
     }
 }
