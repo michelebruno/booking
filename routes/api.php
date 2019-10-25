@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Resources\User;
+use App\Http\Resources\UserResource;
 use App\User as AppUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,18 +16,9 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::middleware('auth:api')->prefix('users')->group(function() {
-    Route::get('/', function (Request $request) {
-        return User::collection( AppUser::all() );
-    });
-
-    Route::get('{id}', function($id) {
-        try {
-            return new User( AppUser::findOrFail($id));
-        } catch (\Throwable $th) {
-            // TODO 
-            echo 'non trovato';
-        }
-    });
+Route::get('/users/me', function() {
+    if(Gate::allows('read-users', true)){ 
+        return response()->json(Auth::user());
+    } else return ['non autorizzato'];
 });
+Route::apiResource('users', 'API\UserController')->middleware('auth:api');
