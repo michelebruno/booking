@@ -41,4 +41,24 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\UserMeta');
     }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $array['meta'] = $this->meta;
+
+        return $array;
+    }
+
+    public function getMetaAttribute()
+    { 
+        $meta = [];
+
+        foreach ($this->meta()->get() as $m ) {
+            $meta[$m->chiave] = $m->value;
+        }
+
+        return $meta;
+    }
 }
