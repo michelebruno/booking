@@ -4,6 +4,7 @@ import { Collapse , Dropdown } from 'react-bootstrap';
 import MetisMenu from 'react-metismenu'
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import profilePic from '../../images/users/user-1.jpg';
+import { connect } from "react-redux"
 
 const vociMenu = [
     {
@@ -109,13 +110,15 @@ let SideNavContent = () => {
 }
 
 
-const UserProfile = () => {
+const UserProfile = ( { user , ...props } ) => {
+    const profilePic = ( typeof user.links !== 'undefined' && typeof user.links.avatar !== 'undefined' ) ? user.links.avatar : false;
     return <React.Fragment>
         <div className="user-box text-center">
-            <img src={profilePic} alt="user-img" title="Amministratore" className="rounded-circle img-thumbnail avatar-lg" />
+            { profilePic && <img src={profilePic} alt="user-img" title="Amministratore" className="rounded-circle img-thumbnail avatar-lg" /> }
+            { !profilePic && <div className="d-inline-block rounded-circle" ><i className="fas fa-user h-100 w-100 d-block" /> </div> }
             <Dropdown>
                 <Dropdown.Toggle variant="link" className="text-dark dropdown-toggle h5 mt-2 mb-1 d-inline-block">
-                    Amministratore
+                    { user.username }
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="user-pro-dropdown">
                     <Dropdown.Item>
@@ -155,17 +158,23 @@ const UserProfile = () => {
     </React.Fragment>
 }
 
-const Sidebar = ( props ) => {
+const Sidebar = ( { currentUser }, ...props ) => {
     const isCondensed = props.isCondensed || false;
 
     return(
         <React.Fragment>
             <div className='left-side-menu' >
-                {!isCondensed && <PerfectScrollbar><UserProfile /><SideNavContent /></PerfectScrollbar>}
+                {!isCondensed && <PerfectScrollbar><UserProfile user={currentUser}/><SideNavContent /></PerfectScrollbar>}
                 {isCondensed && <UserProfile /> && <SideNavContent />}
             </div>
         </React.Fragment>
     )
 }
 
-export default Sidebar;
+const mapStateToProps = state => {
+    return {
+        currentUser : state.currentUser
+    }
+}
+
+export default connect( mapStateToProps )(Sidebar);
