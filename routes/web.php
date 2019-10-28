@@ -18,6 +18,12 @@ Route::get('/test', function ()
     return view('test');
 });
 
+Route::get('/api/v1/auth', function ()
+{
+    $user = request()->user();
+    $user->jwt = 'tokennnnn';
+    return response()->json($user);
+})->middleware('auth');
 
 Route::get('/', function () {
     if ( Auth::id() ) return view('app');
@@ -48,5 +54,4 @@ Route::middleware('auth')->group(function() {
 Auth::routes();
 
 Route::get('/logout', 'Auth\LoginController@logout');
-
-Route::get('/home', 'HomeController@index')->name('home');
+ 

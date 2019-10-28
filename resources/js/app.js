@@ -1,10 +1,9 @@
 import React, { Component, Suspense } from 'react';
 import { BrowserRouter , Switch } from 'react-router-dom'; 
-
+import authenticate from "./_services/auth";
 import { routes } from './routes';
-
 import AuthLayout from './components/AuthLayout'
-
+import { connect } from "react-redux"
 
 // Lazy loading and code splitting - 
 // Derieved idea from https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52
@@ -28,14 +27,18 @@ const withLayout = (WrappedComponent) => {
 const App = ( props ) => {
 	const getLayout = () => {
 		return AuthLayout;
-    }
+	}
+	
+	React.useEffect( () => {
+		props.authenticate();
+	}, [])
     
 	return(
-		// rendering the router with layout
+		// rendering the router with layout 
 		<BrowserRouter>
 			<React.Fragment>
 				<Switch>
-					{routes.map((route, index) => {
+					{ props.currentUser && routes.map((route, index) => {
 						return (
 							<route.route
 								key={index}
@@ -56,8 +59,12 @@ const App = ( props ) => {
 					})}
 				</Switch>
 			</React.Fragment>
-		</BrowserRouter>
+		</BrowserRouter> 
 	)
 } 
-
-export default App;
+const mapStateToProps = state => {
+	return {
+		currentUser: state.currentUser
+	}
+}
+export default connect( mapStateToProps , { authenticate: authenticate.login } )(App);

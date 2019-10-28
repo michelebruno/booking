@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Gate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
 Route::get('/users/me', function() { 
     return response()->json(User::find(Auth::id())); 
 })->middleware('auth:api');
