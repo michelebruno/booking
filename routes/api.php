@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Resources\UserResource;
-use App\User as AppUser;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -16,9 +16,8 @@ use Illuminate\Support\Facades\Gate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/users/me', function() {
-    if(Gate::allows('read-users', true)){ 
-        return response()->json(Auth::user());
-    } else return ['non autorizzato'];
-});
+Route::get('/users/me', function() { 
+    return response()->json(User::find(Auth::id())); 
+})->middleware('auth:api');
+
 Route::apiResource('users', 'API\UserController')->middleware('auth:api');
