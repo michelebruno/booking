@@ -3,17 +3,15 @@ import React, { Component } from 'react';
 /**
  * Renders the preloader
  */
-class PreLoaderWidget extends Component {
+const PreLoaderWidget = (props) => {
 
-    render() {
-        return (
-            <div className="preloader" style={ { zIndex : 25 }}>
-                <div className="status">
-                    <div className="spinner-border avatar-sm text-primary m-2" role="status"></div>
-                </div>
+    return (
+        <div className="preloader" style={ { zIndex : 25 }}>
+            <div className="status">
+                <div className="spinner-border avatar-sm text-primary m-2" role="status"></div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default PreLoaderWidget;

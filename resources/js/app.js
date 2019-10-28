@@ -4,10 +4,11 @@ import authenticate from "./_services/auth";
 import { routes } from './routes';
 import AuthLayout from './components/AuthLayout'
 import { connect } from "react-redux"
+import PreLoaderWidget from './components/Loader';
 
 // Lazy loading and code splitting - 
 // Derieved idea from https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52
-const loading = () => <div></div>
+const loading = () => <PreLoaderWidget></PreLoaderWidget>
 
 /**
 * Exports the component with layout wrapped to it
@@ -24,7 +25,7 @@ const withLayout = (WrappedComponent) => {
 }
 
 
-const App = ( props ) => {
+const App = ( { currentUser, ...props} ) => {
 	const getLayout = () => {
 		return AuthLayout;
 	}
@@ -35,10 +36,11 @@ const App = ( props ) => {
     
 	return(
 		// rendering the router with layout 
-		<BrowserRouter>
-			<React.Fragment>
+		<BrowserRouter>	
+			{ !currentUser && loading()}
+			{ currentUser && <React.Fragment>
 				<Switch>
-					{ props.currentUser && routes.map((route, index) => {
+					{ routes.map( ( route, index ) => {
 						return (
 							<route.route
 								key={index}
@@ -58,7 +60,7 @@ const App = ( props ) => {
 						);
 					})}
 				</Switch>
-			</React.Fragment>
+			</React.Fragment>}
 		</BrowserRouter> 
 	)
 } 

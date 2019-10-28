@@ -5,30 +5,6 @@ import ProfileDropdown from './ProfileDropdown';
 import logoSm from '../../images/logo-sm.png'; 
 import profilePic from '../../images/users/user-1.jpg';
 
-
-const ProfileMenus = [{
-  label: 'Il mio account',
-  icon: 'fe-user',
-  redirectTo: "/",
-},
-{
-  label: 'Impostazione',
-  icon: 'fe-settings',
-  redirectTo: "/"
-},
-{
-  label: 'Blocca',
-  icon: 'fe-lock',
-  redirectTo: "/"
-},
-{
-  label: 'Logout',
-  icon: 'fe-log-out',
-  redirectTo: "/logout",
-  hasDivider: true
-}]
-
-
 const Topbar = props => { 
 
   	return (
@@ -52,7 +28,7 @@ const Topbar = props => {
 					</li> 
 
 					<li>
-						<ProfileDropdown profilePic={profilePic} menuItems={ProfileMenus} username={'Amministratore'} />
+						<ProfileDropdown />
 					</li>
 
 
