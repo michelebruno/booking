@@ -16,6 +16,8 @@ const DealsScheda = React.lazy(() => import('./pages/DealsScheda'));
 const ServiziScheda = React.lazy(() => import('./pages/ServiziScheda'));
 const DealsModifica = React.lazy(() => import('./pages/DealsModifica'));
 const Tickets = React.lazy( () => import('./pages/Tickets'));
+const Utenti = React.lazy( () => import('./pages/Utenti'));
+const UtentiCrea = React.lazy( () => import('./pages/UtentiCrea'));
 // handle auth and authorization
 
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
@@ -63,15 +65,17 @@ const routes = [
   // other pages
   { path: '/dashboard', name: 'Dashboard', component: Dashboard, route: PrivateRoute, roles: ['Admin'], title: 'La mia dashboard' },
   { path: '/esercenti/modifica/:id', name: 'Esercenti', component: EsercentiModifica, route: PrivateRoute, roles: ['Admin'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
-  { path: '/esercenti', exact: true, name: 'Esercenti', component: Esercenti, route: PrivateRoute, roles: ['Admin'], title: 'Esercenti' },
   { path: '/esercenti/:id', name: 'Esercenti', component: EsercentiProfilo, route: PrivateRoute, roles: ['Admin'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
-  { path: '/ordini', exact: true, name: 'Ordini', component: Ordini, route: PrivateRoute, roles: ['Admin'], title: 'Ordini' },
+  { path: '/esercenti', exact: true, name: 'Esercenti', component: Esercenti, route: PrivateRoute, roles: ['Admin'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, name: 'Ordini', component: OrdiniScheda, route: PrivateRoute, roles: ['Admin'], title: 'Dettagli ordine' },
-  { path: '/deals', exact: true, name: 'Deals', component: Deals, route: PrivateRoute, roles: ['Admin'], title: 'Deals' },
+  { path: '/ordini', exact: true, name: 'Ordini', component: Ordini, route: PrivateRoute, roles: ['Admin'], title: 'Ordini' },
   { path: '/deals/modifica/:id', name: 'Scheda deal', component: DealsModifica, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
   { path: '/deals/:id', name: 'Scheda deal', component: DealsScheda, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals', exact: true, name: 'Deals', component: Deals, route: PrivateRoute, roles: ['Admin'], title: 'Deals' },
   { path: '/servizi/:id', name: 'Scheda servizi', component: ServiziScheda, route: PrivateRoute, roles: ['Admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
   { path: '/tickets', name: 'Tickets', component: Tickets, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/utenti/crea', name: 'UtentiCrea', component: UtentiCrea, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
+  { path: '/utenti', name: 'Utenti', component: Utenti, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
   {
 	path: "/",
 	exact: true,

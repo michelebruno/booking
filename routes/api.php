@@ -22,4 +22,5 @@ Route::get('/users/me', function() {
     return response()->json(User::find(Auth::id())); 
 })->middleware('auth:api');
 
-Route::apiResource('users', 'API\UserController')->middleware('auth:api');
+Route::apiResource('users', 'API\UserController')
+    ->middleware('auth:api');

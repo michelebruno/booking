@@ -44,7 +44,7 @@ let SideNavContent = () => {
                         <i className="mdi mdi-view-dashboard"></i>
                         <span>Dashboard </span>
                     </Link>
-                </li>
+                 </li>{/*
                 <li>
                     <Link to="/deals" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-shopping-cart "></i>
@@ -82,6 +82,19 @@ let SideNavContent = () => {
                         <i className="fas fa-ticket-alt "></i>
                         <span>Tickets</span>
                     </Link>
+                </li> */}
+                <li>
+                    <Link to="/utenti" >
+                        <i className="mdi" />
+                        <span>Utenti</span>
+                    </Link>
+                    <ul className="nav-second-level nav" >
+                        <li>
+                            <Link to="/utenti/crea" className="side-nav-link-ref"> 
+                                <span>Nuovo utente</span>
+                            </Link>
+                        </li> 
+                    </ul>
                 </li>
                 <li>
                     <Link to="/esercenti" className="waves-effect side-nav-link-ref has-arrow" aria-expanded="false">

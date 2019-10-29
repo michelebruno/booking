@@ -1,5 +1,4 @@
 import { AUTHENTICATION_SUCCESSFUL } from "../_constants/action-types"
-import axios from "axios"; 
 
 const initialState = {
     currentUser: false, 

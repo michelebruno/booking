@@ -24,13 +24,11 @@ Route::get('/api/v1/auth', function ()
     return response()->json($user->makeVisible(['api_token']));
 })->middleware('auth');
 
-Route::get('/', function () {
-    if ( Auth::id() ) return view('app');
-    return redirect('/login');
-});
 
-Route::middleware('auth')->group(function() {
-
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::get('/', function () { 
+        return view('app');
+    });
 
     Route::get('/esercenti/{a?}/{b?}', function() {
         return view('app');
@@ -54,7 +52,10 @@ Route::middleware('auth')->group(function() {
 
 });
 
-Auth::routes();
+Route::get('/', function () { 
+    return redirect('/login');
+});
+Auth::routes(['verify' => true]);
 
 Route::get('/logout', 'Auth\LoginController@logout');
  

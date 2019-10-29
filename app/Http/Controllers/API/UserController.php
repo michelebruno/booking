@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUser;
 use App\Http\Resources\UserResource;
 use App\User;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        return new UserResource( User::all() );
+        return ( new UserResource( User::paginate(10) ) );
+
     }
 
     /**
@@ -27,11 +29,19 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUser $request)
     {
-        $validi = $request->validate([
-            'email' => ['required', 'unique:users']
-        ]);
+        $dati = $request->validated();
+
+        $user = new User($dati);
+
+        try {
+            $user->saveOrFail();
+            $user->sendEmailVerificationNotification();
+            return response(new UserResource($user));
+        } catch ( \Throwable $e ) {
+            abort(500, $e->getMessage());
+        }
     }
 
     /**
