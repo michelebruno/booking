@@ -1,14 +1,18 @@
 import { AUTHENTICATION_SUCCESSFUL } from "../_constants/action-types"
+import axios from "axios"; 
 
 const initialState = {
-    currentUser: false
+    currentUser: false, 
 }
 
 const rootReducer = ( state = initialState, action ) => {
 
     if (action.type === AUTHENTICATION_SUCCESSFUL) {
+
+        window.axios.defaults.headers.common['Authorization'] = "Bearer " + action.payload.api_token
+
         return Object.assign({}, state, { 
-            currentUser : action.payload
+            currentUser : action.payload,
         });
     } 
     

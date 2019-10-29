@@ -13,6 +13,12 @@ window._ = require('lodash');
 //     require('bootstrap');
 // } catch (e) {}
 
+window.axios = require('axios');
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.baseURL = "http://localhost:3000/api/v1"
+window.axios.defaults.responseType = "json"
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
