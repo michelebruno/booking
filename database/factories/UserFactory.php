@@ -23,10 +23,10 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         'remember_token' => Str::random(10),
         'cf' => $faker->unique()->numerify('0##########'),
-        'livello' => $faker->randomElement(['admin', 'fornitore', 'cliente'])
+        'ruolo' => $faker->randomElement(['admin', 'fornitore', 'cliente'])
     ];
     
-    switch ($data['livello']) {
+    switch ($data['ruolo']) {
         case 'fornitore':
             $data['piva'] = $faker->numerify('###########');
             break;

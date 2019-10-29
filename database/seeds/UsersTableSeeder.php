@@ -17,7 +17,7 @@ class UsersTableSeeder extends Seeder
         $admin->username = 'Michele Bruno';
         $admin->email = 'bm.michelebruno@gmail.com';
         $admin->password = Hash::make('password'); 
-        $admin->livello = 'admin';
+        $admin->ruolo = 'admin';
         $admin->api_token = 'secret_token';
         $admin->save();
 
@@ -25,7 +25,7 @@ class UsersTableSeeder extends Seeder
         $account_manager->username = 'AC';
         $account_manager->email = 'acmanager@example.com';
         $account_manager->password = Hash::make('password'); 
-        $account_manager->livello = 'account_manager';
+        $account_manager->ruolo = 'account_manager';
         $account_manager->api_token = 'ac_secret_token';
         $account_manager->save();
 
@@ -33,7 +33,7 @@ class UsersTableSeeder extends Seeder
         $esercente->username = 'Esercente';
         $esercente->email = 'esercente@example.com';
         $esercente->password = Hash::make('password'); 
-        $esercente->livello = 'esercente';
+        $esercente->ruolo = 'esercente';
         $esercente->api_token = 'esercente_secret_token';
         $esercente->save();
 
@@ -41,7 +41,7 @@ class UsersTableSeeder extends Seeder
         $cliente->username = 'Cliente';
         $cliente->email = 'cliente@example.com';
         $cliente->password = Hash::make('password'); 
-        $cliente->livello = 'cliente';
+        $cliente->ruolo = 'cliente';
         $cliente->api_token = 'cliente_secret_token';
         $cliente->save();
 

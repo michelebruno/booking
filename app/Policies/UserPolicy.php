@@ -16,7 +16,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->livello == 'admin';
+        return $user->ruolo == 'admin';
     }
 
     /**
