@@ -21,8 +21,7 @@ Route::get('/test', function ()
 Route::get('/api/v1/auth', function ()
 {
     $user = request()->user();
-    $user->jwt = 'tokennnnn';
-    return response()->json($user);
+    return response()->json($user->makeVisible(['api_token']));
 })->middleware('auth');
 
 Route::get('/', function () {
@@ -34,6 +33,10 @@ Route::middleware('auth')->group(function() {
 
 
     Route::get('/esercenti/{a?}/{b?}', function() {
+        return view('app');
+    });
+
+    Route::get('/utenti/{a?}/{b?}', function() {
         return view('app');
     });
     
