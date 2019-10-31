@@ -49,6 +49,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $array['meta'] = $this->meta;
 
+        $array['nome'] = $this->nome;
+
+        $array['cognome'] = $this->cognome;
+
+        $array['denominazione'] = $this->denominazione;
+
         $array['abilitato'] = $this->abilitato;
 
         return $array;
@@ -68,5 +74,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAbilitatoAttribute()
     {
         return $this->attributes['abilitato'] = ! $this->trashed();
+    }
+    
+    public function getNomeAttribute()
+    {
+        return array_key_exists('nome', $this->meta) ? $this->meta['nome'] : null;
+    }
+
+    public function getCognomeAttribute()
+    {
+        return array_key_exists('cognome', $this->meta) ? $this->meta['cognome'] : null;
+    }
+
+    public function getDenominazioneAttribute()
+    {
+        return ( $this->nome && $this->cognome ) ? $this->nome." ".$this->cognome : null;
     }
 }

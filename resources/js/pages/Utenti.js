@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import { Card } from "react-bootstrap"
 import BootstrapTable from "react-bootstrap-table-next"
 import { Redirect } from "react-router-dom"
+import paginationFactory from "react-bootstrap-table2-paginator"
 
 const Utenti = ( props ) => {
 
@@ -15,7 +16,10 @@ const Utenti = ( props ) => {
         },
         {
             dataField: 'username',
-            text: 'Username'
+            text: 'Username',
+            formatter: ( cell , row ) => {
+                return row.denominazione ? row.denominazione : cell
+            }
         },
         {
             dataField: 'ruolo',
@@ -65,6 +69,7 @@ const Utenti = ( props ) => {
                     keyField="id"
                     data={fetched.data}
                     rowEvents={rowEvents}
+                    pagination={ paginationFactory() }
                 />}
                 {!fetched && <span>Carico i risultati...</span>}
             </Card.Body>

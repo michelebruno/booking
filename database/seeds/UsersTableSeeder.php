@@ -20,6 +20,7 @@ class UsersTableSeeder extends Seeder
         $admin->ruolo = 'admin';
         $admin->api_token = 'secret_token';
         $admin->save();
+        $admin->markEmailAsVerified();
 
         $account_manager = new User();
         $account_manager->username = 'AC';
@@ -28,6 +29,7 @@ class UsersTableSeeder extends Seeder
         $account_manager->ruolo = 'account_manager';
         $account_manager->api_token = 'ac_secret_token';
         $account_manager->save();
+        $account_manager->markEmailAsVerified();
 
         $esercente = new User();
         $esercente->username = 'Esercente';
@@ -36,6 +38,7 @@ class UsersTableSeeder extends Seeder
         $esercente->ruolo = 'esercente';
         $esercente->api_token = 'esercente_secret_token';
         $esercente->save();
+        $esercente->markEmailAsVerified();
 
         $cliente = new User();
         $cliente->username = 'Cliente';
@@ -44,12 +47,13 @@ class UsersTableSeeder extends Seeder
         $cliente->ruolo = 'cliente';
         $cliente->api_token = 'cliente_secret_token';
         $cliente->save();
+        $cliente->markEmailAsVerified();
 
-        factory(App\User::class, 10)
-            ->create()
-            ->each( function ($user) {
-                $user->meta()->save(factory(App\Models\UserMeta::class)->make());
-            });
+        // factory(App\User::class, 10)
+        //     ->create()
+        //     ->each( function ($user) {
+        //         $user->meta()->save(factory(App\Models\UserMeta::class)->make());
+        //     });
         
     }
 }

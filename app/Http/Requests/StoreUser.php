@@ -26,7 +26,9 @@ class StoreUser extends FormRequest
     {
         return [
             'email' => ['required', 'email', 'unique:users'],
-            'ruolo' => ['required', Rule::in(['admin', 'account_manager', 'esercente', 'cliente'])]
+            'ruolo' => ['required', Rule::in(['admin', 'account_manager', 'esercente', 'cliente'])],
+            'meta.nome' => 'nullable',
+            'meta.cognome' => 'nullable',
         ];
     }
 

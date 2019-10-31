@@ -18,6 +18,7 @@ const DealsModifica = React.lazy(() => import('./pages/DealsModifica'));
 const Tickets = React.lazy( () => import('./pages/Tickets'));
 const Utenti = React.lazy( () => import('./pages/Utenti'));
 const UtentiCrea = React.lazy( () => import('./pages/UtentiCrea'));
+const UtentiProfilo = React.lazy( () => import('./pages/UtentiProfilo'));
 // handle auth and authorization
 
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
@@ -75,6 +76,7 @@ const routes = [
   { path: '/servizi/:id', name: 'Scheda servizi', component: ServiziScheda, route: PrivateRoute, roles: ['Admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
   { path: '/tickets', name: 'Tickets', component: Tickets, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
   { path: '/utenti/crea', name: 'UtentiCrea', component: UtentiCrea, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
+  { path: '/utenti/:id', name: 'Utenti', component: UtentiProfilo, route: PrivateRoute, roles: ['Admin'], title: 'Profilo Utente' },
   { path: '/utenti', name: 'Utenti', component: Utenti, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
   {
 	path: "/",

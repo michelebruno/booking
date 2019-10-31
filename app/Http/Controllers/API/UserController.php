@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUser;
 use App\Http\Resources\UserResource;
 use App\User;
+use App\Models\UserMeta;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -19,7 +20,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        return ( new UserResource( User::paginate(10) ) );
+        return ( new UserResource( User::all()->whereIn('ruolo', ['admin', 'account_manager']) ) );
 
     }
 
@@ -37,7 +38,16 @@ class UserController extends Controller
 
         try {
             $user->saveOrFail();
-            $user->sendEmailVerificationNotification();
+
+            $metas = [];
+            
+            foreach($dati['meta'] as $key => $value) {
+                $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+            }
+
+            if ( count($metas) ) $user->meta()->saveMany($metas);
+
+            //$user->sendEmailVerificationNotification();
             return response(new UserResource($user));
         } catch ( \Throwable $e ) {
             abort(500, $e->getMessage());
@@ -52,7 +62,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $this->authorize('view', User::class);
+
+        return response(new UserResource( User::findOrFail($id) ));
     }
 
     /**
