@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\User;
 use App\Models\UserMeta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -37,12 +38,16 @@ class UserController extends Controller
         $user = new User($dati);
 
         try {
+            $api_token = Str::random(40);
+            while ( User::where('api_token', $api_token)->count() ) {
+                $api_token = Str::random(40);
+            }
             $user->saveOrFail();
 
             $metas = [];
             
             foreach($dati['meta'] as $key => $value) {
-                $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+                if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
             }
 
             if ( count($metas) ) $user->meta()->saveMany($metas);

@@ -148,7 +148,6 @@ const Scheda = ( props ) => {
                                                     <td>12</td>
                                                     <td>{ faker.random.number(28)}</td>
                                                 </tr>
-
                                             )
                                         })
                                     }

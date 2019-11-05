@@ -27,15 +27,10 @@ class StoreUser extends FormRequest
         return [
             'email' => ['required', 'email', 'unique:users'],
             'ruolo' => ['required', Rule::in(['admin', 'account_manager', 'esercente', 'cliente'])],
+            'password' => [ 'required' , 'confirmed' ],
             'meta.nome' => 'nullable',
             'meta.cognome' => 'nullable',
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            "email.required" => "è necessario inserire l'email"
+            'username' => [ 'required', 'unique:users']
         ];
     }
 }

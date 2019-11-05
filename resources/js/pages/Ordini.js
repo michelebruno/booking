@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Table } from 'react-bootstrap';
-import faker from 'faker/locale/it'
+import { Card, Table } from 'react-bootstrap'; 
 import Loader from '../components/Loader';
 
 const TabellaOrdini = ( props ) => {
