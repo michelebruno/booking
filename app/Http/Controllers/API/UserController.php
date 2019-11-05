@@ -42,6 +42,8 @@ class UserController extends Controller
             while ( User::where('api_token', $api_token)->count() ) {
                 $api_token = Str::random(40);
             }
+            $user->api_token = $api_token;
+            
             $user->saveOrFail();
 
             $metas = [];
