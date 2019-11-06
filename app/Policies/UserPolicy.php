@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function view(User $user, User $model = null)
     {
-        return in_array( $user->ruolo , [ 'admin' , 'account_manager'] ) ;
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
     /**
@@ -39,7 +39,7 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        //
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
     /**

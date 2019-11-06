@@ -33,6 +33,8 @@ class UserController extends Controller
      */
     public function store(StoreUser $request)
     {
+        $this->authorize('create', User::class);
+
         $dati = $request->validated();
 
         $user = new User($dati);
@@ -54,7 +56,7 @@ class UserController extends Controller
 
             if ( count($metas) ) $user->meta()->saveMany($metas);
 
-            //$user->sendEmailVerificationNotification();
+            $user->sendEmailVerificationNotification();
             return response(new UserResource($user));
         } catch ( \Throwable $e ) {
             abort(500, $e->getMessage());
