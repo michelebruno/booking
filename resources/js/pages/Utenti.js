@@ -1,14 +1,17 @@
 import React, {useState} from "react"
-import { Card, Button, Modal } from "react-bootstrap"
+import { Card, Button, Modal, Alert } from "react-bootstrap"
 import BootstrapTable from "react-bootstrap-table-next"
 import { Redirect } from "react-router-dom"
 import paginationFactory from "react-bootstrap-table2-paginator"
 import FormNuovoUtente from "../components/FormNuovoUtente"
+import PreLoaderWidget from "../components/Loader"
 
 const Utenti = ( props ) => {
 
-    const [ fetched, setFetched ] = useState(false)
+    const [api, setApi] = useState({status: "loading", data: null})
     const [ redirect, setRedirect ] = useState(false)
+
+    window.api = api
 
     const columns = [ 
         {
@@ -57,36 +60,43 @@ const Utenti = ( props ) => {
 
     React.useEffect(() => {
         axios.get('/users')
-            .then( ({ data }) => { 
-                setFetched( data )
+            .then( ( response ) => { 
+                setApi({ status: "loaded", data: response.data.data })
+            })
+            .catch( error => {
+                setApi({status: "error" , response: error.response, message: error.response.data.message })
             })
     }, [])
     return(
         <Card>
             { redirect && <Redirect to={redirect} push /> }
             <Card.Body>
-                
-                <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
-                <Modal show={aggiungiModal} onHide={() => setAggiungiModal(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>
-                            Crea nuovo utente
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <FormNuovoUtente />
-                    </Modal.Body>
-                </Modal>
+                <p>
+                    <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
+                    <Modal show={aggiungiModal} onHide={() => setAggiungiModal(false)}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                Crea nuovo utente
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <FormNuovoUtente />
+                        </Modal.Body>
+                    </Modal>
+                </p>
 
-                {fetched && fetched.data && 
+                {api.status === "loaded" && api.data && 
                 <BootstrapTable
                     columns={columns}
                     keyField="id"
-                    data={fetched.data}
+                    data={api.data}
                     rowEvents={rowEvents}
                     pagination={ paginationFactory() }
                 />}
-                {!fetched && <span>Carico i risultati...</span>}
+                { api.status === "loading" && <p className="p-5"><PreLoaderWidget /></p>}
+                { api.status === "error" && <Alert variant="danger">
+                    { api.message }
+                </Alert>}
             </Card.Body>
         </Card>
     )

@@ -2,8 +2,8 @@ import React from 'react';
 import { Redirect } from "react-router-dom";
 import { Route } from 'react-router-dom';
 import Button from 'react-bootstrap/Button'
-import { ButtonGroup, DropdownButton, Dropdown, ButtonToolbar, Form } from 'react-bootstrap';
-
+import { ButtonGroup, Dropdown, ButtonToolbar, Form } from 'react-bootstrap';
+import store from "./_store";
 // lazy load all the views
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Esercenti = React.lazy(() => import('./pages/Esercenti'));
@@ -23,9 +23,11 @@ const UtentiProfilo = React.lazy( () => import('./pages/UtentiProfilo'));
 
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
 	<Route {...rest} render={props => {
-		/* const loggedInUser = getLoggedInUser(); */
+		
+		const loggedInUser = store.getState().currentUser;
+ 
 		// check if route is restricted by role
-		if (false && roles) {
+		if ( roles && roles.indexOf(loggedInUser.ruolo) == -1 ) {
 		// role not authorised so redirect to home page
 		return <Redirect to={{ pathname: '/' }} />
 		}
@@ -40,20 +42,20 @@ const SalvaEsercente = props => <React.Fragment>
 </React.Fragment>
 
 const SchedaProdottoTasti = ( props ) => <React.Fragment> 
-	{/* props.match.params.id è disponibile */}
-	<ButtonToolbar className="d-inline-block">
-		<Button  className="d-inline-block mr-2" variant="dark" size="sm">Modifica</Button> 
-		<Dropdown as={ButtonGroup}  className="d-inline-block" variant="success" size="sm" title="Aggiorna Wordpress">
+		{/* props.match.params.id è disponibile */}
+		<ButtonToolbar className="d-inline-block">
+			<Button  className="d-inline-block mr-2" variant="dark" size="sm">Modifica</Button> 
+			<Dropdown as={ButtonGroup}  className="d-inline-block" variant="success" size="sm" title="Aggiorna Wordpress">
 
-				<Button variant="success" >Aggiorna il server Wordpress</Button>
+					<Button variant="success" >Aggiorna il server Wordpress</Button>
 
-				<Dropdown.Toggle split variant="success" className="align-middle" ><i className="fas fa-lg fa-sort-down h-100" /></Dropdown.Toggle>
+					<Dropdown.Toggle split variant="success" className="align-middle" ><i className="fas fa-lg fa-sort-down h-100" /></Dropdown.Toggle>
 
-				<Dropdown.Menu>
-					<Dropdown.Item as="button">Cambia l'id associato</Dropdown.Item>
-				</Dropdown.Menu>
-		</Dropdown>
-	</ButtonToolbar>
+					<Dropdown.Menu>
+						<Dropdown.Item as="button">Cambia l'id associato</Dropdown.Item>
+					</Dropdown.Menu>
+			</Dropdown>
+		</ButtonToolbar>
 	</React.Fragment>
 
 const ProfiloEsercenteTasti = ( props ) => <ButtonToolbar className="d-inline-block">
@@ -64,20 +66,20 @@ const ProfiloEsercenteTasti = ( props ) => <ButtonToolbar className="d-inline-bl
 const routes = [
 
   // other pages
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard, route: PrivateRoute, roles: ['Admin'], title: 'La mia dashboard' },
-  { path: '/esercenti/modifica/:id', name: 'Esercenti', component: EsercentiModifica, route: PrivateRoute, roles: ['Admin'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
-  { path: '/esercenti/:id', name: 'Esercenti', component: EsercentiProfilo, route: PrivateRoute, roles: ['Admin'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
-  { path: '/esercenti', exact: true, name: 'Esercenti', component: Esercenti, route: PrivateRoute, roles: ['Admin'], title: 'Esercenti' },
-  { path: '/ordini/:id', exact: true, name: 'Ordini', component: OrdiniScheda, route: PrivateRoute, roles: ['Admin'], title: 'Dettagli ordine' },
-  { path: '/ordini', exact: true, name: 'Ordini', component: Ordini, route: PrivateRoute, roles: ['Admin'], title: 'Ordini' },
-  { path: '/deals/modifica/:id', name: 'Scheda deal', component: DealsModifica, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/deals/:id', name: 'Scheda deal', component: DealsScheda, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/deals', exact: true, name: 'Deals', component: Deals, route: PrivateRoute, roles: ['Admin'], title: 'Deals' },
-  { path: '/servizi/:id', name: 'Scheda servizi', component: ServiziScheda, route: PrivateRoute, roles: ['Admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
-  { path: '/tickets', name: 'Tickets', component: Tickets, route: PrivateRoute, roles: ['Admin'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/utenti/crea', name: 'UtentiCrea', component: UtentiCrea, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
-  { path: '/utenti/:id', name: 'Utenti', component: UtentiProfilo, route: PrivateRoute, roles: ['Admin'], title: 'Profilo Utente' },
-  { path: '/utenti', name: 'Utenti', component: Utenti, route: PrivateRoute, roles: ['Admin'], title: 'Utenti' },
+  { path: '/dashboard', name: 'Dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
+  { path: '/esercenti/modifica/:id', name: 'Esercenti', component: EsercentiModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
+  { path: '/esercenti/:id', name: 'Esercenti', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
+  { path: '/esercenti', exact: true, name: 'Esercenti', component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
+  { path: '/ordini/:id', exact: true, name: 'Ordini', component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
+  { path: '/ordini', exact: true, name: 'Ordini', component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
+  { path: '/deals/modifica/:id', name: 'Scheda deal', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals/:id', name: 'Scheda deal', component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals', exact: true, name: 'Deals', component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
+  { path: '/servizi/:id', name: 'Scheda servizi', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
+  { path: '/tickets', name: 'Tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/utenti/crea', name: 'UtentiCrea', component: UtentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
+  { path: '/utenti/:id', name: 'Utenti', component: UtentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo Utente' },
+  { path: '/utenti', name: 'Utenti', component: Utenti, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
   {
 	path: "/",
 	exact: true,

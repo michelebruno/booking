@@ -24,7 +24,7 @@ const Profilo = (props) => {
                 <Col lg="6">
                     <Card>
                         <Card.Body>
-                            { !utente && <React.Fragment><br/><br/><PreLoaderWidget /><br/><br/></React.Fragment>}
+                            { !utente && <p className="py-5"><PreLoaderWidget /></p>}
                             { utente && <Form> 
                                 <Form.Group as={Row} controlId="email">
                                     <Form.Label column md="3">Email</Form.Label>

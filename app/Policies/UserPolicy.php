@@ -16,7 +16,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->ruolo == 'admin';
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager'] ) ;
     }
 
     /**
@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function view(User $user, User $model = null)
     {
-        return $user->ruolo == 'admin';
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager'] ) ;
     }
 
     /**
