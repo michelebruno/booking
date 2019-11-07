@@ -20,23 +20,25 @@ const Settings = props => {
         const [errors, setErrors] = useState(false)
 
         const dynamicProps = () => {
+            
             let x = {};
 
             x.readOnly = !editing;
 
             if ( errors ) x.isInvalid = true
+
             return x
         }
 
-        const showErrorsFeedback = field => {
-            return (errors && typeof errors[field] !== 'undefined' ) && 
-            <Form.Control.Feedback type="invalid">
-                <ul>
-                    {errors[field].map( ( error, i ) => 
-                        <li key={i}>{error}</li>
-                    )}
-                </ul>
-            </Form.Control.Feedback>
+        const showErrorsFeedback = () => {
+            (errors && typeof errors.valore !== 'undefined' ) && 
+                <Form.Control.Feedback type="invalid">
+                    <ul>
+                        {errors.valore.map( ( error, i ) => 
+                            <li key={i}>{error}</li>
+                        )}
+                    </ul>
+                </Form.Control.Feedback>
         }
 
         const handleSubmit = () => {
@@ -64,14 +66,7 @@ const Settings = props => {
                         </InputGroup.Prepend>
                         <Form.Control {...dynamicProps()} value={value} onChange={ e => setValue(e.target.value)} onKeyPress={ e => { return e.charCode==13 ? handleSubmit() : null }} />
                         
-                        { (errors && typeof errors.valore !== 'undefined' ) && 
-                            <Form.Control.Feedback type="invalid">
-                                <ul>
-                                    {errors.valore.map( ( error, i ) => 
-                                        <li key={i}>{error}</li>
-                                    )}
-                                </ul>
-                            </Form.Control.Feedback>}
+                        { showErrorsFeedback() }
                         <InputGroup.Append>
                             { !editing && <Button variant="primary" onClick={() => setEditing(true)}><i className="fas fa-edit" /></Button> }
                             { editing && <React.Fragment>

@@ -1,6 +1,7 @@
 import React, {useState, useEffect } from "react"
 import { Card, Form, Row, Col , Button, Spinner } from "react-bootstrap"
 import PreLoaderWidget from "../components/Loader"
+import EditableField from "../components/EditableField"
 
 const Profilo = (props) => {
 
@@ -26,7 +27,9 @@ const Profilo = (props) => {
 
     }, [match.params.id] )
 
-    const fieldValue = field =>( typeof utente[field] !== 'undefined' && utente[field] )? utente[field] : ""
+    const fieldValue = field =>( typeof utente[field] !== 'undefined' && utente[field] )? utente[field] : "" 
+
+    const APIurl = "/users/" + utente.id;
 
     return (
         <React.Fragment>
@@ -36,18 +39,9 @@ const Profilo = (props) => {
                         <Card.Body>
                             { !utente && <div className="py-5"><PreLoaderWidget /></div>}
                             { utente && <Form> 
-                                <Form.Group as={Row} controlId="email">
-                                    <Form.Label column md="3">Email</Form.Label>
-                                    <Col md="8" >
-                                        <Form.Control plaintext readOnly value={fieldValue("email")} />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} controlId="username">
-                                    <Form.Label column md="3">Username</Form.Label>
-                                    <Col md="8" >
-                                        <Form.Control plaintext readOnly value={fieldValue("username")} />
-                                    </Col>
-                                </Form.Group>
+                                <EditableField name={"email"} initialValue={ fieldValue("email")} url={APIurl} label="Email" onSuccess={setUtente} />
+                                <EditableField name={"username"} initialValue={ fieldValue("username")} url={APIurl} label="username" onSuccess={setUtente} />
+
                                 <Form.Group as={Row} controlId="password">
                                     <Form.Label column md="3">Password</Form.Label>
                                     <Col md="8" >{ resettingPassword !== "success" && <Button onClick={ () => {
@@ -66,27 +60,13 @@ const Profilo = (props) => {
                                     { resettingPassword === "success" && <Button variant="outline-success" disabled>Link per il reset inviato.</Button>  }
                                     </Col>
                                 </Form.Group>
-                                <Form.Group as={Row} controlId="nome">
-                                    <Form.Label column md="3">Nome</Form.Label>
-                                    <Col md="8" >
-                                        <Form.Control plaintext readOnly value={fieldValue("nome")} />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} controlId="cognome">
-                                    <Form.Label column md="3">Cognome</Form.Label>
-                                    <Col md="8" >
-                                        <Form.Control plaintext readOnly value={fieldValue("cognome")} />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} controlId="ruolo">
-                                    <Form.Label column md="3">Ruolo</Form.Label>
-                                    <Col md="8" >
-                                        { false && <Form.Control as="select" plaintext readOnly value={fieldValue("ruolo")} >
-                                            <option value="admin" defaultValue>Admin</option>
-                                        </Form.Control>}
-                                        { true && <Form.Control plaintext readOnly value={fieldValue("ruolo")} />}
-                                    </Col>
-                                </Form.Group>
+                                <EditableField name="meta.nome" initialValue={ fieldValue("nome")} url={APIurl} label="Nome" onSuccess={setUtente}/>
+                                <EditableField name={"meta.cognome"} initialValue={ fieldValue("cognome")} url={APIurl} label="Cognome"  onSuccess={setUtente}/>
+                                <EditableField name={"ruolo"} initialValue={ fieldValue("ruolo")} url={APIurl} label="Ruolo"  onSuccess={setUtente} as="select">
+                                    
+                                    <option value="admin" defaultValue>Admin</option>
+                                    <option value="account_manager" defaultValue>Account Manager</option>
+                                </EditableField> 
                             </Form> }
                         </Card.Body>
                     </Card>

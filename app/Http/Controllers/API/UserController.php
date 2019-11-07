@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\User;
 use App\Models\UserMeta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -45,6 +46,8 @@ class UserController extends Controller
                 $api_token = Str::random(40);
             }
             $user->api_token = $api_token;
+
+            $user->password = Hash::make($request->input('password'));
             
             $user->saveOrFail();
 
@@ -57,6 +60,7 @@ class UserController extends Controller
             if ( count($metas) ) $user->meta()->saveMany($metas);
 
             $user->sendEmailVerificationNotification();
+
             return response(new UserResource($user));
         } catch ( \Throwable $e ) {
             abort(500, $e->getMessage());
@@ -82,10 +86,18 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * TODO autorizzazione
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
+
+        if ( $request->has('meta') ) {
+            foreach ($request->input('meta') as $chiave => $valore) {
+                $user->meta()->updateOrCreate(["chiave" => $chiave], ["valore" => $valore]);
+            }
+        } 
+        return response( new UserResource($user) );
     }
 
     /**

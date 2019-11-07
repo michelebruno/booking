@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import { Card, Button, Modal, Alert } from "react-bootstrap"
 import BootstrapTable from "react-bootstrap-table-next"
-import { Redirect } from "react-router-dom"
+import { Redirect , Link } from "react-router-dom"
 import paginationFactory from "react-bootstrap-table2-paginator"
 import FormNuovoUtente from "../components/FormNuovoUtente"
 import PreLoaderWidget from "../components/Loader"
@@ -31,7 +31,25 @@ const Utenti = ( props ) => {
         },
         {
             dataField: 'none',
-            text: ''
+            text: '',
+            formatter: ( cell , row ) => {
+                let url = ""
+
+                switch (row.ruolo) {
+                    case "cliente":
+                        url += "/clienti/"
+                        break;
+    
+                    case "esercente":
+                        url += "/esercenti/"
+                        break;
+                
+                    default:
+                        url += "/utenti/"
+                        break;
+                }
+                return <React.Fragment><Button size="sm" as={Link} to={url+row.id} ><i className="fas fa-edit" /></Button></React.Fragment>
+            }
         }
     ]
 
@@ -59,8 +77,7 @@ const Utenti = ( props ) => {
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
     React.useEffect(() => {
-        
-            
+
         const source = axios.CancelToken.source()
         axios.get('/users' , { cancelToken: source.token } )
             .then( ( response ) => { 
@@ -72,6 +89,7 @@ const Utenti = ( props ) => {
             })
  
         return () => source.cancel();
+
     }, [])
     return(
         <Card>
@@ -96,13 +114,15 @@ const Utenti = ( props ) => {
                     columns={columns}
                     keyField="id"
                     data={api.data}
-                    rowEvents={rowEvents}
+                    // rowEvents={rowEvents}
                     pagination={ paginationFactory() }
+                    hover
+                    bordered={false}
                 />}
                 { api.status === "loading" && <div className="p-5"><PreLoaderWidget /></div>}
                 { api.status === "error" && <Alert variant="danger">
                     { api.message }
-                </Alert>}
+                </Alert> }
             </Card.Body>
         </Card>
     )

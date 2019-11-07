@@ -85,7 +85,7 @@ const SideNavContent = ( { user } ) => {
                 </li> */}
                 <li>
                     <Link to="/utenti" >
-                        <i className="mdi" />
+                        <i className="fas fa-user" />
                         <span>Utenti</span>
                     </Link>
                 </li>
