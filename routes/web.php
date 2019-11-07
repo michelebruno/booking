@@ -50,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
         return view('app');
     });
 
+    Route::get('/settings/{a?}/{b?}', function() {
+        return view('app');
+    });
+
 });
 
 Route::get('/', function () { 

@@ -15,9 +15,9 @@ const Deals = React.lazy(() => import('./pages/Deals'));
 const DealsScheda = React.lazy(() => import('./pages/DealsScheda'));
 const ServiziScheda = React.lazy(() => import('./pages/ServiziScheda'));
 const DealsModifica = React.lazy(() => import('./pages/DealsModifica'));
+const Settings = React.lazy(() => import('./pages/Settings'));
 const Tickets = React.lazy( () => import('./pages/Tickets'));
-const Utenti = React.lazy( () => import('./pages/Utenti'));
-const UtentiCrea = React.lazy( () => import('./pages/UtentiCrea'));
+const Utenti = React.lazy( () => import('./pages/Utenti')); 
 const UtentiProfilo = React.lazy( () => import('./pages/UtentiProfilo'));
 // handle auth and authorization
 
@@ -66,20 +66,20 @@ const ProfiloEsercenteTasti = ( props ) => <ButtonToolbar className="d-inline-bl
 const routes = [
 
   // other pages
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
-  { path: '/esercenti/modifica/:id', name: 'Esercenti', component: EsercentiModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
-  { path: '/esercenti/:id', name: 'Esercenti', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
-  { path: '/esercenti', exact: true, name: 'Esercenti', component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
-  { path: '/ordini/:id', exact: true, name: 'Ordini', component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
-  { path: '/ordini', exact: true, name: 'Ordini', component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
-  { path: '/deals/modifica/:id', name: 'Scheda deal', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/deals/:id', name: 'Scheda deal', component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/deals', exact: true, name: 'Deals', component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
-  { path: '/servizi/:id', name: 'Scheda servizi', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
-  { path: '/tickets', name: 'Tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/utenti/crea', name: 'UtentiCrea', component: UtentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
-  { path: '/utenti/:id', name: 'Utenti', component: UtentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo Utente' },
-  { path: '/utenti', name: 'Utenti', component: Utenti, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
+  { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
+  { path: '/esercenti/modifica/:id', component: EsercentiModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
+  { path: '/esercenti/:id', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
+  { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
+  { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
+  { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
+  { path: '/deals/modifica/:id', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals/:id' , component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
+  { path: '/servizi/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
+  { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },
+  { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/utenti/:id', component: UtentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo Utente' },
+  { path: '/utenti', component: Utenti, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
   {
 	path: "/",
 	exact: true,

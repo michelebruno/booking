@@ -24,3 +24,6 @@ Route::get('/users/me', function() {
 
 Route::apiResource('users', 'API\UserController')
     ->middleware('auth:api');
+
+Route::apiResource('settings', 'API\SettingController')
+    ->middleware('auth:api');

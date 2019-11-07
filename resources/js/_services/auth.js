@@ -1,4 +1,4 @@
-import { authenticate } from "../_actions"
+import { authenticate , getAutoloadedSettings } from "../_actions"
 
 const login = () => {
     return dispatch => {
@@ -9,4 +9,13 @@ const login = () => {
     }
 }
 
-export default { login };
+const settings = () => {
+    return dispatch => {
+        return axios.get( "/settings" )
+            .then(
+                res => dispatch( getAutoloadedSettings( res.data ) )
+            )
+    }
+}
+
+export default { login , settings };

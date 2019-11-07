@@ -25,19 +25,19 @@ const withLayout = (WrappedComponent) => {
 }
 
 
-const App = ( { currentUser, ...props} ) => {
+const App = ( { currentUser, settings, ...props} ) => {
 	const getLayout = () => {
 		return AuthLayout;
 	}
 	
 	React.useEffect( () => {
-		props.authenticate();
+		props.authenticate().then( props.getAutoloadedSettings ); 
 	}, [])
     
 	return(
 		// rendering the router with layout 
 		<BrowserRouter>	
-			{ !currentUser && loading()}
+			{ !currentUser && !settings && loading()}
 			{ currentUser && <React.Fragment>
 				<Switch>
 					{ routes.map( ( route, index ) => {
@@ -66,7 +66,8 @@ const App = ( { currentUser, ...props} ) => {
 } 
 const mapStateToProps = state => {
 	return {
-		currentUser: state.currentUser
+		currentUser: state.currentUser,
+		settings: state.settings
 	}
 }
-export default connect( mapStateToProps , { authenticate: authenticate.login } )(App);
+export default connect( mapStateToProps , { authenticate: authenticate.login, getAutoloadedSettings: authenticate.settings } )(App);

@@ -32,7 +32,7 @@ const vociMenu = [
     }
 ]
 
-let SideNavContent = () => {
+const SideNavContent = ( { user } ) => {
     return <React.Fragment>
 
         <div id="sidebar-menu">
@@ -88,13 +88,6 @@ let SideNavContent = () => {
                         <i className="mdi" />
                         <span>Utenti</span>
                     </Link>
-                    <ul className="nav-second-level nav" >
-                        <li>
-                            <Link to="/utenti/crea" className="side-nav-link-ref"> 
-                                <span>Nuovo utente</span>
-                            </Link>
-                        </li> 
-                    </ul>
                 </li>
                 <li>
                     <Link to="/esercenti" className="waves-effect side-nav-link-ref has-arrow" aria-expanded="false">
@@ -110,12 +103,12 @@ let SideNavContent = () => {
                         </li>
                     </ul>
                 </li> 
-                <li>
-                    <Link to="/" className="waves-effect side-nav-link-ref" >
+                { [ 'admin' ].indexOf(user.ruolo) !== -1 && <li>
+                    <Link to="/settings" className="waves-effect side-nav-link-ref" >
                         <i className="fe-settings"></i>
                         <span>Impostazioni</span>
                     </Link>
-                </li>
+                </li>}
             </ul>
         </div>
         <div className="clearfix"></div>
@@ -177,8 +170,8 @@ const Sidebar = ( { currentUser }, ...props ) => {
     return(
         <React.Fragment>
             <div className='left-side-menu' >
-                {!isCondensed && <PerfectScrollbar><UserProfile user={currentUser}/><SideNavContent /></PerfectScrollbar>}
-                {isCondensed && <UserProfile /> && <SideNavContent />}
+                {!isCondensed && <PerfectScrollbar><UserProfile user={currentUser}/><SideNavContent user={ currentUser } /></PerfectScrollbar>}
+                {isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/>}
             </div>
         </React.Fragment>
     )
