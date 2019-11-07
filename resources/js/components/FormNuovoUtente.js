@@ -15,9 +15,6 @@ const FormNuovoUtente = props => {
     const [nome, setNome] = useState("")
     const [cognome, setCognome] = useState("")
 
-    const [redirect, setRedirect] = useState(false)
-
-
     const handleSubmit = e => {
         e.preventDefault()
         return setApi({status: "sending"})

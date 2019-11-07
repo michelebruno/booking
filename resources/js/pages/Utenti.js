@@ -59,13 +59,19 @@ const Utenti = ( props ) => {
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
     React.useEffect(() => {
-        axios.get('/users')
+        
+            
+        const source = axios.CancelToken.source()
+        axios.get('/users' , { cancelToken: source.token } )
             .then( ( response ) => { 
                 setApi({ status: "loaded", data: response.data.data })
             })
             .catch( error => {
+                if ( axios.isCancel(error) )  return;
                 setApi({status: "error" , response: error.response, message: error.response.data.message })
             })
+ 
+        return () => source.cancel();
     }, [])
     return(
         <Card>
@@ -93,7 +99,7 @@ const Utenti = ( props ) => {
                     rowEvents={rowEvents}
                     pagination={ paginationFactory() }
                 />}
-                { api.status === "loading" && <p className="p-5"><PreLoaderWidget /></p>}
+                { api.status === "loading" && <div className="p-5"><PreLoaderWidget /></div>}
                 { api.status === "error" && <Alert variant="danger">
                     { api.message }
                 </Alert>}
