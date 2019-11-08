@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function store(StoreUser $request)
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create');
 
         $dati = $request->validated();
 
@@ -75,9 +75,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $this->authorize('view', User::class);
+        $user = User::findOrFail($id);
 
-        return response(new UserResource( User::findOrFail($id) ));
+        $this->authorize('view', $user);
+
+        return response(new UserResource( $user ));
     }
 
     /**
@@ -90,6 +92,10 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('update', User::findOrFail($id) );
+
+        if ( $request->user()->ruolo !== 'admin' && $request->input( 'ruolo' ) == 'admin') abort(403);
+
         $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
 
         if ( $request->has('meta') ) {

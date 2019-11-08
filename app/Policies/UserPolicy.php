@@ -15,7 +15,8 @@ class UserPolicy
      * @return mixed
      */
     public function viewAny(User $user)
-    {
+    { 
+
         return in_array( $user->ruolo , [ 'admin' , 'account_manager'] ) ;
     }
 
@@ -27,7 +28,8 @@ class UserPolicy
      * @return mixed
      */
     public function view(User $user, User $model = null)
-    {
+    {  
+
         return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
@@ -51,7 +53,20 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        //
+
+        // Gli admin possono modificare tutto.
+        if ( $user->ruolo === "admin" ) return true;
+        
+        // Chi non è admin non può modificare gli admin.
+        if ( $model->ruolo === "admin" ) return false;
+
+        // Un utente può modificare se stesso.
+        if ( $user->id === $model->id ) return true;
+
+        if ( $user->ruolo !== "account_manager" ) return false;
+
+        return true;
+
     }
 
     /**
