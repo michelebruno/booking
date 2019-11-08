@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import "./bootstrap"
+import "./_services/errorInterceptor"
 import App from './app';
 import store from "./_store"
 import { Provider } from "react-redux" 
-import "./bootstrap"
 
 window.store = store
 

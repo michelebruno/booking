@@ -1,9 +1,14 @@
 import React, { useState } from "react"
-import PropTypes from "prop-types"
-import { Button, Form, FormGroup, Row, Col, InputGroup , Spinner } from "react-bootstrap"
-import dot from "dot-object"
-
-window.dot = dot
+import PropTypes from "prop-types" 
+import Button from "react-bootstrap/Button"
+import Form  from "react-bootstrap/Form"
+import FormGroup  from "react-bootstrap/FormGroup"
+import Row  from "react-bootstrap/Row"
+import Col  from "react-bootstrap/Col"
+import InputGroup  from "react-bootstrap/InputGroup"
+import Spinner  from "react-bootstrap/Spinner"
+import dot from "dot-object" 
+import ErrorModal from "./ErrorModal"
 
 const EditableField = ( { label, target , name, initialValue, onSuccess, ...props} ) => {
     
@@ -19,10 +24,7 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
         
         let x = {};
         
-        x.readOnly = !editing
-        
-        x.disabled = !editing
-        x.plaintext = !editing
+        x.readOnly = x.disabled = x.plaintext = !editing
         
         if ( errors ) x.isInvalid = true
         
@@ -30,14 +32,15 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     }
     
     const showErrorsFeedback = () => {
+
         (errors && typeof errors[target] !== 'undefined' ) && 
         <Form.Control.Feedback type="invalid">
-        <ul>
-        {errors[target].map( ( error, i ) => 
-            <li key={i}>{error}</li>
-            )}
+            <ul>
+                {errors[target].map( ( error, i ) => 
+                    <li key={i}>{error}</li>
+                    )}
             </ul>
-            </Form.Control.Feedback>
+        </Form.Control.Feedback>
     }
         
     const handleSubmit = () => {
@@ -55,13 +58,16 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
             setEditing(false); 
             setSending("success") 
             if ( onSuccess ) onSuccess(res.data)
-            else console.warn("No onSucces function")
+            else console.warn("No onSuccess function")
             
         })  
         .catch( error => { 
             if (error.response) {
-                setErrors(error.response.data.errors)
                 setSending(false) 
+
+                if (error.response.status === 422) { // Errore di validazione
+                    setErrors(error.response.data.errors)
+                } 
                 
             } else {
                 console.error(error)
@@ -97,6 +103,10 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     const Control = () => {
         return <Form.Control key="1" {...props} { ...dynamicProps() } value={value} onChange={ e => setValue(e.target.value)} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
     }
+
+    // if (showErrorModal) {
+    //     return <ErrorModal response={showErrorModal} show={ showErrorModal ? true : false } onHide={() => setShowErrorModal(false)} />
+    // }
     return <FormGroup as={Row} controlId={target} >
         <Form.Label column md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label>
         <Col md="9">                    
