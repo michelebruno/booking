@@ -28,5 +28,5 @@ Route::apiResource('users', 'API\UserController')
 Route::apiResource('settings', 'API\SettingController')
     ->middleware('auth:api');
 
-Route::apiResource('esercente', 'API\EsercenteController')
+Route::apiResource('esercenti', 'API\EsercenteController')
     ->middleware('auth:api');
