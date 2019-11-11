@@ -2,16 +2,23 @@
 
 namespace App\Models;
 
-use App\User; 
+use App\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class Esercente extends User
 {
-    protected $attributes = [
-        'ruolo' => "esercente",
-    ];
-
+    
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'username', 'email', 'password', 'cf', 'piva'
+    ];
+
+    protected $attributes = [
+        'ruolo' => 'esercente'
     ];
 
     public static function boot()
@@ -20,7 +27,7 @@ class Esercente extends User
 
         static::addGlobalScope('ruolo_esercente', function (Builder $builder)
         {
-            $builder->where('ruolo', 'esercente');
+            return $builder->where('ruolo', 'esercente');
         });
     }
 }

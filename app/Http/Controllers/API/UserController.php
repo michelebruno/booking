@@ -22,7 +22,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        return ( new UserResource( User::all()->whereIn('ruolo', ['admin', 'account_manager']) ) );
+        return response( new UserResource( User::all()->whereIn('ruolo', ['admin', 'account_manager']) ) );
 
     }
 
@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function store(StoreUser $request)
     {
-        $this->authorize('create');
+        $this->authorize('create', User::class);
 
         $dati = $request->validated();
 

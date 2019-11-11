@@ -6,10 +6,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, SoftDeletes;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -40,7 +43,23 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function meta()
     {
-        return $this->hasMany('App\Models\UserMeta');
+        return $this->hasMany('App\Models\UserMeta', 'user_id' );
+    }
+
+    public static function toCamelCase(array $array)
+    {
+        $newArray = [];
+
+        foreach ($array as $key => $value) {
+
+            if ( is_array($value) ) $value = static::toCamelCase($value);
+
+            $key = lcfirst(implode('', array_map('ucfirst', explode('_', $key))));
+
+            $newArray[$key] = $value;
+        }
+
+        return $newArray;
     }
 
     public function toArray()
@@ -49,15 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $array['meta'] = $this->meta;
 
-        $array['nome'] = $this->nome;
-
-        $array['cognome'] = $this->cognome;
-
-        $array['denominazione'] = $this->denominazione;
-
-        $array['abilitato'] = $this->abilitato;
-
-        return $array;
+        return static::toCamelCase($array);
     }
 
     public function getMetaAttribute()
@@ -89,5 +100,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getDenominazioneAttribute()
     {
         return ( $this->nome && $this->cognome ) ? $this->nome." ".$this->cognome : null;
+    }
+
+    /* 
+     *
+     * SCOPES
+     * 
+     */
+
+    public function scopeEsercente($query)
+    {
+        return $query->where('ruolo', 'esercente');
     }
 }
