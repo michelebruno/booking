@@ -30,7 +30,7 @@ class StoreUser extends FormRequest
             'password' => [ 'required' , 'confirmed' ],
             'meta.nome' => 'nullable',
             'meta.cognome' => 'nullable',
-            'username' => [ 'required', 'unique:users']
+            'username' => [ 'required', 'unique:users', 'not_regex:/^.+@.+$/i']
         ];
     }
 }

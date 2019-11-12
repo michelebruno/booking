@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react"
 import { Form, Button, Alert, Spinner } from "react-bootstrap"
 import StepWizard from 'react-step-wizard';
 import { Link } from 'react-router-dom'
+import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
 
-const FormNuovoUtente = props => {
+const FormNuovoUtente =  props => {
     
     const [api, setApi] = useState({ status: null, data: null});
 
@@ -41,25 +42,14 @@ const FormNuovoUtente = props => {
 
     const errors = ( api.status === "error" && typeof api.data.errors !== 'undefined' ) ? api.data.errors : false;
 
-    const showErrorsFeedback = field => {
-        return (errors && typeof errors[field] !== 'undefined' ) && 
-        <Form.Control.Feedback type="invalid">
-            <ul>
-                {errors[field].map( ( error, i ) => 
-                    <li key={i}>{error}</li>
-                )}
-            </ul>
-        </Form.Control.Feedback>
-    }
 
     const dynamicProps = field => { 
         let props = {}
         if (api.status === "success") {
             return { readOnly : true, plaintext: true }
         }
-        if (errors && typeof errors[field] !== 'undefined' ) {
-            props.isInvalid = true
-        } 
+
+        props.isInvalid = isInvalid(errors, field)
 
         return props
     }
@@ -81,22 +71,22 @@ const FormNuovoUtente = props => {
                     <Form.Group controlId="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control type="email" required {...dynamicProps("email") } value={email} onChange={ e => setEmail(e.target.value) } />
-                        { showErrorsFeedback("email") }
+                        { showErrorsFeedback(errors, "email") }
                     </Form.Group>
                     <Form.Group controlId="username">
                         <Form.Label>Username</Form.Label>
                         <Form.Control required value={username} onChange={ e => setUsername(e.target.value) } { ...dynamicProps("username")} />
-                        { showErrorsFeedback("username") }
+                        { showErrorsFeedback(errors, "username") }
                     </Form.Group>
                     <Form.Group controlId="password">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" required value={password} onChange={ e => setPassword(e.target.value) } { ...dynamicProps("password") }/>
-                        { showErrorsFeedback("password") }
+                        { showErrorsFeedback(errors, "password") }
                     </Form.Group>
                     <Form.Group controlId="password_confirmation">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" required value={passwordConfirmation} onChange={ e => setPasswordConfirmation(e.target.value) } { ...dynamicProps("password_confirmation") } />
-                        { showErrorsFeedback("password_confirmation") }
+                        { showErrorsFeedback(errors, "password_confirmation") }
                     </Form.Group>
                     <Form.Group controlId="ruolo">
                         <Form.Label>Ruolo account</Form.Label>

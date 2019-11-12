@@ -8,7 +8,7 @@ import store from "./_store";
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Esercenti = React.lazy(() => import('./pages/Esercenti'));
 const EsercentiProfilo = React.lazy(() => import('./pages/EsercentiProfilo'));
-const EsercentiModifica = React.lazy(() => import('./pages/EsercentiModifica'));
+const EsercentiCrea = React.lazy(() => import('./pages/EsercentiCrea'));
 const Ordini = React.lazy(() => import('./pages/Ordini'));
 const OrdiniScheda = React.lazy(() => import('./pages/OrdiniScheda'));
 const Deals = React.lazy(() => import('./pages/Deals'));
@@ -41,6 +41,8 @@ const SalvaEsercente = props => <React.Fragment>
 	<Button variant="success">Salva</Button>
 </React.Fragment>
 
+const NuovoEsercente = props => <Button as={Link} to="/esercenti/crea" >Aggiungi esercente</Button>
+
 const SchedaProdottoTasti = ( props ) => <React.Fragment> 
 		{/* props.match.params.id è disponibile */}
 		<ButtonToolbar className="d-inline-block">
@@ -67,7 +69,8 @@ const routes = [
 
   // other pages
   { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
-  { path: '/esercenti/modifica/:id', component: EsercentiModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: SalvaEsercente },
+  { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente', tastimenu: NuovoEsercente },
+  { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: NuovoEsercente },
   { path: '/esercenti/:id', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },

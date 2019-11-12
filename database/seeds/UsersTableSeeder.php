@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Esercente;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -31,12 +32,25 @@ class UsersTableSeeder extends Seeder
         $account_manager->save();
         $account_manager->markEmailAsVerified();
 
-        $esercente = new User();
+        $esercente = new Esercente();
         $esercente->username = 'Esercente';
         $esercente->email = 'esercente@example.com';
         $esercente->password = Hash::make('password'); 
         $esercente->ruolo = 'esercente';
+        $esercente->cf = 'esercente';
+        $esercente->piva = 'esercente';
         $esercente->api_token = 'esercente_secret_token';
+        $esercente->save();
+        $esercente->nome = "Esercente prova";
+        $esercente->pec = "pec@pec.example.com";
+        $esercente->sdi = "000000";
+        $esercente->indirizzo = [
+            "via" => "Via Marconi",
+            "civico" => "24",
+            "città" => "Bologna",
+            "cap" => "79865",
+            "provincia" => "BO"
+        ];
         $esercente->save();
         $esercente->markEmailAsVerified();
 

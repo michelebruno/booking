@@ -43,7 +43,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function meta()
     {
-        return $this->hasMany('App\Models\UserMeta', 'user_id' );
+        return $this->hasMany('App\Models\UserMeta', 'user_id', 'id' );
     }
 
     public static function toCamelCase(array $array)
@@ -62,20 +62,36 @@ class User extends Authenticatable implements MustVerifyEmail
         return $newArray;
     }
 
+    public function exceptFromTraits($class, $array = false )
+    {
+        if ( $array === false ) $array = $this->meta;
+        $except = [];
+
+        $traits = class_uses_recursive($class);
+
+        if ( in_array('App\Traits\HaIndirizzo', $traits) ) {
+            $except = array_merge($traits, ['indirizzo_via','indirizzo_civico','indirizzo_città','indirizzo_provincia','indirizzo_cap']);
+        }
+
+        return Arr::except($array, $except);
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
 
         $array['meta'] = $this->meta;
-
-        return static::toCamelCase($array);
+        
+        return $array;
     }
 
     public function getMetaAttribute()
     { 
         $meta = [];
 
-        foreach ($this->meta()->get() as $m ) {
+        $array = $this->meta()->get();
+
+        foreach ( $array as $m ) {
             $meta[$m->chiave] = $m->valore;
         }
 

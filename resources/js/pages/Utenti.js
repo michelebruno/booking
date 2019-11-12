@@ -30,7 +30,7 @@ const Utenti = ( props ) => {
             text: 'Tipo'
         },
         {
-            dataField: 'none',
+            dataField: 'meta',
             text: '',
             formatter: ( cell , row ) => {
                 let url = ""
@@ -81,7 +81,7 @@ const Utenti = ( props ) => {
         const source = axios.CancelToken.source()
         axios.get('/users' , { cancelToken: source.token } )
             .then( ( response ) => { 
-                setApi({ status: "loaded", data: response.data.data })
+                setApi({ status: "loaded", data: response.data })
             })
             .catch( error => {
                 if ( axios.isCancel(error) )  return;

@@ -1,20 +1,49 @@
-import React from 'react';
+import React , { useState, useEffect } from 'react';
 
 import Loader from '../components/Loader';
 
 import { Row , Col , Table , Card, Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
+import BootstrapTable from 'react-bootstrap-table-next';
+import PreLoaderWidget from '../components/Loader';
 
 const Esercenti = ( { id, ...props } ) => {
+
+    const [api, setApi] = useState({ status: "loading", data: null})
+
+    useEffect(() => {
+
+        const source = axios.CancelToken.source()
+
+        axios.get("/esercenti", { cancelToken: source.token })
+            .then( res => {
+                setApi({ status : "success" , data: res.data })
+            })
+            .catch( error => {
+                if ( axios.isCancel(error) )  return;
+            })
+
+        return () => source.cancel();
+
+    }, [])
+
+    const columns = [
+        {
+            dataField: 'username',
+            text: "Username",
+            formatter : (cell, row) => <Link to={"/esercenti/" + row.id } >{cell}</Link>
+        }
+    ]
+
     return(
         <React.Fragment>
             { /* preloader */}
-            {props.loading && <Loader />}
+            {props.loading && <div className="px-5"><Loader /></div>}
             <Row>
                 <Col className="mb-2" xs="12" lg="3">
                     <div className="d-flex w-100 justify-content-between ">
                         <h5>Gruppi</h5>
-                        <Link to='#'><h5 className=" text-muted">Nuovo</h5></Link>
+                        <Link to='#'><h5 className="text-muted">Nuovo</h5></Link>
                     </div>
                     <ul className="list-group">
                         <li className="list-group-item d-flex justify-content-between align-items-center">
@@ -33,32 +62,13 @@ const Esercenti = ( { id, ...props } ) => {
                 </Col>
                 <Col lg="9">
                     <Card>
-                        <Card.Body>                                
-                            <Table hover>
-                                <thead>
-                                    <tr>
-                                        <th>Ragione sociale</th>
-                                        <th>Email</th>
-                                        <th>Username</th>
-                                        <th>Ultima convalida</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                        <tr className="position-relative">
-                                                <td><Link className="stretched-link" to="/esercenti/12"></Link>Osteria del nonno</td>
-                                                <td>osteriadelnonno@example.com</td>
-                                                <td>Osteria del Nonno</td>
-                                                <td>2019-12-21 08:11:15</td>
-                                        </tr>
-                                        <tr className="position-relative">
-                                                <td><Link className="stretched-link" to="/esercenti/13"></Link>Osteria del babbo</td>
-                                                <td>osteriadelbabbo@example.com</td>
-                                                <td>Osteria del babbo</td>
-                                                <td>2019-12-21 08:11:15</td>
-                                        </tr>
-                                </tbody>
-                            </Table>
-                            
+                        <Card.Body>
+                            { api.status == "loading" && <PreLoaderWidget />}         
+                            { api.data && <BootstrapTable
+                                keyField="id"
+                                data={api.data}
+                                columns={columns}
+                                /> }
                         </Card.Body>
                     </Card>
                 </Col>

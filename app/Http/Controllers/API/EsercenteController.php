@@ -38,46 +38,57 @@ class EsercenteController extends \App\Http\Controllers\Controller
         $dati = $request->validate([
             'email' => ['required', 'email', 'unique:users'],
             'meta.*' => 'nullable',
+            'indirizzo.*' => 'nullable',
             'username' => [ 'required', 'unique:users'],
             'piva' => ['required', 'unique:users'], // TODO verificare il formato
-            'cf' => ['required', 'unique:users'] // TODO verificare il formato
+            'cf' => ['required', 'unique:users'], // TODO verificare il formato,
+            'nome' => 'string|required'
         ]);
 
         $user = new Esercente($dati);
 
-        try {
+        $api_token = Str::random(40);
 
+        while ( User::where('api_token', $api_token)->count() ) {
             $api_token = Str::random(40);
-
-            while ( User::where('api_token', $api_token)->count() ) {
-                $api_token = Str::random(40);
-            }
-
-            $user->api_token = $api_token;
-
-            $user->password = Hash::make($request->input('password'));
-            
-            $user->saveOrFail();
-
-            $metas = [];
-
-            if( Arr::exists($dati, 'meta') ) {
-            
-                foreach($dati['meta'] as $key => $value) {
-                    if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
-                }
-    
-                if ( count($metas) ) $user->meta()->saveMany($metas);
-
-            }
-
-            $user->sendEmailVerificationNotification();
-
-            return response(User::toCamelCase($user::toArray()));
-
-        } catch ( \Throwable $e ) {
-            abort(500, $e->getMessage());
         }
+
+        $user->api_token = $api_token;
+
+        $user->password = Hash::make( $request->input('password') );
+        
+        $user->saveOrFail();
+
+        $user->nome = $request->input('nome') ;
+
+        $user->sdi = $request->input('sdi', false) ;
+
+        $user->pec = $request->input('pec', false) ;
+
+        $user->indirizzo = $request->input('indirizzo', false) ;
+
+        $user->sede_legale = $request->input('sede_legale', false) ;
+
+        $user->ragione_sociale = $request->input('ragione_sociale', false) ;
+
+        $user->save();
+
+        $metas = [];
+
+        if( Arr::exists($dati, 'meta') ) {
+        
+            foreach($dati['meta'] as $key => $value) {
+                if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+            }
+
+            if ( count($metas) ) $user->meta()->saveMany($metas);
+
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response( $user );
+
     }
 
     /**
@@ -86,9 +97,9 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function show(Esercente $esercente)
+    public function show( $esercente)
     {
-        //
+        return response( Esercente::findOrFail($esercente) );
     }
 
     /**
@@ -98,9 +109,37 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Esercente $esercente)
+    public function update(Request $request, $esercente)
     {
-        //
+        $user = Esercente::findOrFail($esercente);
+
+        $user->nome = $request->input('nome', false) ;
+
+        $user->sdi = $request->input('sdi', false) ;
+
+        $user->pec = $request->input('pec', false) ;
+
+        $user->indirizzo = $request->input('indirizzo', false) ;
+
+        $user->sede_legale = $request->input('sede_legale', false) ;
+
+        $user->ragione_sociale = $request->input('ragione_sociale', false) ;
+
+        $user->save();
+
+        $metas = [];
+
+        // if( Arr::exists($dati, 'meta') ) {
+        
+        //     foreach($dati['meta'] as $key => $value) {
+        //         if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+        //     }
+
+        //     if ( count($metas) ) $user->meta()->saveMany($metas);
+
+        // }
+
+        return response( $user );
     }
 
     /**

@@ -96,10 +96,10 @@ const SideNavContent = ( { user } ) => {
                     </Link>
                     <ul className="nav-second-level nav" aria-expanded="false">
                         <li>
-                            <Link to="/esercenti/12" className="side-nav-link-ref">Profilo esercente</Link>
+                            <Link to="/esercenti/5" className="side-nav-link-ref">Profilo esercente</Link>
                         </li>
                         <li>
-                            <Link to="/esercenti/modifica/12" className="side-nav-link-ref">Modifica esercente</Link>
+                            <Link to="/esercenti/crea" className="side-nav-link-ref">Crea esercente</Link>
                         </li>
                     </ul>
                 </li> 

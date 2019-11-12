@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import ReactDOM from "react-dom"
 import ErrorModal from "../components/ErrorModal"
 
-axios.interceptors.response.use( function( response ) {
+const errorHandler = axios.interceptors.response.use( function( response ) {
     return response;
 }, function (error) {
     if ( error.response ) {
@@ -10,7 +10,9 @@ axios.interceptors.response.use( function( response ) {
             let DOMnode = document.getElementById('error-root') 
             const onHide = () => ReactDOM.unmountComponentAtNode(DOMnode)
             ReactDOM.render( <ErrorModal onHide={onHide} response={error.response} /> , DOMnode ); 
-        } else console.warn("Questo errore del server non mi riguarda.")
+        }
+    } else {
+        // Errore non di axios
     }
     
     return Promise.reject(error)

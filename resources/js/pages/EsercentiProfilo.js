@@ -1,22 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 
 import { Row , Col , Table , Card, Nav, Button } from 'react-bootstrap';
+import PreLoaderWidget from '../components/Loader';
+import { Link } from "react-router-dom"
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
 const EsercentiProfilo = ( props ) => {
+    const [api, setApi] = useState({ status : "loading", data: null })
+
+    useEffect(() => {
+
+        setApi( { status : "loading" , data: null})
+
+        const source = axios.CancelToken.source()
+
+        axios.get("/esercenti/"+ props.match.params.id, { cancelToken: source.token })
+            .then( res => {
+                setApi({ status : res.statusText , esercente: res.data})
+            })
+            .catch( error => {
+                if ( axios.isCancel(error) )  return;
+            })
+
+        return () => source.cancel();
+
+    }, [props.match.params])
+
+    const esercente = api.status == "OK" ? api.esercente : false;
 
     const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
+
     return(
-        <React.Fragment>
-            <div className="d-flex justify-content-between">
-                <h1>Osteria del nonno</h1>
+        <>
+            { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}
+            { esercente && <><div className="d-flex justify-content-between">
+                <h1>{ esercente.nome }</h1>
                 <span>
-                    <Button color="primary" size="sm" >
+                    <Button as={Link} to={ "/esercenti/" + esercente.id + "/modifica"} color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
                     </Button>
-
                 </span>
             </div>
             <Row>
@@ -25,9 +49,16 @@ const EsercentiProfilo = ( props ) => {
                         <Card.Body>
                             <Card.Title><h4>Informazioni generali</h4></Card.Title>
                             <Card.Text>
-                                Via Sabotino 24/a<br/>
-                                Bologna 40131<br/>
-                                <a href="mailto:osteriadelnonno@example.com">osteriadelnonno@example.com</a><br/>
+                                { esercente.indirizzo && <>
+                                    { esercente.indirizzo.via && <>
+                                        { esercente.indirizzo.via + " "} 
+                                        { esercente.indirizzo.civico && esercente.indirizzo.civico }<br/>
+                                    </>}
+                                    { esercente.indirizzo.città &&  esercente.indirizzo.città } 
+                                    { esercente.indirizzo.provincia &&  " (" + esercente.indirizzo.provincia + ")" }
+                                    { esercente.indirizzo.cap &&  " - " + esercente.indirizzo.cap + " " }<br />
+                                </> }
+                                <a href={"mailto:" + esercente.email}>{esercente.email}</a><br/>
                                 <strong>Orari di apertura:</strong><br/>
                             </Card.Text>
                         </Card.Body>
@@ -39,22 +70,22 @@ const EsercentiProfilo = ( props ) => {
                             <Card.Title><h4>Dati di fatturazione</h4></Card.Title>
                             <Card.Text>
                                 <span className="d-flex justify-content-between">
-                                    <strong>Ragione sociale</strong><span>Ciccio pasticcio snc</span>
+                                    <strong>Ragione sociale</strong><span>{ esercente.meta.ragione_sociale }</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
                                     <strong>Sede legale</strong><span>Ciccio pasticcio snc</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
-                                    <strong>P.IVA</strong><span>0123456789</span>
+                                    <strong>P.IVA</strong><span>{ esercente.piva }</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
-                                    <strong>C.F</strong><span>0123456789</span>
+                                    <strong>C.F</strong><span>{ esercente.cf }</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
-                                    <strong>SDI</strong><span>0125CE</span>
+                                    <strong>SDI</strong><span>{ esercente.sdi ? esercente.sdi : " - "}</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
-                                    <strong>PEC</strong><span>pec@pec.it</span>
+                                    <strong>PEC</strong><span>{ esercente.pec ? esercente.pec : " - " }</span>
                                 </span>
                             </Card.Text>
                         </Card.Body>
@@ -145,8 +176,9 @@ const EsercentiProfilo = ( props ) => {
                         </Card.Body>
                     </Card>
                 </Col>
-            </Row>
-        </React.Fragment>
+            </Row></>
+            }
+        </>
     )
 }
 
