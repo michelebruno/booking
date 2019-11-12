@@ -106,7 +106,7 @@ const FormEsercente = ( { id, match, ...props} ) => {
                 data : anagrafica
             })
                 .then( response => {
-                    setRedirect("/esercenti/" + response.data.id)
+                    setRedirect({to : "/esercenti/" + response.data.id , state: { success : true } })
                 })
                 .catch( error =>
                     setApi({status: "error", errors : error.response.data.errors })
@@ -120,7 +120,7 @@ const FormEsercente = ( { id, match, ...props} ) => {
 
     return(
         <React.Fragment>
-            { redirect && <Redirect to={redirect} />}
+            { redirect && <Redirect to={{pathname : redirect.to , state: redirect.state }} />}
             { initial !== false && <>
             <h1>Crea nuovo</h1>
             <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data})}}>

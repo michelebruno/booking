@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react';
 
-import { Row , Col , Table , Card, Nav, Button } from 'react-bootstrap';
+import { Row , Col , Table , Card, Nav, Button, Modal } from 'react-bootstrap';
 import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 
@@ -35,6 +35,7 @@ const EsercentiProfilo = ( props ) => {
         <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}
             { esercente && <><div className="d-flex justify-content-between">
+                { props.location.state.success && window.alert("Operazione riuscita.")}
                 <h1>{ esercente.nome }</h1>
                 <span>
                     <Button as={Link} to={ "/esercenti/" + esercente.id + "/modifica"} color="primary" size="sm" >

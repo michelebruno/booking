@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class EsercenteController extends \App\Http\Controllers\Controller
 {
@@ -112,6 +113,17 @@ class EsercenteController extends \App\Http\Controllers\Controller
     public function update(Request $request, $esercente)
     {
         $user = Esercente::findOrFail($esercente);
+
+        // TODO Validazione della richiesta
+        $dati = $request->validate([
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->email, 'email')],
+            'meta.*' => 'nullable',
+            'indirizzo.*' => 'nullable',
+            'username' => [ 'required', Rule::unique('users', 'username')->ignore($user->username, 'username')],
+            'piva' => ['required', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], // TODO verificare il formato
+            'cf' => ['required', Rule::unique('users', 'cf')->ignore($user->cf, 'cf')], // TODO verificare il formato,
+            'nome' => 'string|required'
+        ]);
 
         $user->nome = $request->input('nome', false) ;
 
