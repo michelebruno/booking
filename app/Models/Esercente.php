@@ -23,6 +23,10 @@ class Esercente extends User
         'ruolo' => 'esercente'
     ];
 
+    protected $appends = [
+        'nome', 'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -37,23 +41,24 @@ class Esercente extends User
     {
         $array = parent::toArray();
 
-        $array['nome'] = $this->nome;
-
-        $array['pec'] = $this->pec;
-
-        $array['sdi'] = $this->sdi;
-
-        $array['indirizzo'] = $this->indirizzo;
-
-        $array['sede_legale'] = $this->sede_legale;     
-
-        $array['ragione_sociale'] = $this->ragione_sociale;
-
         $meta = $this->exceptFromTraits(self::class);
 
-        $array['meta'] = Arr::except($meta, [ 'nome' , 'sdi', 'pec' ]); 
+        $array['meta'] = Arr::except($meta, [ 'nome' , 'sdi', 'pec', 'ragione_sociale', 'sede_legale' ]); 
 
         return $array;
+    }
+
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => '/esercenti/' . $this->id,
+            'edit' => '/esercenti/' . $this->id. '/modifica'
+        ];
+    }
+
+    public function setCfAttribute($value)
+    {
+        return $this->attributes['cf'] = trim( strtoupper($value) );
     }
 
     public function getNomeAttribute()
@@ -105,4 +110,5 @@ class Esercente extends User
     {        
        if ($value) $this->meta()->updateOrCreate(['chiave' => 'sdi'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
+
 }

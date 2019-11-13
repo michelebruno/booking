@@ -41,8 +41,8 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
             'username' => [ 'required', 'unique:users'],
-            'piva' => ['required', 'unique:users'], // TODO verificare il formato
-            'cf' => ['required', 'unique:users'], // TODO verificare il formato,
+            'piva' => ['required', 'digits:11', 'unique:users'], // TODO verificare il formato
+            'cf' => ['required', 'max:16', 'unique:users'], // TODO verificare il formato,
             'nome' => 'string|required'
         ]);
 
@@ -120,10 +120,12 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
             'username' => [ 'required', Rule::unique('users', 'username')->ignore($user->username, 'username')],
-            'piva' => ['required', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], // TODO verificare il formato
-            'cf' => ['required', Rule::unique('users', 'cf')->ignore($user->cf, 'cf')], // TODO verificare il formato,
+            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], // TODO verificare il formato
+            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($user->cf, 'cf')], // TODO verificare il formato,
             'nome' => 'string|required'
         ]);
+
+        $user->fill($dati);
 
         $user->nome = $request->input('nome', false) ;
 

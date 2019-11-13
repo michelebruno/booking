@@ -27,7 +27,9 @@ const Profilo = (props) => {
 
     }, [match.params.id] )
 
-    const fieldValue = field =>( typeof utente[field] !== 'undefined' && utente[field] )? utente[field] : "" 
+    const fieldValue = field => ( typeof utente[field] !== 'undefined' && utente[field] ) ? utente[field] : "" 
+
+    window.fieldValue = fieldValue
 
     const APIurl = "/users/" + utente.id;
 
@@ -38,7 +40,7 @@ const Profilo = (props) => {
                     <Card>
                         <Card.Body>
                             { !utente && <div className="py-5"><PreLoaderWidget /></div>}
-                            { utente && <Form> 
+                            { utente && <Form onSubmit={ e => e.preventDefault() }> 
                                 <EditableField name={"email"} initialValue={ fieldValue("email")} url={APIurl} label="Email" onSuccess={setUtente} />
                                 <EditableField name={"username"} initialValue={ fieldValue("username")} url={APIurl} label="username" onSuccess={setUtente} />
 
@@ -60,8 +62,8 @@ const Profilo = (props) => {
                                     { resettingPassword === "success" && <Button variant="outline-success" disabled>Link per il reset inviato.</Button>  }
                                     </Col>
                                 </Form.Group>
-                                <EditableField name="meta.nome" initialValue={ fieldValue("nome")} url={APIurl} label="Nome" onSuccess={setUtente}/>
-                                <EditableField name={"meta.cognome"} initialValue={ fieldValue("cognome")} url={APIurl} label="Cognome"  onSuccess={setUtente}/>
+                                <EditableField name="nome" initialValue={ fieldValue("nome") } url={APIurl} label="Nome" onSuccess={setUtente}/>
+                                <EditableField name={"cognome"} initialValue={ fieldValue("cognome")} url={APIurl} label="Cognome"  onSuccess={setUtente}/>
                                 <EditableField name={"ruolo"} initialValue={ fieldValue("ruolo")} url={APIurl} label="Ruolo"  onSuccess={setUtente} as="select">
                                     
                                     <option value="admin" defaultValue>Admin</option>

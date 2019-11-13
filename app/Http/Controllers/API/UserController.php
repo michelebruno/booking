@@ -79,7 +79,7 @@ class UserController extends Controller
 
         $this->authorize('view', $user);
 
-        return response(new UserResource( $user ));
+        return response(new UserResource( $user->append(['nome', 'cognome']) ) );
     }
 
     /**
@@ -97,6 +97,10 @@ class UserController extends Controller
         if ( $request->user()->ruolo !== 'admin' && $request->input( 'ruolo' ) == 'admin') abort(403);
 
         $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
+
+        $user->nome = $request->input('nome', false);
+
+        $user->cognome = $request->input('cognome', false);
 
         if ( $request->has('meta') ) {
             foreach ($request->input('meta') as $chiave => $valore) {

@@ -10,9 +10,7 @@ import Button  from 'react-bootstrap/Button'
 
 import { showErrorsFeedback , isInvalid } from '../_services/formValidation'
 
-const FormEsercente = ( { id, match, ...props} ) => {
-    
-    const [initial, setInitial] = useState( match.params.id ? false : null )
+const FormEsercente = ( { id, match, location, ...props} ) => {
 
     const [email, setEmail] = useState("")
     const [username, setUsername] = useState("")
@@ -29,40 +27,56 @@ const FormEsercente = ( { id, match, ...props} ) => {
     const [sdi, setSdi] = useState("")
     const [pec, setPec] = useState("")
 
-    window.initial = initial
+    const impostaInitial = initial => {
 
-    useEffect(() => {
+        if ( initial ) {
+            
+            setEmail(initial.email ? initial.email : "" )
+            setUsername(initial.username ? initial.username : "")
+    
+            if ( initial.indirizzo ) {
+                setIndirizzoVia(initial.indirizzo.via ? initial.indirizzo.via : "")
+                setIndirizzoCivico(initial.indirizzo.civico ? initial.indirizzo.civico : "")
+                setIndirizzoCittà(initial.indirizzo.città ? initial.indirizzo.città : "")
+                setIndirizzoProvincia(initial.indirizzo.provincia ? initial.indirizzo.provincia : "")
+                setIndirizzoCAP(initial.indirizzo.cap ? initial.indirizzo.cap : "")
+            }
+    
+            setCf(initial.cf ? initial.cf : "")
+            setPiva(initial.piva ? initial.piva : "")
+            setNome(initial.nome ? initial.nome : "")
+            setSdi(initial.sdi ? initial.sdi : "")
+            setPec(initial.pec ? initial.pec : "")
+            setRagione_sociale(initial.ragione_sociale ? initial.ragione_sociale : "")
+            setSede_legale(initial.sede_legale ? initial.sede_legale : "")
 
-        const source = axios.CancelToken.source()
-        if ( ! match.params.id ) return;
-        axios.get("/esercenti/" + match.params.id, { cancelToken : source.token })
-            .then( response => {
-                setInitial(response.data)
+        }
 
-                const { data } = response
-                
-                setEmail(data.email)
-                setUsername(data.username)
-                setIndirizzoVia(data.indirizzo.via)
-                setIndirizzoCivico(data.indirizzo.civico)
-                setIndirizzoCittà(data.indirizzo.città)
-                setIndirizzoProvincia(data.indirizzo.provincia)
-                setIndirizzoCAP(data.indirizzo.cap)
-                setCf(data.cf)
-                setPiva(data.piva)
-                setNome(data.nome)
-                setSdi(data.sdi)
-                setPec(data.pec)
-                setRagione_sociale(data.ragione_sociale)
-                setSede_legale(data.sede_legale)
-                
-            })
-            .catch( error => {
-                if ( axios.isCancel(error) )  return;
-            })
-        return () => source.cancel();
+    }
+    useEffect( () => {
 
-    }, [match.params])
+        if ( match.params.id && !( location.state && location.state.esercente ) ) {
+
+            const source = axios.CancelToken.source()
+    
+            axios.get("/esercenti/" + match.params.id, { cancelToken : source.token })
+                .then( response => {    
+                    impostaInitial(response.data)
+                })
+                .catch( error => {
+
+                    if ( axios.isCancel(error) )  return;
+
+                })
+
+                return () => source.cancel();
+
+        } else if ( match.params.id ) {
+            impostaInitial( location.state.esercente )
+        }
+
+    }, [ match.params ] )
+    
     
     const [api, setApi] = useState({status: false, data:null})
 
@@ -121,9 +135,9 @@ const FormEsercente = ( { id, match, ...props} ) => {
     return(
         <React.Fragment>
             { redirect && <Redirect to={{pathname : redirect.to , state: redirect.state }} />}
-            { initial !== false && <>
+            { ! ( match.params.id && email == "") && <>
             <h1>Crea nuovo</h1>
-            <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data})}}>
+            <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }}>
                 <Card>
                     <Card.Body>
                         <Form.Group tag="fieldset" className="mx-lg-3 mx-xl-5">
@@ -160,13 +174,8 @@ const FormEsercente = ( { id, match, ...props} ) => {
                                 <Col>
                                     <Form.Group as={Row}>
                                         <Col className="mb-2" sm="8">
-                                            <InputGroup>
-                                                <InputGroup.Prepend>
-                                                    <InputGroup.Text >Via</InputGroup.Text>
-                                                </InputGroup.Prepend>
-                                                <Form.Control isInvalid={isInvalid(errors, "indirizzo.via" )} name="via" value={ indirizzoVia } onChange={ e => setIndirizzoVia(e.target.value)} />
-                                                { showErrorsFeedback(errors, "indirizzo.via") } 
-                                            </InputGroup>
+                                            <Form.Control placeholder="Via" isInvalid={isInvalid(errors, "indirizzo.via" )} name="via" value={ indirizzoVia } onChange={ e => setIndirizzoVia(e.target.value)} />
+                                            { showErrorsFeedback(errors, "indirizzo.via") } 
                                         </Col>
                                         <Col className="mb-2" sm="2">
                                             <Form.Control isInvalid={isInvalid(errors, "indirizzo.civico" )} id="civico"  name="civico" placeholder="Civico" value={ indirizzoCivico } onChange={ e => setIndirizzoCivico(e.target.value)} />
@@ -174,11 +183,11 @@ const FormEsercente = ( { id, match, ...props} ) => {
                                         </Col>
                                         <Col className="mb-2" sm="3">
                                             <Form.Control size="5" maxLength="5" isInvalid={isInvalid(errors, "indirizzo.cap" )} placeholder="CAP" value={ indirizzoCAP } onChange={ e => setIndirizzoCAP(e.target.value)} />
-                                            { showErrorsFeedback(errors, "email") }
+                                            { showErrorsFeedback(errors, "indirizzo.cap") }
                                         </Col>
                                         <Col className="mb-2" sm="4">
                                             <Form.Control isInvalid={isInvalid(errors, "indirizzo.città" )} id="città" name="Città" placeholder="Città" value={ indirizzoCittà } onChange={ e => setIndirizzoCittà(e.target.value)} />
-                                            { showErrorsFeedback(errors, "indirizzo") }
+                                            { showErrorsFeedback(errors, "indirizzo.città") }
                                         </Col>
                                         <Col className="mb-2" sm="3">
                                             <Form.Control size="2" maxLength="2"  isInvalid={isInvalid(errors, "indirizzo.provincia" )} id="provincia" name="provincia" placeholder="provincia" value={ indirizzoProvincia } onChange={ e => setIndirizzoProvincia(e.target.value)} />

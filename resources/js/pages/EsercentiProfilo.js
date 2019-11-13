@@ -35,10 +35,10 @@ const EsercentiProfilo = ( props ) => {
         <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}
             { esercente && <><div className="d-flex justify-content-between">
-                { props.location.state.success && window.alert("Operazione riuscita.")}
+                { props.location.state && props.location.state.success && window.alert("Operazione riuscita.")}
                 <h1>{ esercente.nome }</h1>
                 <span>
-                    <Button as={Link} to={ "/esercenti/" + esercente.id + "/modifica"} color="primary" size="sm" >
+                    <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente }} } color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
                     </Button>
@@ -71,10 +71,10 @@ const EsercentiProfilo = ( props ) => {
                             <Card.Title><h4>Dati di fatturazione</h4></Card.Title>
                             <Card.Text>
                                 <span className="d-flex justify-content-between">
-                                    <strong>Ragione sociale</strong><span>{ esercente.meta.ragione_sociale }</span>
+                                    <strong>Ragione sociale</strong><span>{ esercente.ragione_sociale }</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
-                                    <strong>Sede legale</strong><span>Ciccio pasticcio snc</span>
+                                    <strong>Sede legale</strong><span>{ esercente.sede_legale } </span>
                                 </span>
                                 <span className="d-flex justify-content-between">
                                     <strong>P.IVA</strong><span>{ esercente.piva }</span>
