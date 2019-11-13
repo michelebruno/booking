@@ -7,16 +7,11 @@ import { connect } from 'react-redux';
 const menuItems = [{
     label: 'Il mio account',
     icon: 'fe-user',
-    redirectTo: "/",
+    redirectTo: "/account",
   },
   {
     label: 'Impostazione',
     icon: 'fe-settings',
-    redirectTo: "/"
-  },
-  {
-    label: 'Blocca',
-    icon: 'fe-lock',
     redirectTo: "/"
   },
   {

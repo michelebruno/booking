@@ -1,10 +1,14 @@
-import React, { Component } from 'react'; 
-import { Row, Col, Card } from 'react-bootstrap';
- 
+import React from 'react'; 
+
+import { connect } from "react-redux"
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Card from 'react-bootstrap/Card'
+
 import Loader from '../components/Loader';
 
 
-const Dashboard = ( props ) => {
+const Dashboard = ( { currentUser , ...props} ) => {
 
     return (
         <React.Fragment>
@@ -13,10 +17,11 @@ const Dashboard = ( props ) => {
                 { props.loading && <Loader />}
 
                 <Row>
-                    <Col lg={12}>
+                    <Col lg={6}>
                         <Card>
                             <Card.Body>
-                                Ciao, benvenuto nella dashboard
+                                Ciao { currentUser.username }, benvenuto nella dashboard.<br />
+                                Hai i permessi di { currentUser.ruolo }.
                             </Card.Body>
                         </Card>
                     </Col>
@@ -28,4 +33,8 @@ const Dashboard = ( props ) => {
 }
 
 
-export default Dashboard;
+export default connect( state => {
+    return {
+        currentUser : state.currentUser
+    }
+} )(Dashboard);

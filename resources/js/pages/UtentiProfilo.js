@@ -4,26 +4,35 @@ import PreLoaderWidget from "../components/Loader"
 import EditableField from "../components/EditableField"
 
 const Profilo = (props) => {
+    let u = false;
+
+    if ( props.location.state && props.location.state.utente ) u = props.location.state.utente
+    else if ( typeof props.utente == 'object' ) u = props.utente
 
     const { match } = props
 
-    const [utente, setUtente] = useState(false)
+    const [ utente, setUtente ] = useState(u)
 
-    const [resettingPassword, setResettingPassword] = useState(false)
+    const [ resettingPassword, setResettingPassword ] = useState(false)
 
+        
     useEffect(() => {
 
-        const source = axios.CancelToken.source()
+        if ( ! utente ) {
+            
+            const source = axios.CancelToken.source()
+    
+            axios.get("/users/"+match.params.id, { cancelToken: source.token })
+                .then( res => {
+                    setUtente(res.data)
+                })
+                .catch( error => {
+                    if ( axios.isCancel(error) )  return;
+                })
+    
+            return () => source.cancel();
 
-        axios.get("/users/"+match.params.id, { cancelToken: source.token })
-            .then( res => {
-                setUtente(res.data)
-            })
-            .catch( error => {
-                if ( axios.isCancel(error) )  return;
-            })
-
-        return () => source.cancel();
+        }
 
     }, [match.params.id] )
 

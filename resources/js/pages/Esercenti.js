@@ -31,7 +31,7 @@ const Esercenti = ( { id, ...props } ) => {
         {
             dataField: 'username',
             text: "Username",
-            formatter : (cell, row) => <Link to={"/esercenti/" + row.id } >{cell}</Link>
+            formatter : (cell, row) => <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
         }
     ]
 

@@ -48,7 +48,7 @@ const Utenti = ( props ) => {
                         url += "/utenti/"
                         break;
                 }
-                return <React.Fragment><Button size="sm" as={Link} to={url+row.id} ><i className="fas fa-edit" /></Button></React.Fragment>
+                return <React.Fragment><Button size="sm" as={Link} to={{pathname: url+row.id, state: { utente : row}}} ><i className="fas fa-edit" /></Button></React.Fragment>
             }
         }
     ]

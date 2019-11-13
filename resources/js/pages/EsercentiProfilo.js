@@ -6,26 +6,35 @@ import { Link } from "react-router-dom"
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
-const EsercentiProfilo = ( props ) => {
-    const [api, setApi] = useState({ status : "loading", data: null })
+const EsercentiProfilo = ( { location , match , ...props } ) => {
+
+    let initialApiState = { status: "loading" }
+
+    if ( location.state && location.state.esercente ) initialApiState = { status : "OK", esercente: location.state.esercente }
+    if ( props.esercente ) initialApiState = { status : "OK", esercente: props.esercente }
+
+    const [api, setApi] = useState(initialApiState)
 
     useEffect(() => {
+        if ( initialApiState.status == "loading" ) {
 
-        setApi( { status : "loading" , data: null})
+            setApi( { status : "loading" , data : null})
+    
+            const source = axios.CancelToken.source()
+    
+            axios.get("/esercenti/"+  match.params.id, { cancelToken: source.token })
+                .then( res => {
+                    setApi({ fromApi : true , status : res.statusText , esercente: res.data})
+                })
+                .catch( error => {
+                    if ( axios.isCancel(error) )  return;
+                })
+    
+            return () => source.cancel();
 
-        const source = axios.CancelToken.source()
+        }
 
-        axios.get("/esercenti/"+ props.match.params.id, { cancelToken: source.token })
-            .then( res => {
-                setApi({ status : res.statusText , esercente: res.data})
-            })
-            .catch( error => {
-                if ( axios.isCancel(error) )  return;
-            })
-
-        return () => source.cancel();
-
-    }, [props.match.params])
+    }, [ match.params])
 
     const esercente = api.status == "OK" ? api.esercente : false;
 
@@ -35,7 +44,7 @@ const EsercentiProfilo = ( props ) => {
         <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}
             { esercente && <><div className="d-flex justify-content-between">
-                { props.location.state && props.location.state.success && window.alert("Operazione riuscita.")}
+                { location.state && location.state.success && window.alert("Operazione riuscita.")}
                 <h1>{ esercente.nome }</h1>
                 <span>
                     <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente }} } color="primary" size="sm" >
@@ -59,8 +68,7 @@ const EsercentiProfilo = ( props ) => {
                                     { esercente.indirizzo.provincia &&  " (" + esercente.indirizzo.provincia + ")" }
                                     { esercente.indirizzo.cap &&  " - " + esercente.indirizzo.cap + " " }<br />
                                 </> }
-                                <a href={"mailto:" + esercente.email}>{esercente.email}</a><br/>
-                                <strong>Orari di apertura:</strong><br/>
+                                {esercente.email}<br/>
                             </Card.Text>
                         </Card.Body>
                     </Card>
