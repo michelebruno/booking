@@ -22,7 +22,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
-        return response( Esercente::all() );
+        return response( Esercente::withTrashed()->get() );
     }
     
     /**
@@ -100,7 +100,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function show( $esercente)
     {
-        return response( Esercente::findOrFail($esercente) );
+        return response( Esercente::withTrashed()->findOrFail($esercente) );
     }
 
     /**
@@ -120,8 +120,8 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
             'username' => [ 'required', Rule::unique('users', 'username')->ignore($user->username, 'username')],
-            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], // TODO verificare il formato
-            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($user->cf, 'cf')], // TODO verificare il formato,
+            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], 
+            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($user->cf, 'cf')],
             'nome' => 'string|required'
         ]);
 
@@ -162,8 +162,14 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Esercente $esercente)
+    public function destroy($esercente)
     {
-        //
+        $esercente = Esercente::findOrFail($esercente);
+        // TODO Autorizza
+        if ( $esercente->delete() ) {
+            return response( $esercente , 204 );
+        } else {
+            return response( null, 400);
+        }
     }
 }

@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import { connect } from "react-redux"
 
 import ProfileDropdown from './ProfileDropdown';
 import logoSm from '../../images/logo-sm.png'; 
-import profilePic from '../../images/users/user-1.jpg';
 
-const Topbar = props => { 
+const Topbar = ( { TopbarButtons , ...props }) => { 
 
   	return (
 		<React.Fragment>
@@ -59,8 +59,8 @@ const Topbar = props => {
 
 					<li>
 						<h4 className="page-title-main d-inline-block">{props.title}</h4>
-						{ typeof props.tastimenu !== 'undefined' && <props.tastimenu {...props} />}
-
+						{ typeof props.tastimenu !== 'undefined' && <TopbarButtons />}
+						{ console.log( TopbarButtons )}
 					</li>
 				</ul>
 				
@@ -70,5 +70,5 @@ const Topbar = props => {
 }
 
 
-export default Topbar;
+export default connect( state => { return { TopbarButtons : state.TopbarButtons } } )( Topbar );
 

@@ -20,6 +20,9 @@ const Settings = React.lazy(() => import('./pages/Settings'));
 const Tickets = React.lazy( () => import('./pages/Tickets'));
 const Utenti = React.lazy( () => import('./pages/Utenti')); 
 const UtentiProfilo = React.lazy( () => import('./pages/UtentiProfilo'));
+
+import SureToDeleteModal from "./components/SureToDeleteModal"
+
 // handle auth and authorization
 
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
@@ -63,23 +66,31 @@ const SchedaProdottoTasti = ( props ) => <React.Fragment>
 
 const ProfiloEsercenteTasti = ( props ) => {
 
+	const [showModal, setShowModal] = useState(false)
+
 	const [redirect, setRedirect] = useState(false)
 
 	const [abilitato, setAbilitato] = useState(false)
 
 	const deleteProfile = ( e ) => {
-		setAbilitato(!abilitato)
-		e.persist()
-		return console.log(e.target.value)
+		setShowModal(true)
 	}
-		
 
-	return <ButtonToolbar className="d-inline-block">
+	return <>
+		<ButtonToolbar className="d-inline-block">
 			{ redirect && <Redirect to={redirect} />}
 			<Form>
-				<Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label="Abilitato" onChange={ deleteProfile } value={abilitato} /> 
+				<Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label={ abilitato ? "Disabilita" : "Abilita"} onChange={ deleteProfile } checked={abilitato} /> 
 			</Form>
-	</ButtonToolbar>
+			
+		</ButtonToolbar>
+		
+		{ showModal && <React.Suspense>
+			<SureToDeleteModal show={showModal} onHide={ () => setShowModal(false)} deleteUrl={ "/esercenti/" + props.match.params.id } title="Conferma">
+				Sei sicuro di voler modificare?
+			</SureToDeleteModal>
+		</React.Suspense> }
+	</>
 }
  
 const routes = [

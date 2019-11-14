@@ -24,7 +24,7 @@ class Esercente extends User
     ];
 
     protected $appends = [
-        'nome', 'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links'
+        'nome', 'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links', 'abilitato'
     ];
 
     public static function boot()
@@ -52,7 +52,8 @@ class Esercente extends User
     {
         return [
             'self' => '/esercenti/' . $this->id,
-            'edit' => '/esercenti/' . $this->id. '/modifica'
+            'edit' => '/esercenti/' . $this->id. '/modifica',
+            'delete' => '/esercenti/' . $this->id
         ];
     }
 
