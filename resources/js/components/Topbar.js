@@ -59,8 +59,7 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 
 					<li>
 						<h4 className="page-title-main d-inline-block">{props.title}</h4>
-						{ typeof props.tastimenu !== 'undefined' && <TopbarButtons />}
-						{ console.log( TopbarButtons )}
+						{ typeof props.tastimenu !== 'undefined' && <props.tastimenu />} 
 					</li>
 				</ul>
 				
@@ -70,5 +69,5 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 }
 
 
-export default connect( state => { return { TopbarButtons : state.TopbarButtons } } )( Topbar );
+export default connect( )( Topbar );
 

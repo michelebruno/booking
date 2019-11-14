@@ -9,7 +9,6 @@ const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvali
 const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
 
     const [ successShown, setSuccessShown ] = useState(false)    
-    const [api, setApi] = useState(initialApiState)
     const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
 
 
@@ -17,6 +16,8 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
     if ( location.state && location.state.esercente ) initialApiState = { status : "OK", esercente: location.state.esercente }
     if ( props.esercente ) initialApiState = { status : "OK", esercente: props.esercente }
+    
+    const [api, setApi] = useState(initialApiState)
 
     useEffect(() => {
         
