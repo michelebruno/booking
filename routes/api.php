@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Resources\UserResource;
+use App\Models\Esercente;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,16 @@ use Illuminate\Support\Facades\Gate;
 */
 
 
-Route::get('/users/me', function() { 
-    return response()->json(User::find(Auth::id())); 
+Route::get('/account', function() { 
+    
+    $user = request()->user();
+
+    if ( $user->ruolo == 'esercente' ) {
+        return response( Esercente::findOrFail($user->id) );
+    }
+
+    return response($user);
+
 })->middleware('auth:api');
 
 Route::apiResource('users', 'API\UserController')

@@ -83,26 +83,23 @@ const SideNavContent = ( { user } ) => {
                         <span>Tickets</span>
                     </Link>
                 </li> */}
-                <li>
+                { [ 'admin', 'account_manager'].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/utenti" >
                         <i className="fas fa-user" />
                         <span>Utenti</span>
                     </Link>
-                </li>
-                <li>
+                </li>}
+                { [ 'admin', 'account_manager'].indexOf(user.ruolo) !== -1 &&<li>
                     <Link to="/esercenti" className="waves-effect side-nav-link-ref has-arrow" aria-expanded="false">
                         <i className="mdi mdi-tooltip-account "></i>
                         <span>Esercenti</span>
                     </Link>
                     <ul className="nav-second-level nav" aria-expanded="false">
                         <li>
-                            <Link to="/esercenti/5" className="side-nav-link-ref">Profilo esercente</Link>
-                        </li>
-                        <li>
                             <Link to="/esercenti/crea" className="side-nav-link-ref">Crea esercente</Link>
                         </li>
                     </ul>
-                </li> 
+                </li> } 
                 { [ 'admin' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/settings" className="waves-effect side-nav-link-ref" >
                         <i className="fe-settings"></i>

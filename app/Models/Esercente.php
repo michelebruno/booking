@@ -61,16 +61,6 @@ class Esercente extends User
         return $this->attributes['cf'] = trim( strtoupper($value) );
     }
 
-    public function getNomeAttribute()
-    {
-        return Arr::exists($this->meta, 'nome') ? $this->meta['nome'] : null;
-    }
-
-    public function setNomeAttribute($value)
-    {        
-       if ($value) $this->meta()->updateOrCreate(['chiave' => 'nome'], [ 'user_id' => $this->id, 'valore' => $value ]);
-    }
-
     public function getRagioneSocialeAttribute()
     {
         return Arr::exists($this->meta, 'ragione_sociale') ? $this->meta['ragione_sociale'] : null;

@@ -10,8 +10,7 @@ const Utenti = ( props ) => {
 
     const [api, setApi] = useState({status: "loading", data: null})
     const [ redirect, setRedirect ] = useState(false)
-
-    window.api = api
+    const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const columns = [ 
         {
@@ -74,7 +73,6 @@ const Utenti = ( props ) => {
         }
     }
 
-    const [aggiungiModal, setAggiungiModal] = useState(false)
 
     React.useEffect(() => {
 

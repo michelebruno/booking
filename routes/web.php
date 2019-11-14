@@ -46,6 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
         return view('app');
     });
     
+    Route::get('/account/{a?}/{b?}', function() {
+        return view('app');
+    });
+    
     Route::get('/deals/{a?}/{b?}', function() {
         return view('app');
     });

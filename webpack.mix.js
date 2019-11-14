@@ -13,8 +13,8 @@ const mix = require('laravel-mix');
 
 mix.disableNotifications()
    .browserSync({
-      proxy: 'localhost:8080',
-      files: ["public/**/*.css", "public/**/*.js", "public/*.js"]
+      files: ["public/**/*.css", "public/**/*.js", "public/*.js"],
+      proxy: 'localhost:8080'
    })
    .react('resources/js/index.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')

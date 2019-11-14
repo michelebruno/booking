@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
 
@@ -10,7 +10,7 @@ const notificationContainerStyle = {
 
 const NotificationDropdown = ( props ) => {
 
-    const [ dropdownOpen, setDropdownOpen ] = React.useState(false);
+    const [ dropdownOpen, setDropdownOpen ] = useState(false);
 
     const getRedirectUrl = (item) => {
         return `/notification/${item.id}`;

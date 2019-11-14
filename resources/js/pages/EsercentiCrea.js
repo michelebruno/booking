@@ -10,13 +10,14 @@ import Button  from 'react-bootstrap/Button'
 
 import { showErrorsFeedback , isInvalid } from '../_services/formValidation'
 
-const FormEsercente = ( { id, match, location, ...props} ) => {
-
+const FormEsercente = ( { match, location, ...props} ) => {
+    const [fetchedFromApi, setFetchedFromApi] = useState(false)
+    const [id, setId] = useState()
     const [email, setEmail] = useState("")
     const [username, setUsername] = useState("")
     const [indirizzoVia, setIndirizzoVia] = useState("")
     const [indirizzoCivico, setIndirizzoCivico] = useState("")
-    const [indirizzoCittà, setIndirizzoCittà] = useState("")
+    const [indirizzocitta, setIndirizzocitta] = useState("")
     const [indirizzoProvincia, setIndirizzoProvincia] = useState("")
     const [indirizzoCAP, setIndirizzoCAP] = useState("")
     const [cf, setCf] = useState("")
@@ -26,18 +27,22 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
     const [nome, setNome] = useState("")
     const [sdi, setSdi] = useState("")
     const [pec, setPec] = useState("")
+    
+    const [api, setApi] = useState({ status: false, data: null })
+
+    const [redirect, setRedirect] = useState(false)
 
     const impostaInitial = initial => {
 
         if ( initial ) {
-            
+            setId(initial.id) 
             setEmail(initial.email ? initial.email : "" )
             setUsername(initial.username ? initial.username : "")
     
             if ( initial.indirizzo ) {
                 setIndirizzoVia(initial.indirizzo.via ? initial.indirizzo.via : "")
                 setIndirizzoCivico(initial.indirizzo.civico ? initial.indirizzo.civico : "")
-                setIndirizzoCittà(initial.indirizzo.città ? initial.indirizzo.città : "")
+                setIndirizzocitta(initial.indirizzo.citta ? initial.indirizzo.citta : "")
                 setIndirizzoProvincia(initial.indirizzo.provincia ? initial.indirizzo.provincia : "")
                 setIndirizzoCAP(initial.indirizzo.cap ? initial.indirizzo.cap : "")
             }
@@ -55,12 +60,13 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
     }
     useEffect( () => {
 
-        if ( match.params.id && !( location.state && location.state.esercente ) ) {
+        const get = url => {
 
             const source = axios.CancelToken.source()
     
-            axios.get("/esercenti/" + match.params.id, { cancelToken : source.token })
-                .then( response => {    
+            axios.get(url, { cancelToken : source.token })
+                .then( response => {
+                    setFetchedFromApi(true)
                     impostaInitial(response.data)
                 })
                 .catch( error => {
@@ -69,18 +75,25 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
 
                 })
 
-                return () => source.cancel();
+            return () => source.cancel();
 
-        } else if ( match.params.id ) {
-            impostaInitial( location.state.esercente )
         }
 
-    }, [ match.params ] )
-    
-    
-    const [api, setApi] = useState({status: false, data:null})
+        if ( location.state && location.state.esercente ) {
+            impostaInitial( location.state.esercente )
+        } else if ( props.esercente ) {
+            impostaInitial( props.esercente )
+        }
 
-    const [redirect, setRedirect] = useState(false)
+        if ( props.shouldBeReloaded ) {
+            return get('/account')
+        } else if ( match.params.id ) {
+            return get( '/esercenti/' + match.params.id )
+        }
+
+    }, [] )
+    
+    
 
     const { errors } = api;
    
@@ -90,9 +103,9 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
         indirizzo: {
             via: indirizzoVia,
             civico: indirizzoCivico,
-            città: indirizzoCittà,
+            citta: indirizzocitta,
             provincia: indirizzoProvincia,
-            CAP: indirizzoCAP
+            cap: indirizzoCAP
         },
         nome,
         cf,
@@ -106,9 +119,9 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
     useEffect( () => {
         if (api.status === "submit") {
             let method, url;
-            if ( match.params.id ) {
+            if ( match.params.id || props.esercente || ( location.state && location.state.esercente )) {
                 method = "put"
-                url = "/esercenti/" + match.params.id
+                url = "/esercenti/" + id
             } else {
                 method = "post"
                 url = "/esercenti"
@@ -120,7 +133,8 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
                 data : anagrafica
             })
                 .then( response => {
-                    setRedirect({to : "/esercenti/" + response.data.id , state: { success : true } })
+                    let to = props.isCurrentUser ? '/account' : "/esercenti/" + response.data.id 
+                    setRedirect({to, state: { success : true } })
                 })
                 .catch( error =>
                     setApi({status: "error", errors : error.response.data.errors })
@@ -135,7 +149,7 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
     return(
         <React.Fragment>
             { redirect && <Redirect to={{pathname : redirect.to , state: redirect.state }} />}
-            { ! ( match.params.id && email == "") && <>
+            { ( ( fetchedFromApi || ! props.shouldBeReloaded ) || email ) && <>
             <h1>Crea nuovo</h1>
             <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }}>
                 <Card>
@@ -186,8 +200,8 @@ const FormEsercente = ( { id, match, location, ...props} ) => {
                                             { showErrorsFeedback(errors, "indirizzo.cap") }
                                         </Col>
                                         <Col className="mb-2" sm="4">
-                                            <Form.Control isInvalid={isInvalid(errors, "indirizzo.città" )} id="città" name="Città" placeholder="Città" value={ indirizzoCittà } onChange={ e => setIndirizzoCittà(e.target.value)} />
-                                            { showErrorsFeedback(errors, "indirizzo.città") }
+                                            <Form.Control isInvalid={isInvalid(errors, "indirizzo.citta" )} id="citta" name="citta" placeholder="citta" value={ indirizzocitta } onChange={ e => setIndirizzocitta(e.target.value)} />
+                                            { showErrorsFeedback(errors, "indirizzo.citta") }
                                         </Col>
                                         <Col className="mb-2" sm="3">
                                             <Form.Control size="2" maxLength="2"  isInvalid={isInvalid(errors, "indirizzo.provincia" )} id="provincia" name="provincia" placeholder="provincia" value={ indirizzoProvincia } onChange={ e => setIndirizzoProvincia(e.target.value)} />

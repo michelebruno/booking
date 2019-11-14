@@ -9,13 +9,17 @@ use Illuminate\Support\Arr;
  */
 trait HaIndirizzo
 {
-    public function setIndirizzoAttribute($indirizzo)
+    public function setIndirizzoAttribute( array $indirizzo)
     {
-        if ( Arr::exists( $indirizzo, 'via')) $this->meta()->updateOrCreate(['chiave' => 'indirizzo_via'], ['user_id' => $this->id, 'valore' => $indirizzo['via']]);
-        if ( Arr::exists( $indirizzo, 'civico')) $this->meta()->updateOrCreate(['chiave' => 'indirizzo_civico'], ['user_id' => $this->id, 'valore' => $indirizzo['civico']]);
-        if ( Arr::exists( $indirizzo, 'città')) $this->meta()->updateOrCreate(['chiave' => 'indirizzo_città'], ['user_id' => $this->id, 'valore' => $indirizzo['città']]);
-        if ( Arr::exists( $indirizzo, 'provincia')) $this->meta()->updateOrCreate(['chiave' => 'indirizzo_provincia'], ['user_id' => $this->id, 'valore' => $indirizzo['provincia']]);
-        if ( Arr::exists( $indirizzo, 'CAP')) $this->meta()->updateOrCreate(['chiave' => 'indirizzo_cap'], ['user_id' => $this->id, 'valore' => $indirizzo['CAP']]);
+        foreach ($indirizzo as $key => $value) {
+
+            $chiave = 'indirizzo_' . strtolower($key);
+            if ( $value && is_string($value) && strlen($value) ) {
+                $this->meta()->updateOrCreate([ 'chiave' => $chiave ] , [ 'user_id' => $this->id , 'valore' => $value ]);
+            } elseif ( Arr::exists( $this->meta, $chiave ) ) {
+                $this->meta()->where('chiave', $chiave)->delete();
+            }
+        }
     }
 
     public function getIndirizzoAttribute()
@@ -31,8 +35,8 @@ trait HaIndirizzo
             $indirizzo['civico'] = $meta['indirizzo_civico'];
         }
         
-        if ( Arr::exists( $meta , 'indirizzo_città' ) ) {
-            $indirizzo['città'] = $meta['indirizzo_città'];
+        if ( Arr::exists( $meta , 'indirizzo_citta' ) ) {
+            $indirizzo['citta'] = $meta['indirizzo_citta'];
         }
         
         if ( Arr::exists( $meta , 'indirizzo_provincia' ) ) {

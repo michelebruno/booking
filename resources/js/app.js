@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from 'react';
+import React, { Component, Suspense, useEffect } from 'react';
 import { BrowserRouter , Switch } from 'react-router-dom'; 
 import authenticate from "./_services/auth";
 import { routes } from './routes';
@@ -26,13 +26,11 @@ const withLayout = (WrappedComponent) => {
 
 
 const App = ( { currentUser, settings, ...props} ) => {
-	const getLayout = () => {
-		return AuthLayout;
-	}
 	
 	React.useEffect( () => {
 		props.authenticate().then( props.getAutoloadedSettings ); 
 	}, [])
+
     
 	return(
 		// rendering the router with layout 
@@ -48,9 +46,10 @@ const App = ( { currentUser, settings, ...props} ) => {
 								exact={route.exact}
 								roles={route.roles}
 								component={withLayout(props => { 
+									
 									return (
 										<Suspense fallback={loading()}>
-											<AuthLayout {...props} title={route.title}>
+											<AuthLayout {...props} tastimenu={route.tastimenu} title={route.title}>
 												<route.component {...props} />
 											</AuthLayout>
 										</Suspense>

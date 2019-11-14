@@ -12,7 +12,7 @@ const menuItems = [{
   {
     label: 'Impostazione',
     icon: 'fe-settings',
-    redirectTo: "/"
+    redirectTo: "/account/modifica"
   },
   {
     label: 'Logout',

@@ -47,7 +47,7 @@ class UsersTableSeeder extends Seeder
         $esercente->indirizzo = [
             "via" => "Via Marconi",
             "civico" => "24",
-            "città" => "Bologna",
+            "citta" => "Bologna",
             "cap" => "79865",
             "provincia" => "BO"
         ];

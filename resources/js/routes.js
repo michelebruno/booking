@@ -1,10 +1,11 @@
-import React from 'react';
-import { Redirect } from "react-router-dom";
-import { Route } from 'react-router-dom';
+import React , { useState } from 'react';
+import { Route , Link, Redirect } from 'react-router-dom';
 import Button from 'react-bootstrap/Button'
 import { ButtonGroup, Dropdown, ButtonToolbar, Form } from 'react-bootstrap';
 import store from "./_store";
 // lazy load all the views
+const Account = React.lazy(() => import('./pages/Account'));
+const AccountModifica = React.lazy(() => import('./pages/AccountModifica'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Esercenti = React.lazy(() => import('./pages/Esercenti'));
 const EsercentiProfilo = React.lazy(() => import('./pages/EsercentiProfilo'));
@@ -60,14 +61,32 @@ const SchedaProdottoTasti = ( props ) => <React.Fragment>
 		</ButtonToolbar>
 	</React.Fragment>
 
-const ProfiloEsercenteTasti = ( props ) => <ButtonToolbar className="d-inline-block">
-	<Button className="d-inline-block mr-2">Modifica</Button> 
-		<Form.Switch className="d-inline-block" name="abilitato" label="Abilitato" /> 
-</ButtonToolbar>
+const ProfiloEsercenteTasti = ( props ) => {
+
+	const [redirect, setRedirect] = useState(false)
+
+	const [abilitato, setAbilitato] = useState(false)
+
+	const deleteProfile = ( e ) => {
+		setAbilitato(!abilitato)
+		e.persist()
+		return console.log(e.target.value)
+	}
+		
+
+	return <ButtonToolbar className="d-inline-block">
+			{ redirect && <Redirect to={redirect} />}
+			<Form>
+				<Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label="Abilitato" onChange={ deleteProfile } value={abilitato} /> 
+			</Form>
+	</ButtonToolbar>
+}
  
 const routes = [
 
   // other pages
+  { path: '/account', exact:true, component: Account, route: PrivateRoute, title: 'Il tuo profilo' },
+  { path: '/account/modifica', component: AccountModifica, route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
   { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente', tastimenu: NuovoEsercente },
   { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: NuovoEsercente },

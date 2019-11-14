@@ -4,6 +4,8 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import { Redirect } from 'react-router-dom'
 
 const Deals = ( props ) => {
+    const [ redirectTo, setRedirectTo ] = React.useState(false);
+
     const colonne = [
         {
             dataField: 'stato',
@@ -94,7 +96,6 @@ const Deals = ( props ) => {
         )
     }
 
-    const [ redirectTo, setRedirectTo ] = React.useState(false);
 
     const rowEvents = {
         onDoubleClick : ( e , row , rowIndex ) => {

@@ -32,6 +32,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password', 'remember_token', 'api_token'
     ];
 
+    protected $appends = [
+        'nome' , 'abilitato'
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -70,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $traits = class_uses_recursive($class);
 
         if ( in_array('App\Traits\HaIndirizzo', $traits) ) {
-            $except = array_merge($traits, ['indirizzo_via','indirizzo_civico','indirizzo_città','indirizzo_provincia','indirizzo_cap']);
+            $except = array_merge($traits, ['indirizzo_via','indirizzo_civico','indirizzo_citta','indirizzo_provincia','indirizzo_cap']);
         }
 
         return Arr::except($array, $except);
@@ -102,10 +106,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->attributes['abilitato'] = ! $this->trashed();
     }
-    
+
     public function getNomeAttribute()
     {
-        return array_key_exists('nome', $this->meta) ? $this->meta['nome'] : null;
+        return Arr::exists($this->meta, 'nome') ? $this->meta['nome'] : null;
+    }
+
+    public function setNomeAttribute($value)
+    {        
+       if ($value) $this->meta()->updateOrCreate(['chiave' => 'nome'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getCognomeAttribute()

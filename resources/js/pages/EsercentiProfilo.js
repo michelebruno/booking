@@ -1,30 +1,35 @@
 import React, { useState , useEffect } from 'react';
 
-import { Row , Col , Table , Card, Nav, Button, Modal } from 'react-bootstrap';
+import { Row , Col , Table , Card, Nav, Button, Modal, Alert } from 'react-bootstrap';
 import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
-const EsercentiProfilo = ( { location , match , ...props } ) => {
+const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
+
+    const [ successShown, setSuccessShown ] = useState(false)    
+    const [api, setApi] = useState(initialApiState)
+    const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
+
 
     let initialApiState = { status: "loading" }
 
     if ( location.state && location.state.esercente ) initialApiState = { status : "OK", esercente: location.state.esercente }
     if ( props.esercente ) initialApiState = { status : "OK", esercente: props.esercente }
 
-    const [api, setApi] = useState(initialApiState)
-
     useEffect(() => {
-        if ( initialApiState.status == "loading" ) {
+        
+        if ( api.status == "loading" || ! api.fromApi ) {
 
-            setApi( { status : "loading" , data : null})
+            let id = match.params.id || ( api.status == "OK" && api.esercente.id )
     
             const source = axios.CancelToken.source()
     
-            axios.get("/esercenti/"+  match.params.id, { cancelToken: source.token })
+            axios.get( "/esercenti/"+  id , { cancelToken: source.token } )
                 .then( res => {
-                    setApi({ fromApi : true , status : res.statusText , esercente: res.data})
+                    return setApi({ fromApi : true , status : res.statusText , esercente: res.data})
+                    
                 })
                 .catch( error => {
                     if ( axios.isCancel(error) )  return;
@@ -34,41 +39,52 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
 
         }
 
-    }, [ match.params])
+    }, [ ])
 
-    const esercente = api.status == "OK" ? api.esercente : false;
+    const {esercente} = api 
 
-    const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
 
     return(
         <>
-            { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}
-            { esercente && <><div className="d-flex justify-content-between">
-                { location.state && location.state.success && window.alert("Operazione riuscita.")}
+            { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
+            
+            { api !== "loading" && esercente && <><div className="d-flex justify-content-between">
                 <h1>{ esercente.nome }</h1>
-                <span>
-                    <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente }} } color="primary" size="sm" >
+                { ! props.isCurrentUser && esercente._links && <span>
+                    <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
                     </Button>
-                </span>
+                </span>}
+                { props.isCurrentUser && <span>
+                    <Button as={Link} to={ { pathname : '/account/modifica' , state: { esercente } } } color="primary" size="sm" >
+                        <i className="mdi"></i>
+                        Modifica profilo
+                    </Button>
+                </span>}
             </div>
             <Row>
+                { location.state && location.state.success && <Col lg="4">
+                    <Alert variant="success" >I dati sono stati aggiornati</Alert> 
+                </Col>  }
+                <div className="w-100"></div>
+
                 <Col xs="6" lg="4" xl="3">
                     <Card>
                         <Card.Body>
-                            <Card.Title><h4>Informazioni generali</h4></Card.Title>
                             <Card.Text>
+                                <strong>Email</strong><br/>
+                                { esercente.email }<br/><br/>
                                 { esercente.indirizzo && <>
+                                    <strong>Indirizzo</strong><br/>
                                     { esercente.indirizzo.via && <>
                                         { esercente.indirizzo.via + " "} 
                                         { esercente.indirizzo.civico && esercente.indirizzo.civico }<br/>
                                     </>}
-                                    { esercente.indirizzo.città &&  esercente.indirizzo.città } 
+                                    { esercente.indirizzo.citta &&  esercente.indirizzo.citta } 
                                     { esercente.indirizzo.provincia &&  " (" + esercente.indirizzo.provincia + ")" }
                                     { esercente.indirizzo.cap &&  " - " + esercente.indirizzo.cap + " " }<br />
                                 </> }
-                                {esercente.email}<br/>
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -78,24 +94,24 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                         <Card.Body>
                             <Card.Title><h4>Dati di fatturazione</h4></Card.Title>
                             <Card.Text>
-                                <span className="d-flex justify-content-between">
+                                {esercente.ragione_sociale && <span className="d-flex justify-content-between">
                                     <strong>Ragione sociale</strong><span>{ esercente.ragione_sociale }</span>
-                                </span>
-                                <span className="d-flex justify-content-between">
+                                </span>}
+                                {esercente.sede_legale && <span className="d-flex justify-content-between">
                                     <strong>Sede legale</strong><span>{ esercente.sede_legale } </span>
-                                </span>
+                                </span>}
                                 <span className="d-flex justify-content-between">
                                     <strong>P.IVA</strong><span>{ esercente.piva }</span>
                                 </span>
                                 <span className="d-flex justify-content-between">
                                     <strong>C.F</strong><span>{ esercente.cf }</span>
                                 </span>
-                                <span className="d-flex justify-content-between">
+                                { esercente.sdi && <span className="d-flex justify-content-between">
                                     <strong>SDI</strong><span>{ esercente.sdi ? esercente.sdi : " - "}</span>
-                                </span>
-                                <span className="d-flex justify-content-between">
+                                </span> }
+                                { esercente.pec && <span className="d-flex justify-content-between">
                                     <strong>PEC</strong><span>{ esercente.pec ? esercente.pec : " - " }</span>
-                                </span>
+                                </span>}
                             </Card.Text>
                         </Card.Body>
                     </Card>
