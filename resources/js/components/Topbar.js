@@ -12,21 +12,6 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 			<div className="navbar-custom">
 				<ul className="list-unstyled topnav-menu float-right mb-0">
 
-					<li className="d-none d-sm-block">
-						<form className="app-search">
-						<div className="app-search-box">
-							<div className="input-group">
-							<input type="text" className="form-control" placeholder="Cerca" />
-							<div className="input-group-append">
-								<button className="btn" >
-								<i className="fe-search"></i>
-								</button>
-							</div>
-							</div>
-						</div>
-						</form>
-					</li> 
-
 					<li>
 						<ProfileDropdown />
 					</li>

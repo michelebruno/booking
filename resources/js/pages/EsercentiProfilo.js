@@ -23,7 +23,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
     const { esercente } = api 
     
-    const ProfiloEsercenteTasti = ( props ) => {
+    const TastiProfiloEsercente = ( props ) => {
 
         const [showModal, setShowModal] = useState(false)
 
@@ -35,8 +35,14 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
         return <>
             { ! ( api.willBeReloaded || api.status == "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
+                
                 <Form> 
-                    <Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> 
+                    { ! props.isCurrentUser && esercente._links && 
+                        <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
+                            Modifica
+                        </Button>
+                    }
+                    <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> 
                 </Form>
                 
                  
@@ -60,9 +66,9 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
         </>
     }
 
-    props.setTopbarButtons( ProfiloEsercenteTasti )
+    props.setTopbarButtons( TastiProfiloEsercente )
 
-    useEffect(() => {
+    useEffect( () => {
 
         if ( api.status == "loading" || api.willBeReloaded ) {
 
@@ -73,10 +79,10 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
             axios.get( "/esercenti/" +  id , { cancelToken: source.token } )
                 .then( res => {
                     return setApi({ willBeReloaded : false , status : res.statusText , esercente: res.data})
-                    
                 })
                 .catch( error => {
                     if ( axios.isCancel(error) )  return;
+                    // TODO gli altri errori per cui bisognerebbe cambiare pagina
                 })
     
             return () => {
@@ -86,21 +92,15 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
         }
 
-    }, [ ])
-
-
+    }, [])
 
     return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
             
             { api !== "loading" && esercente && <><div className="d-flex justify-content-between">
+
                 <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
-                { ! props.isCurrentUser && esercente._links && <span>
-                    <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
-                        <i className="mdi"></i>
-                        Modifica profilo
-                    </Button>
-                </span>}
+
                 { props.isCurrentUser && <span>
                     <Button as={Link} to={ { pathname : '/account/modifica' , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
@@ -120,6 +120,8 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                             <Card.Text>
                                 <strong>Email</strong><br/>
                                 { esercente.email }<br/><br/>
+                                <strong>Username</strong><br/>
+                                { esercente.username }<br/><br/>
                                 { esercente.indirizzo && <>
                                     <strong>Indirizzo</strong><br/>
                                     { esercente.indirizzo.via && <>

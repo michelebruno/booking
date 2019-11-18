@@ -79,7 +79,5 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // }
 
 export default ( props ) => {
-    return(
-        <React.Fragment>Sidebar</React.Fragment>
-    )
+    return null
 };

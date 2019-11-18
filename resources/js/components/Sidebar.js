@@ -124,26 +124,21 @@ const UserProfile = ( { user , ...props } ) => {
                     { user.username }
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="user-pro-dropdown">
-                    <Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/account" >
                         <i className="fe-user mr-1"></i>
-                        <span>My Account</span>
+                        <span>Il mio account</span>
                     </Dropdown.Item>
-                    <Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/account" >
                         <i className="fe-settings mr-1"></i>
-                        <span>Settings</span>
+                        <span>Impostazioni</span>
                     </Dropdown.Item>
-                    <Dropdown.Item>
-                        <i className="fe-lock mr-1"></i>
-                        <span>Lock Screen</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/logout" >
                         <i className="fe-log-out mr-1"></i>
                         <span>Logout</span>
                     </Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown> 
 
-            <p className="text-muted">Admin Head</p>
             <ul className="list-inline">
                 <li className="list-inline-item">
                     <Link to="/" className="text-muted">
@@ -167,8 +162,8 @@ const Sidebar = ( { currentUser }, ...props ) => {
     return(
         <React.Fragment>
             <div className='left-side-menu' >
-                {!isCondensed && <PerfectScrollbar><UserProfile user={currentUser}/><SideNavContent user={ currentUser } /></PerfectScrollbar>}
-                {isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/>}
+                { !isCondensed && <PerfectScrollbar><UserProfile user={ currentUser }/><SideNavContent user={ currentUser } /></PerfectScrollbar> }
+                { isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/> }
             </div>
         </React.Fragment>
     )

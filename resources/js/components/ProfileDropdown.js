@@ -27,8 +27,8 @@ const ProfileDropdown = props => {
     return (
         <Dropdown className="notification-list">
             <Dropdown.Toggle className="btn btn-link border-0 nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light">
-                {profilePic && <img src={profilePic} className="rounded-circle" alt="user" />}
-                {!profilePic && <div className="rounded-circle d-inline-block" ><i className="fas fa-user" /></div>}
+                { profilePic && <img src={profilePic} className="rounded-circle" alt="user" /> }
+                { ! profilePic && <div className="rounded-circle d-inline-block" ><i className="fas fa-user" /></div> }
                 <span className="pro-user-name ml-1">{props.currentUser.username}  <i className="mdi mdi-chevron-down"></i> </span>
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight className="profile-dropdown">
@@ -51,20 +51,6 @@ const ProfileDropdown = props => {
     );
 }
 
-// class ProfileDropdown extends Component {
-//     constructor(props) {
-//         super(props);
-
-//         this.toggleDropdown = this.toggleDropdown.bind(this);
-//         this.state = {
-//             dropdownOpen: false
-//         };
-//     }
-
-//     render() {
-
-//     }
-// }
 const mapStateToProps = state => {
     return {currentUser : state.currentUser}
 }

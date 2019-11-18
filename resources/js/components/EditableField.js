@@ -43,14 +43,13 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     }
         
     const handleSubmit = () => {
-        
+
         setSending(true) ;
 
         let data = dot.str(name, value, {});
    
-
         axios({
-            method: props.method ? props.method : "put",
+            method: props.method ? props.method : "patch",
             url: props.url,
             data: data
         }) 
@@ -63,7 +62,8 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
         })  
         .catch( error => { 
             if (error.response) {
-                setSending(false) 
+
+                setSending(false)
 
                 if (error.response.status === 422) { // Errore di validazione
                     setErrors(error.response.data.errors)
@@ -82,7 +82,7 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     }
 
     const displayValue = () => {
-        if (!props.children) return value;
+        if ( !props.children ) return value;
 
         let options = [];
 
@@ -128,7 +128,8 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
                     <Button variant="outline-primary" onClick={() => { setValue(initialValue) ; setEditing(false) }} ><i className="fas fa-times" /></Button>
                 </InputGroup.Append>
                 </InputGroup> }
-            { !editing && <div className="d-flex justify-content-between"><span className="align-self-center">{displayValue()}</span><Button variant="outline-primary" onClick={() => setEditing(true)}><i className="fas fa-edit" /></Button></div> }
+
+            { ! editing && <div className="d-flex justify-content-between"><span className="align-self-center">{displayValue()}</span><Button variant="outline-primary" onClick={() => setEditing(true)}><i className="fas fa-edit" /></Button></div> }
 
         </Col>
     </FormGroup>

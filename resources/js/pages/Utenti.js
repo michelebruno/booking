@@ -1,10 +1,20 @@
-import React, {useState} from "react"
-import { Card, Button, Modal, Alert } from "react-bootstrap"
+import React, { useState } from "react"
+
+import { connect } from "react-redux"
+
+import Card from "react-bootstrap/Card"
+import Button from "react-bootstrap/Button"
+import ButtonToolbar from "react-bootstrap/ButtonToolbar"
+import Modal  from "react-bootstrap/Modal"
+import Alert from "react-bootstrap/Alert"
+
 import BootstrapTable from "react-bootstrap-table-next"
 import { Redirect , Link } from "react-router-dom"
 import paginationFactory from "react-bootstrap-table2-paginator"
 import FormNuovoUtente from "../components/FormNuovoUtente"
 import PreLoaderWidget from "../components/Loader"
+
+import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
 
 const Utenti = ( props ) => {
 
@@ -73,6 +83,9 @@ const Utenti = ( props ) => {
         }
     }
 
+    props.setTopbarButtons( () => <ButtonToolbar className="d-inline-block" >
+        <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
+    </ButtonToolbar>)
 
     React.useEffect(() => {
 
@@ -86,15 +99,18 @@ const Utenti = ( props ) => {
                 setApi({status: "error" , response: error.response, message: error.response.data.message })
             })
  
-        return () => source.cancel();
+        return () => {
+            source.cancel();
+            props.unsetTopbarButtons()
+        }
 
     }, [])
+
     return(
         <Card>
             { redirect && <Redirect to={redirect} push /> }
             <Card.Body>
                 <p>
-                    <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
                     <Modal show={aggiungiModal} onHide={() => setAggiungiModal(false)}>
                         <Modal.Header closeButton>
                             <Modal.Title>
@@ -128,4 +144,4 @@ const Utenti = ( props ) => {
 
 
 
-export default Utenti;
+export default connect( null, { setTopbarButtons, unsetTopbarButtons })( Utenti );
