@@ -32,6 +32,13 @@ const Esercenti = ( { id, ...props } ) => {
             dataField: 'username',
             text: "Username",
             formatter : (cell, row) => <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
+        },
+        {
+            dataField: 'stato',
+            text: '',
+            formatter: ( cell , row ) => {
+                { row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>}
+            }
         }
     ]
 

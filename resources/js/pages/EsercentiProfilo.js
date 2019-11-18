@@ -1,56 +1,102 @@
 import React, { useState , useEffect } from 'react';
 
-import { Row , Col , Table , Card, Nav, Button, Modal, Alert } from 'react-bootstrap';
+import { connect } from 'react-redux'
+ 
+import { Row , Col , Table , Card, Nav, Button, ButtonToolbar, Alert , Form, Badge } from 'react-bootstrap';
 import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
+import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
+import AxiosConfirmModal from '../components/AxiosConfirmModal';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
 const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
 
-    const [ successShown, setSuccessShown ] = useState(false)    
     const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
-
 
     let initialApiState = { status: "loading" }
 
-    if ( location.state && location.state.esercente ) initialApiState = { status : "OK", esercente: location.state.esercente }
-    if ( props.esercente ) initialApiState = { status : "OK", esercente: props.esercente }
+    if ( location.state && location.state.esercente ) initialApiState = { willBeReloaded: true, status : "OK", esercente: location.state.esercente }
+
+    if ( props.esercente ) initialApiState = { willBeReloaded: true, status : "OK", esercente: props.esercente }
+
+    const [ api, setApi ] = useState(initialApiState)
+
+    const { esercente } = api 
     
-    const [api, setApi] = useState(initialApiState)
+    const ProfiloEsercenteTasti = ( props ) => {
+
+        const [showModal, setShowModal] = useState(false)
+
+
+        const deleteProfile = ( e ) => {
+            setShowModal(true)
+        }
+
+        const abilitato = esercente.abilitato
+
+        return <>
+            { ! api.willBeReloaded && esercente && <ButtonToolbar className="d-inline-block">
+                <Form>
+                    <Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> 
+                </Form>
+                
+                 
+                <AxiosConfirmModal 
+                    method={ abilitato ? "delete" : "patch" } 
+                    show={showModal} 
+                    onHide={ () => setShowModal(false)} 
+                    url={ abilitato ? esercente._links.delete : esercente._links.restore } 
+                    onSuccess={ ( res ) => { setShowModal(false) ; return setApi( { willBeReloaded : false , status : res.statusText, esercente : res.data } );  }} 
+                    title="Conferma" >
+                        Sei sicuro di voler modificare?<br />
+                        Essere abilitati permette di :
+                        <ul>
+                            <li>Loggarsi</li>
+                            <li>Effettuare convalide</li>
+                            <li>Inserire fatture</li>
+                        </ul>
+                </AxiosConfirmModal>
+            </ButtonToolbar> }
+            
+        </>
+    }
+
+    props.setTopbarButtons( ProfiloEsercenteTasti )
 
     useEffect(() => {
-        
-        if ( api.status == "loading" || ! api.fromApi ) {
+
+        if ( api.status == "loading" || api.willBeReloaded ) {
 
             let id = match.params.id || ( api.status == "OK" && api.esercente.id )
-    
+
             const source = axios.CancelToken.source()
     
-            axios.get( "/esercenti/"+  id , { cancelToken: source.token } )
+            axios.get( "/esercenti/" +  id , { cancelToken: source.token } )
                 .then( res => {
-                    return setApi({ fromApi : true , status : res.statusText , esercente: res.data})
+                    return setApi({ willBeReloaded : false , status : res.statusText , esercente: res.data})
                     
                 })
                 .catch( error => {
                     if ( axios.isCancel(error) )  return;
                 })
     
-            return () => source.cancel();
+            return () => {
+                source.cancel()
+                props.unsetTopbarButtons()
+            }
 
         }
 
     }, [ ])
 
-    const {esercente} = api 
 
 
-    return(
-        <>
+    return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
             
             { api !== "loading" && esercente && <><div className="d-flex justify-content-between">
-                <h1>{ esercente.nome }</h1>
+                <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
                 { ! props.isCurrentUser && esercente._links && <span>
                     <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
@@ -208,4 +254,4 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     )
 }
 
-export default EsercentiProfilo;
+export default connect( null , { setTopbarButtons, unsetTopbarButtons })(EsercentiProfilo);

@@ -11,7 +11,9 @@ import Button  from 'react-bootstrap/Button'
 import { showErrorsFeedback , isInvalid } from '../_services/formValidation'
 
 const FormEsercente = ( { match, location, ...props} ) => {
-    const [fetchedFromApi, setFetchedFromApi] = useState(false)
+
+    const [willBeReloaded, setWillBeReloaded] = useState(true)
+
     const [id, setId] = useState()
     const [email, setEmail] = useState("")
     const [username, setUsername] = useState("")
@@ -35,6 +37,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
     const impostaInitial = initial => {
 
         if ( initial ) {
+
             setId(initial.id) 
             setEmail(initial.email ? initial.email : "" )
             setUsername(initial.username ? initial.username : "")
@@ -56,8 +59,8 @@ const FormEsercente = ( { match, location, ...props} ) => {
             setSede_legale(initial.sede_legale ? initial.sede_legale : "")
 
         }
-
     }
+
     useEffect( () => {
 
         const get = url => {
@@ -66,7 +69,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
     
             axios.get(url, { cancelToken : source.token })
                 .then( response => {
-                    setFetchedFromApi(true)
+                    setWillBeReloaded(false)
                     impostaInitial(response.data)
                 })
                 .catch( error => {
@@ -127,10 +130,13 @@ const FormEsercente = ( { match, location, ...props} ) => {
                 url = "/esercenti"
             }
 
+            const source = axios.CancelToken.source()
+
             axios({
                 method : method,
                 url : url, 
-                data : anagrafica
+                data : anagrafica,
+                cancelToken : source.token
             })
                 .then( response => {
                     let to = props.isCurrentUser ? '/account' : "/esercenti/" + response.data.id 
@@ -139,6 +145,8 @@ const FormEsercente = ( { match, location, ...props} ) => {
                 .catch( error =>
                     setApi({status: "error", errors : error.response.data.errors })
                 )
+            
+            return () => source.cancel()
         }
         
         return () => {
@@ -149,7 +157,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
     return(
         <React.Fragment>
             { redirect && <Redirect to={{pathname : redirect.to , state: redirect.state }} />}
-            { ( ( fetchedFromApi || ! props.shouldBeReloaded ) || email ) && <>
+            { ( ( willBeReloaded || ! props.shouldBeReloaded ) || email ) && <>
             <h1>Crea nuovo</h1>
             <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }}>
                 <Card>

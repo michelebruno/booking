@@ -8,7 +8,7 @@ import logoSm from '../../images/logo-sm.png';
 const Topbar = ( { TopbarButtons , ...props }) => { 
 
   	return (
-		<React.Fragment>
+		<>
 			<div className="navbar-custom">
 				<ul className="list-unstyled topnav-menu float-right mb-0">
 
@@ -59,15 +59,15 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 
 					<li>
 						<h4 className="page-title-main d-inline-block">{props.title}</h4>
-						{ typeof props.tastimenu !== 'undefined' && <props.tastimenu />} 
+						<TopbarButtons />
 					</li>
 				</ul>
 				
 			</div>
-		</React.Fragment >
+		</ >
 	);
 }
 
 
-export default connect( )( Topbar );
+export default connect( state => { return { TopbarButtons : state.TopbarButtons } } )( Topbar );
 

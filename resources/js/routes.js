@@ -21,8 +21,6 @@ const Tickets = React.lazy( () => import('./pages/Tickets'));
 const Utenti = React.lazy( () => import('./pages/Utenti')); 
 const UtentiProfilo = React.lazy( () => import('./pages/UtentiProfilo'));
 
-import SureToDeleteModal from "./components/SureToDeleteModal"
-
 // handle auth and authorization
 
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
@@ -64,34 +62,6 @@ const SchedaProdottoTasti = ( props ) => <React.Fragment>
 		</ButtonToolbar>
 	</React.Fragment>
 
-const ProfiloEsercenteTasti = ( props ) => {
-
-	const [showModal, setShowModal] = useState(false)
-
-	const [redirect, setRedirect] = useState(false)
-
-	const [abilitato, setAbilitato] = useState(false)
-
-	const deleteProfile = ( e ) => {
-		setShowModal(true)
-	}
-
-	return <>
-		<ButtonToolbar className="d-inline-block">
-			{ redirect && <Redirect to={redirect} />}
-			<Form>
-				<Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label={ abilitato ? "Disabilita" : "Abilita"} onChange={ deleteProfile } checked={abilitato} /> 
-			</Form>
-			
-		</ButtonToolbar>
-		
-		{ showModal && <React.Suspense>
-			<SureToDeleteModal show={showModal} onHide={ () => setShowModal(false)} deleteUrl={ "/esercenti/" + props.match.params.id } title="Conferma">
-				Sei sicuro di voler modificare?
-			</SureToDeleteModal>
-		</React.Suspense> }
-	</>
-}
  
 const routes = [
 
@@ -101,7 +71,7 @@ const routes = [
   { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
   { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente', tastimenu: NuovoEsercente },
   { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: NuovoEsercente },
-  { path: '/esercenti/:id', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' ,tastimenu: ProfiloEsercenteTasti },
+  { path: '/esercenti/:id', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' },
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
@@ -110,7 +80,7 @@ const routes = [
   { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
   { path: '/servizi/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
   { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },
-  { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
   { path: '/utenti/:id', component: UtentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo Utente' },
   { path: '/utenti', component: Utenti, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Utenti' },
   {

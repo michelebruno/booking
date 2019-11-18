@@ -1,8 +1,9 @@
-import { AUTHENTICATION_SUCCESSFUL , GET_AUTOLOADED_SETTINGS, SETTING_UPDATED } from "../_constants/action-types"
+import { AUTHENTICATION_SUCCESSFUL , GET_AUTOLOADED_SETTINGS, SETTING_UPDATED, SET_TOPBAR_BUTTONS } from "../_constants/action-types"
 
 const initialState = {
     currentUser: false,
-    settings: false
+    settings: false,
+    TopbarButtons : () => null
 }
 
 const rootReducer = ( state = initialState, action ) => {
@@ -21,6 +22,13 @@ const rootReducer = ( state = initialState, action ) => {
  
         return Object.assign({}, state, { 
             settings : action.payload,
+        });
+    } 
+
+    if ( action.type === SET_TOPBAR_BUTTONS ) {
+ 
+        return Object.assign({}, state, { 
+            TopbarButtons : action.payload,
         });
     } 
     

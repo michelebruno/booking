@@ -5,7 +5,7 @@ const ErrorModal = ( { onHide, response, ...props} ) => {
 
     const show = props.show ? props.show : true;
 
-    return <Modal show={show} onHide={ onHide } >
+    return <Modal show={show} onHide={ onHide } centered >
         <Modal.Header closeButton >
             <Modal.Title>
                 Errore { response.status } 

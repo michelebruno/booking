@@ -39,3 +39,5 @@ Route::apiResource('settings', 'API\SettingController')
 
 Route::apiResource('esercenti', 'API\EsercenteController')
     ->middleware('auth:api');
+
+Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore')->middleware('auth:api');

@@ -165,11 +165,22 @@ class EsercenteController extends \App\Http\Controllers\Controller
     public function destroy($esercente)
     {
         $esercente = Esercente::findOrFail($esercente);
-        // TODO Autorizza
-        if ( $esercente->delete() ) {
-            return response( $esercente , 204 );
-        } else {
-            return response( null, 400);
-        }
+        // TODO Autorizza 
+
+        $esercente->delete();
+    
+        return response( $esercente, 200 );
+            
     }
+
+    public function restore($esercente)
+    {
+        $esercente = Esercente::withTrashed()->findOrFail($esercente); // TODO oppure onlyTrashed?
+
+        if ( $esercente->restore() ) {
+            return response( $esercente );
+        } else abort(400);
+    }
+
+
 }

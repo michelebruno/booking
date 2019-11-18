@@ -53,7 +53,8 @@ class Esercente extends User
         return [
             'self' => '/esercenti/' . $this->id,
             'edit' => '/esercenti/' . $this->id. '/modifica',
-            'delete' => '/esercenti/' . $this->id
+            'delete' => '/esercenti/' . $this->id,
+            'restore' => '/esercenti/' . $this->id . '/restore',
         ];
     }
 
