@@ -17,8 +17,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     let initialApiState = { status: "loading" }
 
     if ( location.state && location.state.esercente ) initialApiState = { willBeReloaded: true, status : "OK", esercente: location.state.esercente }
-
-    if ( props.esercente ) initialApiState = { willBeReloaded: true, status : "OK", esercente: props.esercente }
+    else if ( props.esercente ) initialApiState = { willBeReloaded: true, status : "OK", esercente: props.esercente }
 
     const [ api, setApi ] = useState(initialApiState)
 
@@ -28,16 +27,15 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
         const [showModal, setShowModal] = useState(false)
 
-
         const deleteProfile = ( e ) => {
             setShowModal(true)
         }
 
-        const abilitato = esercente.abilitato
+        const { abilitato } = esercente ? esercente : false
 
         return <>
-            { ! api.willBeReloaded && esercente && <ButtonToolbar className="d-inline-block">
-                <Form>
+            { ! ( api.willBeReloaded || api.status == "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
+                <Form> 
                     <Form.Check type="switch" className="d-inline-block" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> 
                 </Form>
                 

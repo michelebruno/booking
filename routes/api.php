@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Gate;
 */
 
 
-Route::get('/account', function() { 
+Route::get('account', function() { 
     
     $user = request()->user();
 
@@ -37,7 +37,7 @@ Route::apiResource('users', 'API\UserController')
 Route::apiResource('settings', 'API\SettingController')
     ->middleware('auth:api');
 
-Route::apiResource('esercenti', 'API\EsercenteController')
+Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]])
     ->middleware('auth:api');
 
 Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore')->middleware('auth:api');

@@ -8,7 +8,6 @@ import Col  from "react-bootstrap/Col"
 import InputGroup  from "react-bootstrap/InputGroup"
 import Spinner  from "react-bootstrap/Spinner"
 import dot from "dot-object" 
-import ErrorModal from "./ErrorModal"
 
 const EditableField = ( { label, target , name, initialValue, onSuccess, ...props} ) => {
     
@@ -44,6 +43,7 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     }
         
     const handleSubmit = () => {
+        
         setSending(true) ;
 
         let data = dot.str(name, value, {});
@@ -138,7 +138,7 @@ EditableField.propTypes = {
     name : PropTypes.string.isRequired,
     label : PropTypes.string,
     url: PropTypes.string.isRequired,
-    method: PropTypes.oneOf(['post', 'put']),
+    method: PropTypes.oneOf(['post', 'put', 'patch']),
     onSuccess: PropTypes.func
 }
 

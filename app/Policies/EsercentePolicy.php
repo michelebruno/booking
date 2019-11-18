@@ -6,7 +6,6 @@ use App\Models\Esercente;
 use App\User;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
 
 class EsercentePolicy
 {
@@ -32,7 +31,7 @@ class EsercentePolicy
      */
     public function view(User $user, Esercente $esercente)
     {
-        return $user->id === $esercente->id || in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
+        return $user->id == $esercente->id || in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
     /**
@@ -55,7 +54,7 @@ class EsercentePolicy
      */
     public function update(User $user, Esercente $esercente)
     {
-        //
+        return in_array($user->ruolo, ['admin', 'account_manager']) || $user->id == $esercente->id;
     }
 
     /**
@@ -67,7 +66,7 @@ class EsercentePolicy
      */
     public function delete(User $user, Esercente $esercente)
     {
-        //
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
     /**
@@ -79,7 +78,7 @@ class EsercentePolicy
      */
     public function restore(User $user, Esercente $esercente)
     {
-        //
+        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 
     /**
@@ -91,6 +90,6 @@ class EsercentePolicy
      */
     public function forceDelete(User $user, Esercente $esercente)
     {
-        //
+        return in_array( $user->ruolo , [ 'admin' ] ) ;
     }
 }

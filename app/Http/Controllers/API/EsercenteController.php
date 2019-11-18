@@ -22,6 +22,8 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Esercente::class);
+        
         return response( Esercente::withTrashed()->get() );
     }
     
@@ -33,7 +35,8 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        //Gate::authorize('create', Esercente::class);
+
+        $this->authorize('create', Esercente::class);
 
         // TODO Validazione della richiesta
         $dati = $request->validate([
@@ -74,17 +77,24 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $user->save();
 
-        $metas = [];
+        // $metas = [];
 
-        if( Arr::exists($dati, 'meta') ) {
+        // TODO Salvare i meta
+
+        // if( Arr::exists($dati, 'meta') ) {
         
-            foreach($dati['meta'] as $key => $value) {
-                if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
-            }
+        //     foreach($dati['meta'] as $key => $value) {
+        //         if ( Arr::exists( $user->meta , $key ) ) { // Aggiorniamo il metadato
 
-            if ( count($metas) ) $user->meta()->saveMany($metas);
+        //         } else { // Creiamo il metadato
+                    
+        //         }
+        //         if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+        //     }
 
-        }
+        //     if ( count($metas) ) $user->meta()->saveMany($metas);
+
+        // }
 
         $user->sendEmailVerificationNotification();
 
@@ -98,9 +108,11 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function show( $esercente)
+    public function show( Esercente $esercente )
     {
-        return response( Esercente::withTrashed()->findOrFail($esercente) );
+        $this->authorize( 'view', $esercente );
+
+        return response( $esercente );
     }
 
     /**
@@ -110,50 +122,53 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $esercente)
+    public function update(Request $request, Esercente $esercente)
     {
-        $user = Esercente::findOrFail($esercente);
+        $this->authorize( 'update' , $esercente );
 
         // TODO Validazione della richiesta
+
         $dati = $request->validate([
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->email, 'email')],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($esercente->email, 'email')],
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
-            'username' => [ 'required', Rule::unique('users', 'username')->ignore($user->username, 'username')],
-            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($user->piva, 'piva')], 
-            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($user->cf, 'cf')],
+            'username' => [ 'required', Rule::unique('users', 'username')->ignore($esercente->username, 'username')],
+            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($esercente->piva, 'piva')], 
+            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($esercente->cf, 'cf')],
             'nome' => 'string|required'
         ]);
 
-        $user->fill($dati);
+        $esercente->fill($dati); // TODO: quanto è sicuro? L'attributo fillable come è impostato?
 
-        $user->nome = $request->input('nome', false) ;
+        $esercente->nome = $request->input('nome', false) ;
 
-        $user->sdi = $request->input('sdi', false) ;
+        $esercente->sdi = $request->input('sdi', false) ;
 
-        $user->pec = $request->input('pec', false) ;
+        $esercente->pec = $request->input('pec', false) ;
 
-        $user->indirizzo = $request->input('indirizzo', false) ;
+        $esercente->indirizzo = $request->input('indirizzo', false) ;
 
-        $user->sede_legale = $request->input('sede_legale', false) ;
+        $esercente->sede_legale = $request->input('sede_legale', false) ;
 
-        $user->ragione_sociale = $request->input('ragione_sociale', false) ;
+        $esercente->ragione_sociale = $request->input('ragione_sociale', false) ;
 
-        $user->save();
+        $esercente->save();
 
         $metas = [];
+
+        // TODO Metadati
 
         // if( Arr::exists($dati, 'meta') ) {
         
         //     foreach($dati['meta'] as $key => $value) {
-        //         if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+        //         if ( $value ) $metas[] = UserMeta::updateOrCreate( ["chiave" => $key , "user_id" => $esercente->id ], [  "valore" => $value ] );
         //     }
 
-        //     if ( count($metas) ) $user->meta()->saveMany($metas);
+        //     if ( count($metas) ) $esercente->meta()->saveMany($metas);
 
         // }
 
-        return response( $user );
+        return response( $esercente );
     }
 
     /**
@@ -162,10 +177,9 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function destroy($esercente)
+    public function destroy( Esercente $esercente)
     {
-        $esercente = Esercente::findOrFail($esercente);
-        // TODO Autorizza 
+        $this->authorize('delete', $esercente );
 
         $esercente->delete();
     
@@ -173,9 +187,9 @@ class EsercenteController extends \App\Http\Controllers\Controller
             
     }
 
-    public function restore($esercente)
+    public function restore( $esercente )
     {
-        $esercente = Esercente::withTrashed()->findOrFail($esercente); // TODO oppure onlyTrashed?
+        $this->authorize( 'restore', $esercente = Esercente::withTrashed()->findOrFail( $esercente ) );  // TODO oppure onlyTrashed?
 
         if ( $esercente->restore() ) {
             return response( $esercente );
