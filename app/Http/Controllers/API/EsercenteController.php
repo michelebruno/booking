@@ -5,10 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Esercente;
 use App\User;
 
-use App\Models\UserMeta;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -196,5 +193,20 @@ class EsercenteController extends \App\Http\Controllers\Controller
         } else abort(400);
     }
 
+    public function setNote( Esercente $esercente , Request $request )
+    {
+        // TODO : authorize
+        // TODO : e per gli altri campi?
+        $dati = $request->validate([
+            'note' => 'required|string'
+        ]);
+
+        $esercente->note = $dati['note'];
+        
+        $esercente->save();
+
+        return response($esercente);
+
+    }
 
 }

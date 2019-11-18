@@ -33,7 +33,7 @@ class SettingController extends Controller
      */
     public function store(Request $request)
     {
-        
+        // TODO: AUTHORIZE
     }
 
     /**
@@ -54,16 +54,8 @@ class SettingController extends Controller
      * @param  \App\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $setting)
+    public function update(Request $request, Setting $setting)
     {
-        // TODO: AUTHORIZE
-
-        $request->validate([
-            'valore' => 'required',
-            'autoload' => 'required|boolean'
-        ]);
-
-        return response( Setting::updateOrCreate([ 'chiave' => $setting], ['valore' => $request->input('valore'), 'autoload' => $request->input('autoload') ]));
     }
 
     /**

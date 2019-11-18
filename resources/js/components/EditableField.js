@@ -9,7 +9,7 @@ import InputGroup  from "react-bootstrap/InputGroup"
 import Spinner  from "react-bootstrap/Spinner"
 import dot from "dot-object" 
 
-const EditableField = ( { label, target , name, initialValue, onSuccess, ...props} ) => {
+const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess, isFile, ...props} ) => {
     
     const [editing, setEditing] = useState(false)
     
@@ -44,35 +44,45 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
         
     const handleSubmit = () => {
 
+        if ( ! editing ) return;
+
         setSending(true) ;
 
         let data = dot.str(name, value, {});
+        let headers = {}
+
+        if ( isFile ) {
+            data = new FormData()
+            data.append(name, value)
+            headers['Content-Type'] = 'multipart/form-data'
+        }
    
         axios({
             method: props.method ? props.method : "patch",
             url: props.url,
-            data: data
-        }) 
-        .then( (res) => { 
-            setEditing(false); 
-            setSending("success") 
-            if ( onSuccess ) onSuccess(res.data)
-            else console.warn("No onSuccess function")
-            
-        })  
-        .catch( error => { 
-            if (error.response) {
-
-                setSending(false)
-
-                if (error.response.status === 422) { // Errore di validazione
-                    setErrors(error.response.data.errors)
-                } 
+            data,
+            headers
+        })
+            .then( (res) => { 
+                setEditing(false); 
+                setSending("success") 
+                if ( onSuccess ) onSuccess(res.data)
+                else console.warn("No onSuccess function")
                 
-            } else {
-                console.error(error)
-            }
-        } )
+            })  
+            .catch( error => { 
+                if (error.response) {
+
+                    setSending(false)
+
+                    if (error.response.status === 422) { // Errore di validazione
+                        setErrors(error.response.data.errors)
+                    } 
+                    
+                } else {
+                    console.error(error)
+                }
+            } )
     }
 
     if (sending === "success") {
@@ -82,7 +92,7 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
     }
 
     const displayValue = () => {
-        if ( !props.children ) return value;
+        if ( ! props.children ) return value;
 
         let options = [];
 
@@ -104,12 +114,9 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
         return <Form.Control key="1" {...props} { ...dynamicProps() } value={value} onChange={ e => setValue(e.target.value)} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
     }
 
-    // if (showErrorModal) {
-    //     return <ErrorModal response={showErrorModal} show={ showErrorModal ? true : false } onHide={() => setShowErrorModal(false)} />
-    // }
     return <FormGroup as={Row} controlId={target} >
-        <Form.Label column md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label>
-        <Col md="9">                    
+        { ! noLabel && <Form.Label column md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label> }
+        <Col md={noLabel ? 12 : 9}>                    
             { editing && <InputGroup onDoubleClick={() => setEditing(true)}>
 
                 <InputGroup.Prepend>
@@ -138,6 +145,7 @@ const EditableField = ( { label, target , name, initialValue, onSuccess, ...prop
 EditableField.propTypes = {
     name : PropTypes.string.isRequired,
     label : PropTypes.string,
+    noLabel : PropTypes.bool,
     url: PropTypes.string.isRequired,
     method: PropTypes.oneOf(['post', 'put', 'patch']),
     onSuccess: PropTypes.func

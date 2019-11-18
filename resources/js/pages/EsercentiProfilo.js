@@ -7,6 +7,7 @@ import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
+import EditableField from '../components/EditableField';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
@@ -166,9 +167,12 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                 <Col xs="6" lg="4" xl="3">
                     <Card>
                         <Card.Body>
-                            <Card.Title><h4>Note</h4></Card.Title>
+                            <Card.Title>
+                                <h4 className="d-inline-block">Note</h4>
+                                <small className="text-muted"> Non visibile all'esercente</small>
+                            </Card.Title>
                             <Card.Text>
-                                Note..
+                                <EditableField name="note" noLabel initialValue={ esercente.note } url={esercente._links.self + "/note" } method="patch" as="textarea" />
                             </Card.Text>
                         </Card.Body>
                     </Card>
