@@ -20,7 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password', 'cf', 'piva', 'ruolo'
+        'username', 'email', 'password', 'cf', 'piva', 'ruolo', 'nome'
     ];
 
     /**
@@ -33,7 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'nome' , 'abilitato'
+        'abilitato'
     ];
 
     /**
@@ -107,24 +107,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->attributes['abilitato'] = ! $this->trashed();
     }
 
-    public function getNomeAttribute()
-    {
-        return Arr::exists($this->meta, 'nome') ? $this->meta['nome'] : null;
-    }
-
-    public function setNomeAttribute($value)
-    {        
-       if ($value) $this->meta()->updateOrCreate(['chiave' => 'nome'], [ 'user_id' => $this->id, 'valore' => $value ]);
-    }
-
     public function getCognomeAttribute()
     {
         return array_key_exists('cognome', $this->meta) ? $this->meta['cognome'] : null;
-    }
-
-    public function getDenominazioneAttribute()
-    {
-        return ( $this->nome && $this->cognome ) ? $this->nome." ".$this->cognome : null;
     }
 
     /* 

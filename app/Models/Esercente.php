@@ -16,7 +16,7 @@ class Esercente extends User
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password', 'cf', 'piva'
+        'username', 'email', 'password', 'cf', 'piva', 'nome'
     ];
 
     protected $attributes = [
@@ -24,7 +24,7 @@ class Esercente extends User
     ];
 
     protected $appends = [
-        'nome', 'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links', 'abilitato'
+        'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links', 'abilitato'
     ];
 
     public static function boot()
@@ -43,7 +43,7 @@ class Esercente extends User
 
         $meta = $this->exceptFromTraits(self::class);
 
-        $array['meta'] = Arr::except($meta, [ 'nome' , 'sdi', 'pec', 'ragione_sociale', 'sede_legale' ]); 
+        $array['meta'] = Arr::except($meta, [ 'sdi', 'pec', 'ragione_sociale', 'sede_legale' ]); 
 
         return $array;
     }

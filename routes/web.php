@@ -13,11 +13,6 @@
 
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/test', function ()
-{
-    return view('test');
-});
-
 Route::get('/api/v1/auth', function ()
 {
     $user = request()->user();
@@ -63,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 Route::get('/', function () { 
     return redirect('/login');
 });
+
 Auth::routes(['verify' => true]);
 
 Route::get('/logout', 'Auth\LoginController@logout');

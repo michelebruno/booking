@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Resources\UserResource;
 use App\Models\Esercente;
 use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +13,6 @@ use Illuminate\Support\Facades\Gate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 
 Route::get('account', function() { 
     
