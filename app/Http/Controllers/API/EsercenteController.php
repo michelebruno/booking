@@ -74,6 +74,8 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $user->save();
 
+        $user->markEmailAsVerified();
+
         // $metas = [];
 
         // TODO Salvare i meta
@@ -93,7 +95,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         // }
 
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
 
         return response( $user );
 
