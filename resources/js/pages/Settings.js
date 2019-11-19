@@ -11,6 +11,11 @@ import { settingUpdated } from "../_actions"
 
 import EditableField from "../components/EditableField"
 
+const SettingEditableField = ( props ) => {
+
+    return <EditableField method="post" url="/settings" { ...props } />
+}
+
 const Settings = props => {
 
     const [data, setData] = useState(null);
@@ -34,8 +39,16 @@ const Settings = props => {
             <Col lg="6">
                 <Card>
                     <Card.Body> 
-                        <Form onSubmit={ e => e.preventDefault() }>
-                            <EditableField name="base_url" label="Url di base" url="/settings" method="put" />
+                        <EditableField name="base_url" label="Url di base" url="/settings" method="put" />
+                        <EditableField name="favicon" type="file" accept=".ico" url="/settings" method="put" isFile label="Favicon"/>
+                        <Form onSubmit={ e => e.preventDefault}>
+                            <Form.Group as={Row} controlId="favicon">
+                                <Form.Label md="3" column >Favicon</Form.Label>
+                                <Col md="9" >
+                                    <Form.Control type="file" accept=".ico" />
+                                </Col>
+                            </Form.Group>
+
                         </Form>
                     </Card.Body>
                 </Card>

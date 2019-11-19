@@ -45,16 +45,12 @@ const App = ( { currentUser, settings, ...props} ) => {
 								path={route.path}
 								exact={route.exact}
 								roles={route.roles}
-								component={withLayout(props => { 
-									
-									return (
-										<Suspense fallback={loading()}>
+								component={ props => <Suspense fallback={ loading() }>
 											<AuthLayout {...props} tastimenu={route.tastimenu} title={route.title}>
 												<route.component {...props} />
 											</AuthLayout>
 										</Suspense>
-										);
-									})} 
+									} 
 							/>
 						);
 					})}

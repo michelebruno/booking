@@ -24,7 +24,7 @@ class Esercente extends User
     ];
 
     protected $appends = [
-        'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links', 'abilitato'
+        'pec', 'sdi', 'indirizzo', 'sede_legale', 'ragione_sociale', '_links', 'abilitato', 'note'
     ];
 
     public static function boot()
@@ -41,7 +41,7 @@ class Esercente extends User
     {
         $array = parent::toArray();
 
-        $meta = $this->exceptFromTraits(self::class);
+        $meta = $this->exceptFromTraits( self::class );
 
         $array['meta'] = Arr::except($meta, [ 'sdi', 'pec', 'ragione_sociale', 'sede_legale' ]); 
 
@@ -58,9 +58,9 @@ class Esercente extends User
         ];
     }
 
-    public function setCfAttribute($value)
+    public function setCfAttribute( $value )
     {
-        return $this->attributes['cf'] = trim( strtoupper($value) );
+        return $this->attributes['cf'] = trim( strtoupper( $value ) );
     }
 
     public function getRagioneSocialeAttribute()
@@ -68,9 +68,9 @@ class Esercente extends User
         return Arr::exists($this->meta, 'ragione_sociale') ? $this->meta['ragione_sociale'] : null;
     }
 
-    public function setRagioneSocialeAttribute($value)
+    public function setRagioneSocialeAttribute( $value )
     {
-        if ($value) $this->meta()->updateOrCreate(['chiave' => 'ragione_sociale'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'ragione_sociale'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getSedeLegaleAttribute()
@@ -78,9 +78,9 @@ class Esercente extends User
         return Arr::exists($this->meta, 'sede_legale') ? $this->meta['sede_legale'] : null;
     }
 
-    public function setSedeLegaleAttribute($value)
+    public function setSedeLegaleAttribute( $value )
     {        
-        if ($value) $this->meta()->updateOrCreate(['chiave' => 'sede_legale'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'sede_legale'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getPecAttribute()
@@ -88,19 +88,29 @@ class Esercente extends User
         return Arr::exists($this->meta, 'pec') ? $this->meta['pec'] : null;
     }
 
-    public function setPecAttribute($value)
+    public function setPecAttribute( $value )
     {        
-        if ($value) $this->meta()->updateOrCreate(['chiave' => 'pec'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'pec'], [ 'user_id' => $this->id, 'valore' => $value ]);
+    }
+
+    public function getNoteAttribute()
+    {
+        return Arr::exists($this->meta, 'note') ? $this->meta['note'] : null;
+    }
+
+    public function setNoteAttribute( $value )
+    {        
+       if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'note'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getSDIAttribute()
     {
-        return Arr::exists($this->meta, 'sdi') ? $this->meta['sdi'] : null;
+        return Arr::exists($this->meta, 'SDI') ? $this->meta['SDI'] : null;
     }
 
-    public function setSDIAttribute($value)
+    public function setSDIAttribute( $value )
     {        
-       if ($value) $this->meta()->updateOrCreate(['chiave' => 'sdi'], [ 'user_id' => $this->id, 'valore' => $value ]);
+       if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'SDI'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
 }

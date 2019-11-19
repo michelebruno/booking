@@ -7,6 +7,7 @@ import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
+import EditableField from '../components/EditableField';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 
@@ -23,7 +24,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
     const { esercente } = api 
     
-    const TastiProfiloEsercente = ( props ) => {
+    const TastiProfiloEsercente = ( ) => {
 
         const [showModal, setShowModal] = useState(false)
 
@@ -42,7 +43,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                             Modifica
                         </Button>
                     }
-                    <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> 
+                    { ! props.isCurrentUser && <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> }
                 </Form>
                 
                  
@@ -97,7 +98,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
             
-            { api !== "loading" && esercente && <><div className="d-flex justify-content-between">
+            { api.status !== "loading" && esercente && <><div className="d-flex justify-content-between">
 
                 <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
 
@@ -163,19 +164,21 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col xs="6" lg="4" xl="3">
+                { ! props.isCurrentUser && esercente.note && <Col xs="6" lg="4" xl="3">
                     <Card>
                         <Card.Body>
-                            <Card.Title><h4>Note</h4></Card.Title>
+                            <Card.Title>
+                                <h4 className="d-inline-block">Note</h4>
+                                <small className="text-muted"> Non visibile all'esercente</small>
+                            </Card.Title>
                             <Card.Text>
-                                Note..
+                                <EditableField name="note" noLabel initialValue={ esercente.note } url={esercente._links.self + "/note" } method="patch" as="textarea" />
                             </Card.Text>
                         </Card.Body>
                     </Card>
-                </Col>
-                <Col>
-                
-                <Card>
+                </Col>}
+                <Col xs="6" lg="4" xl="3">
+                    <Card>
                         <Card.Body>
                             <h2>Azioni richieste</h2>
                             <ul>
