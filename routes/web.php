@@ -80,5 +80,21 @@ if ( env('APP_ENV') == 'local ') {
             Artisan::call('key:generate');
             return response( nl2br( Artisan::output() ) );
         });
+    
+        Route::get('key', function ($id) {
+            Artisan::call('key:generate');
+            return response( nl2br( Artisan::output() ) );
+        });
+
+        Route::get('composer/init', function () {
+
+            exec("cd ..");
+
+            exec("php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\"");
+            exec("php -r \"if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a443b120cd5ba38043260d5c4023dbf93e1558871f1f07f58274fc6f4c93bcfd858c6bd0775cd8d1') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;\"");
+            exec("php composer-setup.php");
+            exec("php -r \"unlink('composer-setup.php');\"");
+            exec("php composer.phar install");
+        });
     });
 }
