@@ -9,11 +9,7 @@ class Tariffa extends Model
     protected $table = "tariffe";
 
     protected $appends = [
-        'variante'
-    ];
-
-    protected $hidden = [
-        'variante_tariffa_id'
+        'slug' , 'titolo'
     ];
 
     public $timestamps = false;
@@ -28,9 +24,13 @@ class Tariffa extends Model
         return $this->belongsTo('App\Models\VarianteTariffa', 'variante_tariffa_id');
     }
 
-    public function getVarianteAttribute()
+    public function getSlugAttribute()
     {
-        return $this->variante()->first();
+        return $this->variante->slug;
     }
 
+    public function getTitoloAttribute()
+    {
+        return $this->variante->titolo;
+    }
 }

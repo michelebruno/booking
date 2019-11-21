@@ -2,7 +2,7 @@ import React, { useState , useEffect } from 'react';
 
 import { connect } from 'react-redux'
  
-import { Row , Col , Table , Card, Nav, Button, ButtonToolbar, Alert , Form, Badge } from 'react-bootstrap';
+import { Row , Col , Table , Card, Nav, Button, ButtonToolbar, Alert , Form, Badge, Modal } from 'react-bootstrap';
 import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
@@ -10,10 +10,13 @@ import AxiosConfirmModal from '../components/AxiosConfirmModal';
 import EditableField from '../components/EditableField';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
+const NuovoServizio = React.lazy( () => import( '../components/NuovoServizio' ) );
 
 const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
 
-    const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
+    const [ tabAttivitàAperta, setTabAttivitàAperta ] = useState("convalide");
+
+    const [servizioModal, setServizioModal] = useState(false)
 
     let initialApiState = { status: "loading" }
 
@@ -109,6 +112,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                     </Button>
                 </span>}
             </div>
+            
             <Row>
                 { location.state && location.state.success && <Col lg="4">
                     <Alert variant="success" >I dati sono stati aggiornati</Alert> 
@@ -196,7 +200,19 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                             <div className="d-flex justify-content-between">
 
                                 <h2>Servizi</h2>
-                                <span><Button variant="outline-secondary" size="sm">Aggiungi servizio</Button></span>
+                                
+                                <span><Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button></span>
+
+                                { servizioModal !== false && <Modal show={true} >
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Aggiungi un nuovo servizio</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <React.Suspense>
+                                            <NuovoServizio { ...servizioModal } />
+                                        </React.Suspense>
+                                    </Modal.Body>
+                                </Modal>  }
                             </div>
                             <Table hover>
                                 <thead>
