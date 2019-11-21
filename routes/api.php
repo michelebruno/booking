@@ -32,8 +32,12 @@ Route::apiResource('users', 'API\UserController')
 Route::apiResource('settings', 'API\SettingController')
     ->middleware('auth:api');
 
+Route::apiResource('servizi', 'API\ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
+    ->middleware('auth:api');
+
 Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]])
     ->middleware('auth:api');
 
 Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore')->middleware('auth:api');
+
 Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote')->middleware('auth:api');

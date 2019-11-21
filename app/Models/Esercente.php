@@ -37,6 +37,11 @@ class Esercente extends User
         });
     }
 
+    public function servizi()
+    {
+        return $this->hasMany('App\Models\Servizio');
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
