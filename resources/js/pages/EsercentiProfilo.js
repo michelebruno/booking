@@ -27,7 +27,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
     const { esercente } = api 
     
-    const TastiProfiloEsercente = ( ) => {
+    const TastiProfiloEsercente = ( { className, ...props } ) => {
 
         const [showModal, setShowModal] = useState(false)
 
@@ -40,10 +40,10 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
         return <>
             { ! ( api.willBeReloaded || api.status == "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
                 
-                <Form> 
+                <Form className={className} > 
                     { ! props.isCurrentUser && esercente._links && 
                         <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
-                            Modifica
+                            <i className="fas fa-edit" /><span className=""> Modifica</span> 
                         </Button>
                     }
                     { ! props.isCurrentUser && <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> }
@@ -101,17 +101,22 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
             
-            { api.status !== "loading" && esercente && <><div className="d-flex justify-content-between">
+            { api.status !== "loading" && esercente && <>
+            
+            <div className="d-flex justify-content-between">
 
                 <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
-
+            </div>
+                <div className="w-100" />
                 { props.isCurrentUser && <span>
                     <Button as={Link} to={ { pathname : '/account/modifica' , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
                     </Button>
+                </span> }
+                { ! props.isCurrentUser && <span>
+                    <TastiProfiloEsercente className="d-md-none py-2" />
                 </span>}
-            </div>
             
             <Row>
                 { location.state && location.state.success && <Col lg="4">
@@ -119,7 +124,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                 </Col>  }
                 <div className="w-100"></div>
 
-                <Col xs="6" lg="4" xl="3">
+                <Col xs="12" lg="4" xl="3">
                     <Card>
                         <Card.Body>
                             <Card.Text>
@@ -141,7 +146,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col xs="6" lg="4" xl="3">
+                <Col xs="12" lg="4" xl="3">
                     <Card>
                         <Card.Body>
                             <Card.Title><h4>Dati di fatturazione</h4></Card.Title>
@@ -181,7 +186,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                         </Card.Body>
                     </Card>
                 </Col>}
-                <Col xs="6" lg="4" xl="3">
+                <Col xs="12" lg="4" xl="3">
                     <Card>
                         <Card.Body>
                             <h2>Azioni richieste</h2>
@@ -214,7 +219,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            <Table hover>
+                            <Table hover responsive>
                                 <thead>
                                     <tr>
                                         <th>ID</th>

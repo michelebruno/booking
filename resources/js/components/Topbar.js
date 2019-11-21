@@ -19,7 +19,7 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 
 					<li className="dropdown notification-list">
 						<button className="btn btn-link nav-link right-bar-toggle waves-effect waves-light" onClick={props.rightSidebarToggle}>
-						<i className="fe-settings noti-icon"></i>
+							<i className="fe-settings noti-icon"></i>
 						</button>
 					</li>
 				</ul>
@@ -38,13 +38,13 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 				<ul className="list-unstyled topnav-menu topnav-menu-left m-0">
 					<li>
 						<button className="button-menu-mobile disable-btn waves-effect" onClick={props.menuToggle}>
-						<i className="fe-menu"></i>
+							<i className="mdi mdi-menu"></i>
 						</button>
 					</li>
 
-					<li>
-						<h4 className="page-title-main d-inline-block">{props.title}</h4>
-						<TopbarButtons />
+					<li className="h-100">
+						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
+						<TopbarButtons className="d-none d-md-block" />
 					</li>
 				</ul>
 				

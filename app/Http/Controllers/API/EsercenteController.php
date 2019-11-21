@@ -104,13 +104,15 @@ class EsercenteController extends \App\Http\Controllers\Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Esercente  $esercente
+     * @param  int $esercente
      * @return \Illuminate\Http\Response
      */
-    public function show( Esercente $esercente )
+    public function show( $esercente )
     {
-        $this->authorize( 'view', $esercente );
+        $esercente = Esercente::withTrashed()->findOrFail($esercente);
 
+        $this->authorize( 'view', $esercente );
+        
         return response( $esercente );
     }
 

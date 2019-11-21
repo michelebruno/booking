@@ -102,7 +102,7 @@ const SideNavContent = ( { user } ) => {
                 </li> } 
                 { [ 'admin' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/settings" className="waves-effect side-nav-link-ref" >
-                        <i className="fe-settings"></i>
+                        <i className="mdi mdi-settings"></i>
                         <span>Impostazioni</span>
                     </Link>
                 </li>}
@@ -156,14 +156,29 @@ const UserProfile = ( { user , ...props } ) => {
     </React.Fragment>
 }
 
-const Sidebar = ( { currentUser }, ...props ) => {
-    const isCondensed = props.isCondensed || false;
+const Sidebar = ( { currentUser , ...props } ) => {
+    
+    if ( ! props.isCondensed) {
+        document.body.classList.remove("sidebar-enable");
+        document.body.classList.remove("enlarged");
+    } else {
+        document.body.classList.add("sidebar-enable");
+        const isSmallScreen = window.innerWidth < 768;
+        if (!isSmallScreen) {
+            document.body.classList.add("enlarged");
+        }
+    }
 
+    
+    
     return(
         <React.Fragment>
             <div className='left-side-menu' >
-                { !isCondensed && <PerfectScrollbar><UserProfile user={ currentUser }/><SideNavContent user={ currentUser } /></PerfectScrollbar> }
-                { isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/> }
+                { ! props.isCondensed && <PerfectScrollbar>
+                    <UserProfile user={ currentUser }/>
+                    <SideNavContent user={ currentUser } />
+                </PerfectScrollbar> }
+                { props.isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/> }
             </div>
         </React.Fragment>
     )

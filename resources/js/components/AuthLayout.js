@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense , useState } from "react";
 import { Container } from 'react-bootstrap';
 
 import profilePic from '../../images/users/user-1.jpg';
@@ -25,6 +25,8 @@ const RightSidebarContent = (props) => {
 }
 
 const AuthLayout = ( props ) => {
+
+    const [isCondensed, setIsCondensed] = useState(false)
     
     const signOut = (e) => {
         e.preventDefault();
@@ -36,6 +38,7 @@ const AuthLayout = ( props ) => {
      */
     const toggleMenu = (e) => {
         e.preventDefault();
+        setIsCondensed( !isCondensed )
     }
 
     
@@ -54,7 +57,7 @@ const AuthLayout = ( props ) => {
             <div id="wrapper">
                 <Suspense fallback={loading()}>
                     <Topbar rightSidebarToggle={toggleRightSidebar} menuToggle={toggleMenu} {...props} />
-                    <Sidebar ></Sidebar>
+                    <Sidebar isCondensed={isCondensed} { ...props } ></Sidebar>
                 </Suspense>
                 <div className="content-page">
                     <div className="content">

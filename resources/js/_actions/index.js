@@ -13,7 +13,7 @@ export function settingUpdated( payload ) {
  }
 
  export function setTopbarButtons( payload ) {
-    return { type : SET_TOPBAR_BUTTONS , payload }
+    return { type : SET_TOPBAR_BUTTONS , payload  }
 }
 
 export function unsetTopbarButtons( payload ) {

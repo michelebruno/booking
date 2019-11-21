@@ -115,8 +115,8 @@ const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess
     }
 
     return <FormGroup as={Row} controlId={target} >
-        { ! noLabel && <Form.Label column md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label> }
-        <Col md={noLabel ? 12 : 9}>                    
+        { ! noLabel && <Form.Label column xs={12} md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label> }
+        <Col xs={12} md={noLabel ? 12 : 9} >                    
             { editing && <InputGroup onDoubleClick={() => setEditing(true)}>
 
                 <InputGroup.Prepend>
