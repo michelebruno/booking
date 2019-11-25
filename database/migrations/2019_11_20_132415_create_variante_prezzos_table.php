@@ -17,7 +17,14 @@ class CreateVariantePrezzosTable extends Migration
             $table->bigIncrements('id');
             $table->string('slug')->unique();
             $table->string('nome');
+            $table->unsignedBigInteger('fallback_id')
+                ->nullable()
+                ->default(null);
             $table->timestamps();
+
+            $table->foreign('fallback_id')
+                ->on('varianti_tariffa')
+                ->references('id');
         });
 
         Schema::table('tariffe', function (Blueprint $table) {

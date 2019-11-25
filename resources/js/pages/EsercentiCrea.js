@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
+import { connect } from "react-redux"
+
 import { Redirect } from "react-router-dom"
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -7,6 +9,8 @@ import Form  from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Card from 'react-bootstrap/Card'
 import Button  from 'react-bootstrap/Button'
+
+import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
 import { showErrorsFeedback , isInvalid } from '../_services/formValidation'
 
@@ -96,29 +100,6 @@ const FormEsercente = ( { match, location, ...props} ) => {
 
     }, [] )
     
-    
-
-    const { errors } = api;
-   
-    const anagrafica = {
-        email,
-        username,
-        indirizzo: {
-            via: indirizzoVia,
-            civico: indirizzoCivico,
-            citta: indirizzocitta,
-            provincia: indirizzoProvincia,
-            cap: indirizzoCAP
-        },
-        nome,
-        cf,
-        piva,
-        sdi,
-        ragione_sociale,
-        sede_legale,
-        pec
-    }
-
     useEffect( () => {
         if (api.status === "submit") {
             let method, url;
@@ -154,12 +135,41 @@ const FormEsercente = ( { match, location, ...props} ) => {
         };
     }, [api.status])
 
+    useEffect(() => {
+        props.setTopbarButtons( () => <Button onClick={handleSubmit} size="sm" >Salva</Button>)
+        return () => {
+            props.unsetTopbarButtons()
+        };
+    })
+    const { errors } = api;
+   
+    const anagrafica = {
+        email,
+        username,
+        indirizzo: {
+            via: indirizzoVia,
+            civico: indirizzoCivico,
+            citta: indirizzocitta,
+            provincia: indirizzoProvincia,
+            cap: indirizzoCAP
+        },
+        nome,
+        cf,
+        piva,
+        sdi,
+        ragione_sociale,
+        sede_legale,
+        pec
+    }
+    const handleSubmit = e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }
+
+
     return(
         <React.Fragment>
             { redirect && <Redirect to={{pathname : redirect.to , state: redirect.state }} />}
             { ( ( willBeReloaded || ! props.shouldBeReloaded ) || email ) && <>
             <h1>Crea nuovo</h1>
-            <Form onSubmit={  e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }}>
+            <Form onSubmit={ handleSubmit }>
                 <Card>
                     <Card.Body>
                         <Form.Group tag="fieldset" className="mx-lg-3 mx-xl-5">
@@ -282,10 +292,10 @@ const FormEsercente = ( { match, location, ...props} ) => {
                         </Form.Group>
                     </Card.Body>
                 </Card>
-                <Button type="submit" >Invia</Button>
+                <Button type="submit" >Salva</Button>
             </Form></>}
         </React.Fragment>
     )
 }
 
-export default FormEsercente;
+export default connect(null, { setTopbarButtons, unsetTopbarButtons } )(FormEsercente);

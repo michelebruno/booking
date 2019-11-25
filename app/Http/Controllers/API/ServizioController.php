@@ -28,19 +28,6 @@ class ServizioController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Servizio::class );
-
-        $dati = $request->validate([
-            'stato' => 'required|string',
-            'titolo' => 'required|string',
-            'codice' => 'required|unique:prodotti',
-            'esercente_id' => 'required|int' // Deve esistere ed essere esercente!
-        ]);
-
-        $servizio = new Servizio($dati);
-        $servizio->save();
-
-        return response($servizio, 201);
         
     }
 

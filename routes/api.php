@@ -13,30 +13,32 @@ use App\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::group(['middleware' => ['auth:api']], function () {
 
-Route::get('account', function() { 
+    Route::get('account', function() { 
+        
+        $user = request()->user();
     
-    $user = request()->user();
-
-    if ( $user->ruolo == 'esercente' ) {
-        return response( Esercente::findOrFail($user->id) );
-    }
-
-    return response($user);
-
-})->middleware('auth:api');
-
-Route::apiResource('users', 'API\UserController')
-    ->middleware('auth:api');
-
-Route::apiResource('settings', 'API\SettingController')
-    ->middleware('auth:api');
-
-Route::apiResource('servizi', 'API\ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
-    ->middleware('auth:api');
-
-Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]])
-    ->middleware('auth:api');
-
-Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore')->middleware('auth:api');
-Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote')->middleware('auth:api');
+        if ( $user->ruolo == 'esercente' ) {
+            return response( Esercente::findOrFail($user->id) );
+        }
+    
+        return response($user);
+    
+    });
+    
+    Route::apiResource('users', 'API\UserController');
+    
+    Route::apiResource('settings', 'API\SettingController');
+    
+    Route::apiResource('servizi', 'API\ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
+        ->only([ 'get' , 'head' ]);
+    
+    Route::apiResource( 'esercenti.servizi' , 'API\EsercenteServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' , 'esercenti' => 'esercente' ] ] );
+    
+    Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
+    
+    Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore');
+    Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote');
+    
+});

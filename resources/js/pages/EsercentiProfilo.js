@@ -2,12 +2,22 @@ import React, { useState , useEffect } from 'react';
 
 import { connect } from 'react-redux'
  
-import { Row , Col , Table , Card, Nav, Button, ButtonToolbar, Alert , Form, Badge, Modal } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+import Badge from 'react-bootstrap/Badge';
+import Modal from 'react-bootstrap/Modal';
 import PreLoaderWidget from '../components/Loader';
 import { Link } from "react-router-dom"
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
 import EditableField from '../components/EditableField';
+import BootstrapTable from "react-bootstrap-table-next"
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 const NuovoServizio = React.lazy( () => import( '../components/NuovoServizio' ) );
@@ -38,12 +48,12 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
         const { abilitato } = esercente ? esercente : false
 
         return <>
-            { ! ( api.willBeReloaded || api.status == "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
-                
+            { ! ( api.willBeReloaded || api.status === "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
+
                 <Form className={className} > 
                     { ! props.isCurrentUser && esercente._links && 
                         <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
-                            <i className="fas fa-edit" /><span className=""> Modifica</span> 
+                            <i className="fas fa-edit" /><span > Modifica</span> 
                         </Button>
                     }
                     { ! props.isCurrentUser && <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> }
@@ -65,16 +75,21 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                             <li>Inserire fatture</li>
                         </ul>
                 </AxiosConfirmModal>
+
             </ButtonToolbar> }
+
             
         </>
     }
 
-    props.setTopbarButtons( TastiProfiloEsercente )
+    const reloadApi = () => {
+        let n = Object.assign( {}, api, { willBeReloaded : true} ) ;  
+        return setApi(n) 
+    }
 
-    useEffect( () => {
-
-        if ( api.status == "loading" || api.willBeReloaded ) {
+    useEffect( () => {    
+        
+        if ( api.status === "loading" || api.willBeReloaded ) {
 
             let id = match.params.id || ( api.status == "OK" && api.esercente.id )
 
@@ -85,18 +100,45 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                     return setApi({ willBeReloaded : false , status : res.statusText , esercente: res.data})
                 })
                 .catch( error => {
-                    if ( axios.isCancel(error) )  return;
+                    if ( axios.isCancel(error) ) return;
                     // TODO gli altri errori per cui bisognerebbe cambiare pagina
+                    if ( error.response ) {
+                        // è un errore del server
+                    } else {
+                        // è un eccezione di javascript
+                    }
+
                 })
     
-            return () => {
+            return () => {                
                 source.cancel()
-                props.unsetTopbarButtons()
             }
 
         }
 
-    }, [])
+    }, [api])
+
+    useEffect(() => {
+        props.setTopbarButtons( TastiProfiloEsercente )
+        return () => {
+            props.unsetTopbarButtons()
+        };
+    })
+
+    const DeleteServizioButton = props => {
+        const [show, setShow] = useState(false)
+
+        return <>
+        
+            <Button variant="danger" className="ml-1" onClick={ () => setShow(true) }>
+                <i className="fas fa-trash" />
+            </Button>
+
+            <AxiosConfirmModal url={props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
+                Sei sicuro di cancellare questo servizio?
+            </AxiosConfirmModal>
+        </>
+    }
 
     return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
@@ -208,48 +250,76 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                 
                                 <span><Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button></span>
 
-                                { servizioModal !== false && <Modal show={true} >
+                                { servizioModal !== false && <Modal show={true} onHide={ () => setServizioModal(false)} >
                                     <Modal.Header closeButton>
                                         <Modal.Title>Aggiungi un nuovo servizio</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
                                         <React.Suspense>
-                                            <NuovoServizio { ...servizioModal } />
+                                            <NuovoServizio { ...servizioModal } url={ esercente._links.servizi } onSuccess={ reloadApi } />
                                         </React.Suspense>
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            <Table hover responsive>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nome</th>
-                                        <th>Deals associati</th>
-                                        <th>Prezzo (adulti)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            { esercente.servizi && <BootstrapTable 
+                                data={ esercente.servizi }
+                                keyField="id"
+                                columns={[
                                     {
-                                        [ 0, 1, 2, 3, 4, 5].map( ( value , index ) => {
-                                            return(
-                                                <tr key={index}>
-                                                    <td>{ "S-0001" + value }</td>
-                                                    <td>Pranzo da €12</td>
-                                                    <td>Pranzo tipico a Bologna</td>
-                                                    <td>12</td>
-                                                </tr>
+                                        dataField : 'codice',
+                                        text : 'Cod.'
+                                    },
+                                    {
+                                        dataField : 'titolo',
+                                        text : 'Titolo'
+                                    },
+                                    {
+                                        dataField : 'tariffe.intero.imponibile',
+                                        text : 'Costo intero (iva esc.)',
+                                        formatter : ( cell ) => cell ? "€ " + cell : "-"
+                                    },
+                                    {
+                                        dataField : 'iva',
+                                        text : 'IVA',
+                                        formatter : ( cell ) => cell + "%"
+                                    },
+                                    {
+                                        dataField : 'deal',
+                                        text : 'Deals collegati',
+                                        formatter: ( cell ) => {
+                                            if ( Array.isArray(cell) ) {
 
-                                            )
-                                        })
+                                                let deals = "";
+                                                cell.forEach(deal => {
+                                                    deals += deal.titolo + ", "
+                                                });
+    
+                                                return deals.substr(-2);
+                                            } else return cell
+                                        }
+                                    },
+                                    {
+                                        dataField : 'modifica',
+                                        text : '',
+                                        formatter : ( cell , row ) => {
+                                            return <>
+                                                <Button variant="success">
+                                                    <i className="fas fa-edit" />   
+                                                </Button>
+                                                <DeleteServizioButton url={ esercente._links.servizi + "/" + row.id } />
+                                            </>
+                                        }
                                     }
-                                </tbody>
-                            </Table>
+                                ] }
+                                bordered={ false }
+                                hover
+                                wrapperClasses="table-responsive"
+                                noDataIndication="Nessun servizio per questo esercente."
+                                />}
                         </Card.Body>
                     </Card>
                 </Col>
-            </Row>
-            <Row>
-                <Col xs="12">
+                <Col xs="12" >
                     <Card>
                         <Card.Header className="bg-white">
                             <h2>Attività</h2>
@@ -267,6 +337,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
                         </Card.Header>
                         <Card.Body>
+
                         { tabAttivitàAperta === "convalide" && <React.Suspense><TabellaConvalide /></React.Suspense>}
 
                         </Card.Body>

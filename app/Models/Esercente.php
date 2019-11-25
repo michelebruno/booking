@@ -42,6 +42,11 @@ class Esercente extends User
         return $this->hasMany('App\Models\Servizio');
     }
 
+    public function getServiziAttribute()
+    {
+        return $this->servizi()->get();
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
@@ -60,8 +65,13 @@ class Esercente extends User
             'edit' => '/esercenti/' . $this->id. '/modifica',
             'delete' => '/esercenti/' . $this->id,
             'restore' => '/esercenti/' . $this->id . '/restore',
+            'servizi' => '/esercenti/' . $this->id . '/servizi'
         ];
     }
+
+    /*
+     * ANAGRAFICA 
+     */
 
     public function setCfAttribute( $value )
     {
@@ -75,7 +85,7 @@ class Esercente extends User
 
     public function setRagioneSocialeAttribute( $value )
     {
-        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'ragione_sociale'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) return $this->meta()->updateOrCreate(['chiave' => 'ragione_sociale'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getSedeLegaleAttribute()
@@ -85,7 +95,7 @@ class Esercente extends User
 
     public function setSedeLegaleAttribute( $value )
     {        
-        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'sede_legale'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) return $this->meta()->updateOrCreate(['chiave' => 'sede_legale'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getPecAttribute()
@@ -95,7 +105,7 @@ class Esercente extends User
 
     public function setPecAttribute( $value )
     {        
-        if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'pec'], [ 'user_id' => $this->id, 'valore' => $value ]);
+        if ( $value ) return $this->meta()->updateOrCreate(['chiave' => 'pec'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getNoteAttribute()
@@ -105,7 +115,7 @@ class Esercente extends User
 
     public function setNoteAttribute( $value )
     {        
-       if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'note'], [ 'user_id' => $this->id, 'valore' => $value ]);
+       if ( $value ) return $this->meta()->updateOrCreate(['chiave' => 'note'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
     public function getSDIAttribute()
@@ -115,7 +125,7 @@ class Esercente extends User
 
     public function setSDIAttribute( $value )
     {        
-       if ( $value ) $this->meta()->updateOrCreate(['chiave' => 'SDI'], [ 'user_id' => $this->id, 'valore' => $value ]);
+       if ( $value ) return $this->meta()->updateOrCreate(['chiave' => 'SDI'], [ 'user_id' => $this->id, 'valore' => $value ]);
     }
 
 }

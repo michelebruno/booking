@@ -18,7 +18,6 @@ class CreatePrezzosTable extends Migration
             $table->unsignedBigInteger('prodotto_id');
             $table->unsignedBigInteger('variante_tariffa_id');
             $table->float('imponibile'); // 00'0000,00
-            $table->tinyInteger('iva', false, true);
 
             $table->foreign('prodotto_id')
                 ->on('prodotti')

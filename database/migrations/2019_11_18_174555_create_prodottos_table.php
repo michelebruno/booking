@@ -26,7 +26,8 @@ class CreateProdottosTable extends Migration
                 ->nullable()
                 ->default(null);
             $table->string('stato', 20); 
-            $table->integer('wp')
+            $table->tinyInteger('iva', false, true);
+            $table->integer('wp', false, true)
                 ->nullable()
                 ->default(null);           
             $table->softDeletes();

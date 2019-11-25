@@ -12,6 +12,10 @@ class Tariffa extends Model
         'slug' , 'titolo'
     ];
 
+    public $fillable = [
+        'variante_tariffa_id', 'imponibile'
+    ];
+
     public $timestamps = false;
 
     public function prodotto()

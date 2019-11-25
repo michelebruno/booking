@@ -13,6 +13,7 @@ $factory->define(Servizio::class, function (Faker $faker) {
         'titolo' => $faker->text(15),
         'descrizione' => $faker->text(20),
         'stato' => 'pubblico',
-        'esercente_id' => $faker->randomElement($esercenti)
+        'esercente_id' => $faker->randomElement($esercenti),
+        'iva' => 22
     ];
 });

@@ -19,10 +19,8 @@ class Servizio extends Prodotto
         'tariffe'
     ];
 
-    protected $guarded = [
-        'created_at',
-        'deleted_at', 
-        'updated_at'
+    protected $fillable = [
+        'titolo' , 'codice', 'stato', 'iva', 'wp'
     ];
 
     /*
@@ -57,8 +55,9 @@ class Servizio extends Prodotto
         }
     }
 
-    public function getTariffeAttribute()
+    public function scopeDi($query, $id)
     {
-        return $this->tariffe()->get();
+        return $query->where( 'esercente_id' , $id );
     }
+
 }

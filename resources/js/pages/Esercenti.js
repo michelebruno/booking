@@ -2,14 +2,25 @@ import React , { useState, useEffect } from 'react';
 
 import Loader from '../components/Loader';
 
-import { Row , Col , Table , Card, Pagination } from 'react-bootstrap';
+import { Row , Col , Card, Button  } from 'react-bootstrap';
+import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
 import BootstrapTable from 'react-bootstrap-table-next';
 import PreLoaderWidget from '../components/Loader';
+import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
 const Esercenti = ( { id, ...props } ) => {
 
     const [api, setApi] = useState({ status: "loading", data: null})
+
+    useEffect(() => {
+        props.setTopbarButtons( () => {
+            return <Button size="sm" as={Link} to="/esercenti/crea">Nuovo</Button>
+        })
+        return () => {
+            props.unsetTopbarButtons()
+        };
+    })
 
     useEffect(() => {
 
@@ -86,4 +97,4 @@ const Esercenti = ( { id, ...props } ) => {
 }
 
 
-export default Esercenti;
+export default connect(null, { setTopbarButtons, unsetTopbarButtons })(Esercenti);

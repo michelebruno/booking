@@ -10,7 +10,6 @@ $factory->define(Tariffa::class, function (Faker $faker) {
     $varianti = VarianteTariffa::all('id');
     return [
         'imponibile' => $faker->numberBetween(8,200),
-        'iva' => 22,
         'variante_tariffa_id' => $faker->randomElement($varianti)
     ];
 });

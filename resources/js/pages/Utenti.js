@@ -124,15 +124,17 @@ const Utenti = ( props ) => {
                 </p>
 
                 {api.status === "loaded" && api.data && 
-                <BootstrapTable
-                    columns={columns}
-                    keyField="id"
-                    data={api.data}
-                    // rowEvents={rowEvents}
-                    pagination={ paginationFactory() }
-                    hover
-                    bordered={false}
-                />}
+                    <BootstrapTable
+                        columns={columns}
+                        keyField="id"
+                        data={api.data}
+                        // rowEvents={rowEvents}
+                        pagination={ paginationFactory() }
+                        hover
+                        bordered={false}
+                        wrapperClasses="table-responsive"
+                    />
+                    }
                 { api.status === "loading" && <div className="p-5"><PreLoaderWidget /></div>}
                 { api.status === "error" && <Alert variant="danger">
                     { api.message }
