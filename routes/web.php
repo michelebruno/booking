@@ -26,7 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
         return view('app');
     });
 
-    Route::get('/esercenti/{a?}/{b?}', function() {
+    Route::get('/esercenti/{a?}/{b?}/{c?}/{d?}', function() {
         return view('app');
     });
 

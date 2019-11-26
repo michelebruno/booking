@@ -9,7 +9,7 @@ class Tariffa extends Model
     protected $table = "tariffe";
 
     protected $appends = [
-        'slug' , 'titolo'
+        'slug' , 'nome'
     ];
 
     public $fillable = [
@@ -33,8 +33,8 @@ class Tariffa extends Model
         return $this->variante->slug;
     }
 
-    public function getTitoloAttribute()
+    public function getNomeAttribute()
     {
-        return $this->variante->titolo;
+        return $this->variante->nome;
     }
 }

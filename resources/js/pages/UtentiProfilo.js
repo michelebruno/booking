@@ -26,7 +26,10 @@ const Profilo = ( { match , ...props }) => {
                     setUtente(res.data)
                 })
                 .catch( error => {
-                    if ( axios.isCancel(error) )  return;
+                    if ( axios.isCancel(error) ) return;
+                    if ( error.response ) {
+                        if ( error.response.status == 403 ) window.alert("Non hai i permessi per vedere questo utente").then(() => window.location = "/dashboard")
+                    }
                 })
     
             return () => source.cancel();

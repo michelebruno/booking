@@ -271,7 +271,8 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     },
                                     {
                                         dataField : 'titolo',
-                                        text : 'Titolo'
+                                        text : 'Titolo',
+                                        formatter: ( cell , row ) => <span title={ row.descrizione }>{cell}</span>
                                     },
                                     {
                                         dataField : 'tariffe.intero.imponibile',
@@ -299,11 +300,15 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                         }
                                     },
                                     {
+                                        dataField : 'disponibili',
+                                        text : 'Disponibilità'
+                                    },
+                                    {
                                         dataField : 'modifica',
                                         text : '',
                                         formatter : ( cell , row ) => {
                                             return <>
-                                                <Button variant="success">
+                                                <Button as={ Link } to={ { pathname : esercente._links.self + "/servizi/" + row.id , state : { servizio : row , esercente : esercente }}} variant="success">
                                                     <i className="fas fa-edit" />   
                                                 </Button>
                                                 <DeleteServizioButton url={ esercente._links.servizi + "/" + row.id } />

@@ -76,9 +76,11 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $user->markEmailAsVerified();
 
-        // $metas = [];
+        // * $metas = [];
 
         // TODO Salvare i meta
+
+        // ? O forse non servono?
 
         // if( Arr::exists($dati, 'meta') ) {
         

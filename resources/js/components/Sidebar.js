@@ -94,11 +94,6 @@ const SideNavContent = ( { user } ) => {
                         <i className="mdi mdi-tooltip-account "></i>
                         <span>Esercenti</span>
                     </Link>
-                    <ul className="nav-second-level nav" aria-expanded="false">
-                        <li>
-                            <Link to="/esercenti/crea" className="side-nav-link-ref">Crea esercente</Link>
-                        </li>
-                    </ul>
                 </li> } 
                 { [ 'admin' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/settings" className="waves-effect side-nav-link-ref" >

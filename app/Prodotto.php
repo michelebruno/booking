@@ -17,7 +17,7 @@ abstract class Prodotto extends Model
     ];
 
     protected $appends = [
-        'tariffe'
+        'tariffe' , '_links'
     ];
 
     public function tariffe()
@@ -40,6 +40,7 @@ abstract class Prodotto extends Model
 
     public function setTariffeAttribute($tariffe)
     {
+        if (! $tariffe ) return;
         $etichette = VarianteTariffa::all()->toArray();
 
         $etichette_slugs = array_column($etichette, 'slug');
@@ -52,5 +53,22 @@ abstract class Prodotto extends Model
                 $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichette[$pos]['id']], $value );
             }
         }
+    }
+
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id
+        ];
+    }
+
+    public function scopeDisponibili($query, $more_than = 0)
+    {
+        return $query->where('disponibili', '>', $more_than);
+    }
+
+    public function scopeAttivi($query)
+    {
+        return $query->whereIn('stato' , [ 'pubblico' , 'privato' ]);
     }
 }

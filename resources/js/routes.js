@@ -38,30 +38,6 @@ const PrivateRoute = ({ component: Component, roles, ...rest }) => (
 		return <Component {...props} />
 	}} />
 )
-
-const SalvaEsercente = props => <React.Fragment>
-	<Button variant="success">Salva</Button>
-</React.Fragment>
-
-const NuovoEsercente = props => <Button as={Link} to="/esercenti/crea" >Aggiungi esercente</Button>
-
-const SchedaProdottoTasti = ( props ) => <React.Fragment> 
-		{/* props.match.params.id è disponibile */}
-		<ButtonToolbar className="d-inline-block">
-			<Button  className="d-inline-block mr-2" variant="dark" size="sm">Modifica</Button> 
-			<Dropdown as={ButtonGroup}  className="d-inline-block" variant="success" size="sm" title="Aggiorna Wordpress">
-
-					<Button variant="success" >Aggiorna il server Wordpress</Button>
-
-					<Dropdown.Toggle split variant="success" className="align-middle" ><i className="fas fa-lg fa-sort-down h-100" /></Dropdown.Toggle>
-
-					<Dropdown.Menu>
-						<Dropdown.Item as="button">Cambia l'id associato</Dropdown.Item>
-					</Dropdown.Menu>
-			</Dropdown>
-		</ButtonToolbar>
-	</React.Fragment>
-
  
 const routes = [
 
@@ -69,16 +45,17 @@ const routes = [
   { path: '/account', exact:true, component: Account, route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/account/modifica', component: AccountModifica, route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
-  { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente', tastimenu: NuovoEsercente },
-  { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente', tastimenu: NuovoEsercente },
-  { path: '/esercenti/:id', component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' },
+  { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente' },
+  { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente' },  
+  { path: '/esercenti/:esercente/servizi/:servizio', exact: true, component: ServiziScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda servizio' },
+  { path: '/esercenti/:id', exact: true, component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' },  
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
-  { path: '/deals/modifica/:id', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
-  { path: '/deals/:id' , component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal', tastimenu : SchedaProdottoTasti },
+  { path: '/deals/modifica/:id', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
+  { path: '/deals/:id' , component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
   { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
-  { path: '/servizi/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio', tastimenu : SchedaProdottoTasti },
+  { path: '/servizi/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio' },
   { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },
   { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
   { path: '/utenti/:id', component: UtentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo Utente' },

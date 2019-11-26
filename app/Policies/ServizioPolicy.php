@@ -30,7 +30,7 @@ class ServizioPolicy
      */
     public function view(User $user, Servizio $servizio)
     {
-        return $servizio->esercente_id == $user->id || in_array($user->ruolo, [ 'admin', 'account_manager' ]);
+        return $servizio->esercente_id == $user->id || in_array( $user->ruolo, [ 'admin', 'account_manager' ] );
     }
 
     /**

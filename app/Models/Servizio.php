@@ -15,12 +15,8 @@ class Servizio extends Prodotto
         'tipo' => 'servizio'
     ];
 
-    protected $appends = [
-        'tariffe'
-    ];
-
     protected $fillable = [
-        'titolo' , 'codice', 'stato', 'iva', 'wp'
+        'titolo' , 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
     ];
 
     /*

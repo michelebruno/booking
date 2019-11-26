@@ -25,7 +25,10 @@ class CreateProdottosTable extends Migration
                 ->unsigned()
                 ->nullable()
                 ->default(null);
-            $table->string('stato', 20); 
+            $table->string('stato', 20);
+            $table->integer('disponibili', false, true)
+                ->nullable()
+                ->default(0);
             $table->tinyInteger('iva', false, true);
             $table->integer('wp', false, true)
                 ->nullable()

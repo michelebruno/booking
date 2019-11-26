@@ -9,7 +9,7 @@ import InputGroup  from "react-bootstrap/InputGroup"
 import Spinner  from "react-bootstrap/Spinner"
 import dot from "dot-object" 
 
-const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess, isFile, ...props} ) => {
+const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile, textMutator, append, prepend , ...props} ) => {
     
     const [editing, setEditing] = useState(false)
     
@@ -32,10 +32,10 @@ const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess
     
     const showErrorsFeedback = () => {
 
-        (errors && typeof errors[target] !== 'undefined' ) && 
+        (errors && typeof errors[name] !== 'undefined' ) && 
         <Form.Control.Feedback type="invalid">
             <ul>
-                {errors[target].map( ( error, i ) => 
+                {errors[name].map( ( error, i ) => 
                     <li key={i}>{error}</li>
                     )}
             </ul>
@@ -64,10 +64,16 @@ const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess
             headers
         })
             .then( (res) => { 
-                setEditing(false); 
                 setSending("success") 
-                if ( onSuccess ) onSuccess(res.data)
-                else console.warn("No onSuccess function")
+                
+                setTimeout(() => {                    
+                    
+                    setSending(false)
+                    setEditing(false); 
+
+                    if ( onSuccess ) onSuccess(res.data)
+                    else console.warn("No onSuccess function")
+                }, 3000)
                 
             })  
             .catch( error => { 
@@ -85,14 +91,9 @@ const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess
             } )
     }
 
-    if (sending === "success") {
-        setTimeout(() => {
-            setSending(false)
-        }, 3000)
-    }
 
     const displayValue = () => {
-        if ( ! props.children ) return value;
+        if ( ! props.children ) return( prepend + value + append );
 
         let options = [];
 
@@ -111,10 +112,10 @@ const EditableField = ( { label, noLabel, target , name, initialValue, onSuccess
     }
     
     const Control = () => {
-        return <Form.Control key="1" {...props} { ...dynamicProps() } value={value} onChange={ e => setValue(e.target.value)} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
+        return <Form.Control { ...props } { ...dynamicProps() } value={value} onChange={ e => setValue( textMutator(e.target.value) )} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
     }
 
-    return <FormGroup as={Row} controlId={target} >
+    return <FormGroup as={Row} controlId={name} >
         { ! noLabel && <Form.Label column xs={12} md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label> }
         <Col xs={12} md={noLabel ? 12 : 9} >                    
             { editing && <InputGroup onDoubleClick={() => setEditing(true)}>
@@ -150,5 +151,12 @@ EditableField.propTypes = {
     method: PropTypes.oneOf(['post', 'put', 'patch']),
     onSuccess: PropTypes.func
 }
+
+EditableField.defaultProps = {
+    textMutator : str => str,
+    append : "",
+    prepend: ""
+}
+
 
 export default EditableField

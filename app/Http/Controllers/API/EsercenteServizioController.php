@@ -7,6 +7,7 @@ use App\Models\Esercente;
 use App\Models\Servizio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class EsercenteServizioController extends Controller
 {
@@ -33,6 +34,8 @@ class EsercenteServizioController extends Controller
         $dati = $request->validate([
             'stato' => 'required|string|in:pubblico,privato,bozza',
             'titolo' => 'required|string',
+            'descrizione' => 'string',
+            'disponibili' => 'integer',
             'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
             'iva' => 'integer|required',
             'tariffe' => 'array|bail',
@@ -74,9 +77,28 @@ class EsercenteServizioController extends Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Esercente $esercente)
+    public function update(Request $request, Esercente $esercente, Servizio $servizio)
     {
-        //
+        $this->authorize('create', Servizio::class );
+
+        $dati = $request->validate([
+            'stato' => 'string|in:pubblico,privato,bozza',
+            'titolo' => 'string',
+            'descrizione' => 'string',
+            'disponibili' => 'integer',
+            'codice' => Rule::unique('prodotti','codice')->ignore($servizio->id),
+            'iva' => 'integer|',
+            'tariffe' => 'array|bail',
+            'tariffe.intero.imponibile' => ''
+        ]);
+
+        $servizio->fill($dati);
+        
+        $servizio->save();
+
+        $servizio->tariffe = $request->input('tariffe', null);
+
+        return response($servizio);
     }
 
     /**

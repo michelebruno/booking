@@ -16,6 +16,7 @@ const NuovoServizio = ( props ) => {
     const [prezzo, setPrezzo] = useState( 0 )
     const [IVA, setIVA] = useState(22)
     const [stato, setStato] = useState("pubblico")
+    const [disponibili, setDisponibili] = useState(0)
 
     const data = {
         titolo,
@@ -24,6 +25,7 @@ const NuovoServizio = ( props ) => {
         codice,
         codice_personalizzato : ! customCod,
         iva: IVA,
+        disponibili,
         tariffe : {
             intero: {
                 imponibile: prezzo
@@ -86,11 +88,11 @@ const NuovoServizio = ( props ) => {
             </Col>
         </Form.Group> }
 
-        {! created && <Form.Group as={Row} controlId="customCod">
+        { !created && <Form.Group as={Row} controlId="customCod">
             <Col xs="8" md={ { offset : 4 , span : 8 }}>
                 <Form.Check className={ "align-self-center" } type="switch" checked={!customCod} label="Assegna codice prodotto automaticamente" onChange={ e => setCustomCod(!customCod) } />
             </Col>
-        </Form.Group>}
+        </Form.Group> }
 
         <Form.Group as={ Row } controlId="titolo" >
             <Form.Label column xs="12" md="4">Titolo</Form.Label>
@@ -118,11 +120,16 @@ const NuovoServizio = ( props ) => {
                 </Form.Control>                    
                 
                 { showErrorsFeedback( errors , 'stato' )}
-
             </Col>
         </Form.Group>
 
-
+        <Form.Group as={ Row } controlId="disponibili" >
+            <Form.Label column xs="12" md="4">Disponibili</Form.Label>
+            <Col xs="12" md="8">
+                <Form.Control type="number" value={disponibili} onChange={ e => setDisponibili(e.target.value) }  {...dynamicProps( 'disponibili' ) }/>
+                { showErrorsFeedback( errors , 'disponibili' )}
+            </Col>
+        </Form.Group>
 
         <Form.Group as={ Row } controlId="prezzo" required >
             <Form.Label column xs="12" md="4">Tariffa base</Form.Label>
@@ -149,7 +156,6 @@ const NuovoServizio = ( props ) => {
                     </InputGroup.Append>
                 </InputGroup>
                 { showErrorsFeedback( errors , 'iva')}
-
             </Col>
         </Form.Group>
         <Button type="submit" { ...{ disabled: api.status === "sending" || api.status === "Created" }} >Invia</Button>

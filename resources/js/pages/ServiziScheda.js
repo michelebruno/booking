@@ -1,18 +1,31 @@
-import React from 'react'
-import { Card, Row, Col, Image, Table, Badge } from 'react-bootstrap'
+import React , { useState } from 'react'
+import { Card, Row, Col, Form, InputGroup, Table, Badge, Button } from 'react-bootstrap'
+import PreLoaderWidget from '../components/Loader'
+
 import BootstrapTable from 'react-bootstrap-table-next'
-import faker from 'faker/locale/it'
 
+import cellEditFactory , { Type } from 'react-bootstrap-table2-editor';
+import EditableField from '../components/EditableField';
+import upperCase from 'upper-case';
 
-const Scheda = ( props ) => {
+const Scheda = ( { location , ...props} ) => {
 
-    const titolo = "Pranzo tipico dal Rosso",
-    descrizione = "Mollit eiusmod veniam amet aliqua. Dolore ullamco deserunt laborum laborum ut in ullamco consequat dolore magna officia aliquip excepteur. Ea deserunt occaecat aute elit deserunt qui est commodo. Elit adipisicing adipisicing duis reprehenderit reprehenderit. Cillum aliquip irure est nisi proident ut aliqua labore qui laboris. Sint dolor reprehenderit nostrud non velit esse. Laborum nulla aute sint anim quis.",
-    thumbnail = {
-        url : 'http://www.turismo.bologna.it/wp-content/uploads/2019/09/una-inclinata-laltra-di-più-le-torri-asinelli-e-garisenda.jpg',
-        alt : 'Vista qualsiasi di Bologna',
-        title : 'Vista qualsiasi di Bologna'
+    let initialServizio = false;
+
+    if ( location.state && location.state.servizio ) {
+        initialServizio =  location.state.servizio
+        initialServizio.willBeReloaded = true
     }
+
+    const [servizio, setServizio] = useState(initialServizio)
+
+    const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
+
+    let tariffe_array = []
+    
+    Object.keys(tariffe).map( slug => {
+        tariffe_array.push( tariffe[slug] )
+    })
 
     const prezzi = [
         {
@@ -43,88 +56,89 @@ const Scheda = ( props ) => {
         }
     ]
 
-    const dealscollegati = [
-        {
-            id: 2,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 8,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        },
-        {
-            id: 3,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 6,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        },
-        {
-            id: 4,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 8,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        }
-    ]
+    let disponibiliVariant = "success" 
+
+    switch (disponibili) {
+        case disponibili < 10:
+            disponibiliVariant = "danger"
+            break;
     
-    return(
+        default:
+            break;
+    }
+
+    const editableFieldProps = { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
+    
+    if ( servizio ) return(
         <React.Fragment>
             <Row>
                 <Col md="6" >
                     <Card>
                         <Card.Body> 
-                            <div><span className="h1">{titolo}</span>   <span className="h3"><Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: 31 <i className="fas fa-edit" /></Badge></span  > </div>
-                            <h4 className="text-muted">
-                                Descrizione
-                            </h4>
-                            <p>{descrizione}</p>
-                            <h4 className="text-muted">
-                                Tariffario
-                            </h4>
-                            <BootstrapTable
-                                keyField="id"
-                                data={prezzi}
-                                columns={[
-                                    { dataField: 'stato', text: 'Stato' },
-                                    { dataField: 'target.titolo', text: 'Titolo' },
-                                    { dataField: 'imponibile.costo', text: 'Prezzo' }
-                                ]}
-                                hover
-                                bordered={ false }
-                            /> 
+                            <div className="d-flex justify-content-between">
+                                <div >
+                                    <span className="h1" >{titolo}</span >
+                                    <br />
+                                    <span className="text-muted mr-1"><strong>Codice: </strong>{codice}</span>
+                                    { stato == "privato" && <Badge size="sm" variant="danger" >{stato}</Badge>}
+                                    { stato == "bozza" && <Badge size="sm" variant="light" >{stato}</Badge>}
+                                    </div>   
+                                <div className="h3">
+                                    <Badge variant={disponibiliVariant} className="h4 p-1 text-white align-items-center" >
+                                        Disponibili: { disponibili } 
+                                        <Button className="fas fa-edit ml-1" variant="success" />
+                                    </Badge>
+                                </div  > 
+                            </div>
+
+                            <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
+                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
+                            <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
+                                <option value="pubblico">Pubblico</option>
+                                <option value="privato">Privato</option>
+                                <option value="bozza">Bozza</option>
+                            </EditableField>
+
+                            <EditableField type="number" name="disponibili" label="Disponibili" initialValue={disponibili} { ...editableFieldProps}  />
                         </Card.Body>
                     </Card>
 
                 </Col>
-                <Col md="6">
+                <Col>
                     <Card>
                         <Card.Body>
-                            <h2>Azioni richieste</h2>
-                            <ul>
-                                <li>Approva la descrizione</li>
-                                <li>Inserisci le fatture di fine mese</li>
-                            </ul>
+
+                            <h3 className="text-muted">
+                                Tariffario
+                            </h3>
+
+                            <BootstrapTable
+                                keyField="id"
+                                data={ tariffe_array }
+                                columns={[
+                                    {
+                                        dataField: 'nome', 
+                                        text: 'Titolo'
+                                    },
+                                    { 
+                                        dataField: 'imponibile', 
+                                        text: 'Prezzo',
+                                        formatter: cell => cell ? "€" + cell : " - ",
+                                        editorStyle : { width : "5em" },
+                                        editCellClasses: "px-0"
+                                    } 
+                                ]}
+                                hover
+                                cellEdit={ cellEditFactory({ mode: "dbclick" })} 
+                                bordered={ false }
+                            /> 
+
                         </Card.Body>
                     </Card>
                 </Col>
+                <div className="w-100" />
             </Row>
             <Card>
                 <Card.Body>
@@ -138,25 +152,12 @@ const Scheda = ( props ) => {
                                         <th>Disponibilità</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {
-                                        [ 0, 1, 2, 3, 4, 5].map( ( value , index ) => {
-                                            return(
-                                                <tr key={index}>
-                                                    <td>{ "S-" + (value*2*value) + "0-1" + value }</td>
-                                                    <td>Pranzo da €12</td> 
-                                                    <td>12</td>
-                                                    <td>{ faker.random.number(28)}</td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
                             </Table>
                 </Card.Body>
             </Card>
         </React.Fragment>
     )
+    else return <PreLoaderWidget />
 }
 
 export default Scheda;
