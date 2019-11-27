@@ -59,7 +59,7 @@ class UserController extends Controller
 
             if ( count($metas) ) $user->meta()->saveMany($metas);
 
-            $user->sendEmailVerificationNotification();
+            $user->markEmailAsVerified();
 
             return response(new UserResource($user));
         } catch ( \Throwable $e ) {
@@ -79,7 +79,7 @@ class UserController extends Controller
 
         $this->authorize('view', $user);
 
-        return response(new UserResource( $user->append(['nome', 'cognome']) ) );
+        return response(new UserResource( $user ) );
     }
 
     /**
@@ -99,8 +99,6 @@ class UserController extends Controller
         $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
 
         $user->nome = $request->input('nome', false);
-
-        $user->cognome = $request->input('cognome', false);
 
         if ( $request->has('meta') ) {
             foreach ($request->input('meta') as $chiave => $valore) {

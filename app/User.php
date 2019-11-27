@@ -106,12 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->attributes['abilitato'] = ! $this->trashed();
     }
-
-    public function getCognomeAttribute()
-    {
-        return array_key_exists('cognome', $this->meta) ? $this->meta['cognome'] : null;
-    }
-
+    
     /* 
      *
      * SCOPES

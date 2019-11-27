@@ -14,7 +14,6 @@ const FormNuovoUtente =  props => {
     const [passwordConfirmation, setPasswordConfirmation] = useState("")
     const [ruolo, setRuolo] = useState("account_manager");
     const [nome, setNome] = useState("")
-    const [cognome, setCognome] = useState("")
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -29,10 +28,7 @@ const FormNuovoUtente =  props => {
                 ruolo,
                 password,
                 password_confirmation: passwordConfirmation,
-                meta : {
-                    nome,
-                    cognome
-                }
+                nome
             }).then( res => setApi({status: "success", data: res.data})
             ).catch( res => {
                 setApi({status: "error", data: res.response.data })
@@ -102,10 +98,6 @@ const FormNuovoUtente =  props => {
                     <Form.Group controlId="nome">
                         <Form.Label>Nome</Form.Label>
                         <Form.Control type="text" value={nome} onChange={ e => setNome(e.target.value) } />
-                    </Form.Group>
-                    <Form.Group controlId="cognome">
-                        <Form.Label>Cognome</Form.Label>
-                        <Form.Control value={cognome} onChange={ e => setCognome(e.target.value) } />
                     </Form.Group>
                     <Button type="submit" >Invia</Button>
                 </React.Fragment>
