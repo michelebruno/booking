@@ -90,7 +90,7 @@ const SideNavContent = ( { user } ) => {
                     </Link>
                 </li>}
                 { [ 'admin', 'account_manager'].indexOf(user.ruolo) !== -1 &&<li>
-                    <Link to="/esercenti" className="waves-effect side-nav-link-ref has-arrow" aria-expanded="false">
+                    <Link to="/esercenti" className="waves-effect side-nav-link-ref" aria-expanded="false">
                         <i className="mdi mdi-tooltip-account "></i>
                         <span>Esercenti</span>
                     </Link>
@@ -170,10 +170,9 @@ const Sidebar = ( { currentUser , ...props } ) => {
         <React.Fragment>
             <div className='left-side-menu' >
                 { ! props.isCondensed && <PerfectScrollbar>
-                    <UserProfile user={ currentUser }/>
                     <SideNavContent user={ currentUser } />
                 </PerfectScrollbar> }
-                { props.isCondensed && <UserProfile /> && <SideNavContent user={ currentUser }/> }
+                { props.isCondensed && <SideNavContent user={ currentUser }/> }
             </div>
         </React.Fragment>
     )

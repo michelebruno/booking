@@ -36,7 +36,9 @@ const Utenti = ( props ) => {
         },
         {
             dataField: 'ruolo',
-            text: 'Tipo'
+            text: 'Tipo',
+            classes : "d-none d-lg-table-cell",
+            headerClasses : "d-none d-lg-table-cell"
         },
         {
             dataField: 'meta',
@@ -83,7 +85,7 @@ const Utenti = ( props ) => {
         }
     }
 
-    props.setTopbarButtons( () => <ButtonToolbar className="d-inline-block" >
+    props.setTopbarButtons( () => <ButtonToolbar className="d-inline-block align-self-center" >
         <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
     </ButtonToolbar>)
 
@@ -92,11 +94,15 @@ const Utenti = ( props ) => {
         const source = axios.CancelToken.source()
         axios.get('/users' , { cancelToken: source.token } )
             .then( ( response ) => { 
-                setApi({ status: "loaded", data: response.data })
+                setApi({ status: "loaded" , data: response.data })
             })
             .catch( error => {
                 if ( axios.isCancel(error) )  return;
-                setApi({status: "error" , response: error.response, message: error.response.data.message })
+                if ( error.response ) setApi({status: "error" , response: error.response, message: error.response.data.message })
+                else {
+                    console.warn("c'è un errore sconosciuto:")
+                    console.error(error)
+                }
             })
  
         return () => {

@@ -79,7 +79,6 @@ const NuovoServizio = ( props ) => {
     }
 
     return <Form onSubmit={ handleSubmit } >
-        { created && <Alert variant="success" >Prodotto creato con codice {codice}.</Alert>}
         { customCod && <Form.Group as={ Row } controlId="cod" >
             <Form.Label column xs="12" md="4">Codice</Form.Label>
             <Col xs="12" md="8"  >
@@ -158,6 +157,7 @@ const NuovoServizio = ( props ) => {
                 { showErrorsFeedback( errors , 'iva')}
             </Col>
         </Form.Group>
+        { created && <Alert variant="success" >Prodotto creato con codice {codice}.</Alert>}
         <Button type="submit" { ...{ disabled: api.status === "sending" || api.status === "Created" }} >Invia</Button>
     </Form>
 }

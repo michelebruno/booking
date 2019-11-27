@@ -128,7 +128,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     const DeleteServizioButton = props => {
         const [show, setShow] = useState(false)
 
-        return <>
+        return <div className={props.className}>
         
             <Button variant="danger" className="ml-1" onClick={ () => setShow(true) }>
                 <i className="fas fa-trash" />
@@ -137,7 +137,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
             <AxiosConfirmModal url={props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
                 Sei sicuro di cancellare questo servizio?
             </AxiosConfirmModal>
-        </>
+        </div>
     }
 
     return( <>
@@ -256,7 +256,10 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     </Modal.Header>
                                     <Modal.Body>
                                         <React.Suspense>
-                                            <NuovoServizio { ...servizioModal } url={ esercente._links.servizi } onSuccess={ reloadApi } />
+                                            <NuovoServizio { ...servizioModal } url={ esercente._links.servizi } onSuccess={ ( ) => { setTimeout(() => {
+                                                reloadApi()
+                                                setServizioModal(false)
+                                            }, 3000); } } />
                                         </React.Suspense>
                                     </Modal.Body>
                                 </Modal>  }
@@ -276,13 +279,17 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     },
                                     {
                                         dataField : 'tariffe.intero.imponibile',
-                                        text : 'Costo intero (iva esc.)',
-                                        formatter : ( cell ) => cell ? "€ " + cell : "-"
+                                        text : 'Imponibile (prezzo intero)',
+                                        formatter : ( cell ) => "€ " + cell || "-",
+                                        classes : "d-none d-md-table-cell",
+                                        headerClasses : "d-none d-md-table-cell",
                                     },
                                     {
                                         dataField : 'iva',
                                         text : 'IVA',
-                                        formatter : ( cell ) => cell + "%"
+                                        formatter : ( cell ) => cell + "%",
+                                        classes : "d-none d-md-table-cell",
+                                        headerClasses : "d-none d-md-table-cell",
                                     },
                                     {
                                         dataField : 'deal',
@@ -297,11 +304,15 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
     
                                                 return deals.substr(-2);
                                             } else return cell
-                                        }
+                                        },
+                                        classes : "d-none d-md-table-cell",
+                                        headerClasses : "d-none d-md-table-cell",
                                     },
                                     {
                                         dataField : 'disponibili',
-                                        text : 'Disponibilità'
+                                        text : 'Disponibilità',
+                                        classes : "d-none d-md-table-cell",
+                                        headerClasses : "d-none d-md-table-cell",
                                     },
                                     {
                                         dataField : 'modifica',
@@ -311,7 +322,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                                 <Button as={ Link } to={ { pathname : esercente._links.self + "/servizi/" + row.id , state : { servizio : row , esercente : esercente }}} variant="success">
                                                     <i className="fas fa-edit" />   
                                                 </Button>
-                                                <DeleteServizioButton url={ esercente._links.servizi + "/" + row.id } />
+                                                <DeleteServizioButton url={ esercente._links.servizi + "/" + row.id } className="d-none d-md-inline-block" />
                                             </>
                                         }
                                     }

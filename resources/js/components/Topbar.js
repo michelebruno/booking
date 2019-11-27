@@ -42,9 +42,11 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 						</button>
 					</li>
 
-					<li className="h-100">
+					<li>
 						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
-						<TopbarButtons className="d-none d-md-block" />
+						<div className="d-inline-block h1">
+							<TopbarButtons/>
+						</div>
 					</li>
 				</ul>
 				

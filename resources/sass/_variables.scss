@@ -33,9 +33,9 @@ $menu-item-active-color-dark: #ffffff;
 
 //Menu item colors
 $menu-item:              #435966;
-$menu-item-hover:        #b22222;
-$menu-item-active:       #b22222;
-$menu-sub-item-active:   #b22222;
+$menu-item-hover:        #71b6f9;
+$menu-item-active:       #71b6f9;
+$menu-sub-item-active:   #71b6f9;
 
 //Rightbar Width
 $rightbar-width:           260px;
@@ -69,9 +69,9 @@ $gray-300: #dee2e6;
 $gray-400: #ced4da;
 $gray-500: #adb5bd;
 $gray-600: #98a6ad;
-$gray-700: #001a26;
-$gray-800: #00141d;
-$gray-900: #000c11;
+$gray-700: #6c757d;
+$gray-800: #343a40;
+$gray-900: #323a46;
 
 $grays: ();
 $grays: map-merge((
@@ -115,7 +115,7 @@ $colors: map-merge((
   "gray-dark":  $gray-800
 ), $colors);
 
-$primary:       #b22222;
+$primary:       $blue;
 $secondary:     $gray-700;
 $success:       $green;
 $info:          $cyan;

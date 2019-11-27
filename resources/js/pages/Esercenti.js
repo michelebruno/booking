@@ -86,6 +86,8 @@ const Esercenti = ( { id, ...props } ) => {
                                 keyField="id"
                                 data={api.data}
                                 columns={columns}
+                                bordered={ false }
+                                hover
                                 /> }
                         </Card.Body>
                     </Card>
