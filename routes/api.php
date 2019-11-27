@@ -36,6 +36,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     
     Route::apiResource( 'esercenti.servizi' , 'API\EsercenteServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' , 'esercenti' => 'esercente' ] ] );
     
+    Route::post('/esercenti/{esercente}/servizi/{servizio}/tariffe', 'API\EsercenteServizioController@aggiungiTariffa');
+    Route::patch('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'API\EsercenteServizioController@editTariffa');
+    
     Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
     
     Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore');

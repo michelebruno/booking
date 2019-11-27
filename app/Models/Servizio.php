@@ -56,4 +56,11 @@ class Servizio extends Prodotto
         return $query->where( 'esercente_id' , $id );
     }
 
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id,
+            'tariffe' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id . '/tariffe' ,
+        ];
+    }
 }

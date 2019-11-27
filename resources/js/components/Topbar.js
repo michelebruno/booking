@@ -27,10 +27,10 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 				<div className="logo-box">
 					<Link to="/" className="logo text-center">
 						<span className="logo-lg">
-						<img src="https://www.turismo.bologna.it/wp-content/uploads/2019/03/OSCARD-Turismo-Bologna-Logo_Landscape_-Png.png" alt="" height="16" />
+							<img src="https://www.turismo.bologna.it/wp-content/uploads/2019/03/OSCARD-Turismo-Bologna-Logo_Landscape_-Png.png" alt="" height="16" />
 						</span>
 						<span className="logo-sm">
-						<img src={logoSm} alt="" height="24" />
+							<img src={logoSm} alt="" height="24" />
 						</span>
 					</Link>
 				</div>
@@ -44,7 +44,7 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 
 					<li>
 						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
-						<div className="d-inline-block h1">
+						<div className="d-inline-block p-2 p-md-0">
 							<TopbarButtons/>
 						</div>
 					</li>

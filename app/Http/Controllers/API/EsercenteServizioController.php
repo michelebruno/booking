@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Esercente;
 use App\Models\Servizio;
+use App\Models\Tariffa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -99,6 +100,30 @@ class EsercenteServizioController extends Controller
         $servizio->tariffe = $request->input('tariffe', null);
 
         return response($servizio);
+    }
+
+    public function aggiungiTariffa(Request $request, Esercente $esercente, Servizio $servizio)
+    {
+        $dati = $request->validate([
+            'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('id' , $servizio->id )],
+            'imponibile' => 'required|int'
+        ]);
+
+        $servizio->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'imponibile' => $dati['imponibile']]);
+
+        return response( $servizio , 201);
+    }
+
+    public function editTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
+    {
+        $d = $request->validate(['imponibile' => 'required|int']);
+
+        if ( ! $tariffa->prodotto_id === $servizio->id || ! $servizio->esercente_id === $esercente->id ) return abort(404);
+        
+        $tariffa->imponibile = $d['imponibile'];
+        $tariffa->save();
+        
+        return response( $servizio );
     }
 
     /**

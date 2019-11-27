@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\VarianteTariffa;
 use App\Setting;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,13 @@ class SettingController extends Controller
         foreach ($settings as $setting ) {
             $res[$setting->chiave] = $setting->valore;
         }
+
+        $res['varianti_tariffe'] = VarianteTariffa::all();
+
+        foreach ($res['varianti_tariffe'] as $variante) {
+            $res['varianti_tariffe_assoc'][$variante->slug] = $variante;
+        }
+
         return response( $res );
     }
 
@@ -33,7 +41,7 @@ class SettingController extends Controller
      */
     public function store(Request $request)
     {
-        // TODO: AUTHORIZE
+        // TODO: AUTHORIZE e tutto il resto
     }
 
     /**

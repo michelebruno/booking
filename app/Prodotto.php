@@ -20,6 +20,11 @@ abstract class Prodotto extends Model
         'tariffe' , '_links'
     ];
 
+    public function setCodiceAttribute($value)
+    {
+        return $this->attributes['codice'] = strtoupper($value);
+    }
+
     public function tariffe()
     {
         return $this->hasMany('App\Models\Tariffa', 'prodotto_id');

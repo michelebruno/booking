@@ -1,14 +1,18 @@
 import React , { useState } from 'react'
-import { Card, Row, Col, Form, InputGroup, Table, Badge, Button } from 'react-bootstrap'
+import { Card, Row, Col, Form, InputGroup, Table, Badge, Button, Overlay, Tooltip, Popover } from 'react-bootstrap'
 import PreLoaderWidget from '../components/Loader'
-
+import { connect } from "react-redux"
 import BootstrapTable from 'react-bootstrap-table-next'
 
 import cellEditFactory , { Type } from 'react-bootstrap-table2-editor';
 import EditableField from '../components/EditableField';
 import upperCase from 'upper-case';
+import NuovaTariffaPopover from '../components/NuovaTariffaPopover';
 
-const Scheda = ( { location , ...props} ) => {
+const Scheda = ( { location , varianti , ...props} ) => {
+    
+    const addTariffaRef = React.useRef(null)
+    const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
 
     let initialServizio = false;
 
@@ -21,41 +25,6 @@ const Scheda = ( { location , ...props} ) => {
 
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
 
-    let tariffe_array = []
-    
-    Object.keys(tariffe).map( slug => {
-        tariffe_array.push( tariffe[slug] )
-    })
-
-    const prezzi = [
-        {
-            id: 125,
-            target: {
-                slug: 'adulti',
-                titolo: 'Adulti'
-            },
-            imponibile: {
-                costo: '€12',
-                valuta: 'EUR'
-            },
-            imposta: '22%',
-            stato: 'Approvato'
-        },
-        {
-            id: 1285,
-            target: {
-                slug: 'adulti',
-                titolo: 'Adulti - pacchetto'
-            },
-            imponibile: {
-                costo: '€10',
-                valuta: 'EUR'
-            },
-            imposta: '22%',
-            stato: 'Da approvare'
-        }
-    ]
-
     let disponibiliVariant = "success" 
 
     switch (disponibili) {
@@ -67,12 +36,20 @@ const Scheda = ( { location , ...props} ) => {
             break;
     }
 
+    let varianti_disponibili = varianti
+
+    if ( varianti ) { Object.keys(servizio.tariffe).map( variante => {
+            let keys = Object.keys(varianti) 
+            let pos = keys.findIndex( ( value ) => value == variante ) 
+            pos !== -1 && delete varianti_disponibili[keys[pos]]
+        })
+    }
     const editableFieldProps = { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
     
     if ( servizio ) return(
         <React.Fragment>
             <Row>
-                <Col md="6" >
+                <Col xs="12" xl="6" >
                     <Card>
                         <Card.Body> 
                             <div className="d-flex justify-content-between">
@@ -80,8 +57,8 @@ const Scheda = ( { location , ...props} ) => {
                                     <span className="h1" >{titolo}</span >
                                     <br />
                                     <span className="text-muted mr-1"><strong>Codice: </strong>{codice}</span>
-                                    { stato == "privato" && <Badge size="sm" variant="danger" >{stato}</Badge>}
-                                    { stato == "bozza" && <Badge size="sm" variant="light" >{stato}</Badge>}
+                                    { stato == "privato" && <Badge variant="danger" >Privato</Badge>}
+                                    { stato == "bozza" && <Badge variant="light" >Bozza</Badge>}
                                     </div>   
                                 <div className="h3">
                                     <Badge variant={disponibiliVariant} className="h4 p-1 text-white align-items-center" >
@@ -106,17 +83,22 @@ const Scheda = ( { location , ...props} ) => {
                     </Card>
 
                 </Col>
-                <Col>
+                <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-
-                            <h3 className="text-muted">
-                                Tariffario
-                            </h3>
+                            { typeof varianti_disponibili !== 'undefined' && <>
+                                <NuovaTariffaPopover url={servizio._links.tariffe} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ d => setServizio(d) } varianti={ Object.values(varianti_disponibili) } />
+                                <div className="d-flex justify-content-between">
+                                    <span className="h3">
+                                        Tariffario
+                                    </span>
+                                    <strong className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong>
+                                </div>
+                            </>}
 
                             <BootstrapTable
                                 keyField="id"
-                                data={ tariffe_array }
+                                data={ Object.values(tariffe) }
                                 columns={[
                                     {
                                         dataField: 'nome', 
@@ -124,14 +106,24 @@ const Scheda = ( { location , ...props} ) => {
                                     },
                                     { 
                                         dataField: 'imponibile', 
-                                        text: 'Prezzo',
+                                        text: 'Imponibile',
                                         formatter: cell => cell ? "€" + cell : " - ",
-                                        editorStyle : { width : "5em" },
-                                        editCellClasses: "px-0"
+                                        editorStyle : { width : "5em" , margin: "0" },
                                     } 
                                 ]}
                                 hover
-                                cellEdit={ cellEditFactory({ mode: "dbclick" })} 
+                                cellEdit={ cellEditFactory({
+                                    mode: "dbclick",
+                                    beforeSaveCell : (oldValue, newValue, row, column, done) => {
+                                        axios.patch(servizio._links.tariffe + "/" + row.id , { imponibile : newValue } )
+                                            .then( res => {
+                                                setServizio(res.data)
+                                                done(true)
+                                            })
+                                            .catch( error => done(false) )
+                                        return { async: true };
+                                      }
+                                })} 
                                 bordered={ false }
                             /> 
 
@@ -160,4 +152,4 @@ const Scheda = ( { location , ...props} ) => {
     else return <PreLoaderWidget />
 }
 
-export default Scheda;
+export default connect(state => { return { varianti : state.settings.varianti_tariffe_assoc } })(Scheda);

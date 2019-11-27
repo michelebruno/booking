@@ -4,6 +4,7 @@ use App\Models\Esercente;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UsersTableSeeder extends Seeder
 {
@@ -66,6 +67,28 @@ class UsersTableSeeder extends Seeder
         $cliente->api_token = 'cliente_secret_token';
         $cliente->save();
         $cliente->markEmailAsVerified();
+
+        $manuel = new User([
+            'username' => 'Manuel',
+            'nome' => 'Manuel Perre',
+            'email' => 'perre.manuel33@gmail.com',
+            'passwordo' => Hash::make("password"),
+            'ruolo' => 'admin',
+            'api_token' => Str::random(20)
+        ]);
+        $manuel->save();
+        $manuel->markEmailAsVerified();
+
+        $federica = new User([
+            'username' => 'Federica',
+            'nome' => 'Federica Mari',
+            'email' => 'federicamari1994@gmail.com',
+            'passwordo' => Hash::make("password"),
+            'ruolo' => 'admin',
+            'api_token' => Str::random(20)
+        ]);
+        $federica->save();
+        $federica->markEmailAsVerified();
 
         // factory(App\User::class, 10)
         //     ->create()

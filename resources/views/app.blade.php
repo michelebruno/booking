@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     <script src="https://kit.fontawesome.com/cb57072874.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="left-side-menu-dark">
     <div id="root"></div>
     <div id="error-root"></div>
     <script src="{{ mix('js/index.js') }}"></script>
