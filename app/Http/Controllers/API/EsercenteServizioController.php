@@ -17,10 +17,17 @@ class EsercenteServizioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Esercente $esercente )
+    public function index( Request $request, Esercente $esercente )
     {
+        // TODO authorize
+
+        if ( $request->query('only_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->onlyTrashed()->get() );
+
+        if ( $request->query('with_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->withTrashed()->get() );
         
+        return response( Servizio::fornitore($esercente->id)->get() ) ; 
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -40,10 +47,15 @@ class EsercenteServizioController extends Controller
             'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
             'iva' => 'integer|required',
             'tariffe' => 'array|bail',
-            'tariffe.intero.imponibile' => 'required'
+            'tariffe.intero.imponibile' => 'required',
+            'tariffe.*.imponibile' => 'required'
         ]);
 
-        if ( $request->input( 'codice_personalizzato' , true ) ) $dati['codice'] = Str::random(10); // TODO
+ 
+        // TODO Creare un codice non random ma unico
+        //  ? Il valore di dafault deve essere true?
+
+        if ( $request->input( 'codice_personalizzato' , true ) ) $dati['codice'] = Str::random(10);
 
         $servizio = new Servizio($dati);
 
@@ -65,10 +77,11 @@ class EsercenteServizioController extends Controller
      */
     public function show(Esercente $esercente, $servizio)
     {
-        Servizio::di($esercente->id)->findOrFail($servizio);
+        $servizio = Servizio::di($esercente->id)->findOrFail($servizio);
 
-        // TODO $this->authorize()
+        $this->authorize('view' , $servizio) ;
 
+        return response($servizio);
     }
 
     /**
@@ -80,18 +93,37 @@ class EsercenteServizioController extends Controller
      */
     public function update(Request $request, Esercente $esercente, Servizio $servizio)
     {
-        $this->authorize('create', Servizio::class );
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404);
 
-        $dati = $request->validate([
-            'stato' => 'string|in:pubblico,privato,bozza',
-            'titolo' => 'string',
-            'descrizione' => 'string',
-            'disponibili' => 'integer',
-            'codice' => Rule::unique('prodotti','codice')->ignore($servizio->id),
-            'iva' => 'integer|',
-            'tariffe' => 'array|bail',
-            'tariffe.intero.imponibile' => ''
-        ]);
+        $this->authorize('create', $servizio );
+
+        if ( $request->user()->ruolo == 'esercente' ) {
+
+            $dati = $request->validate([
+                'stato' => 'string|in:pubblico,privato,bozza',
+                'titolo' => 'string',
+                'descrizione' => 'string',
+                'disponibili' => 'integer',
+                'codice' => Rule::unique('prodotti','codice')->ignore($servizio->id),
+                'iva' => 'integer|',
+                'tariffe' => 'array|bail',
+                'tariffe.intero.imponibile' => ''
+            ]);
+
+        } else {
+
+            $dati = $request->validate([
+                'stato' => 'string|in:pubblico,privato,bozza',
+                'titolo' => 'string',
+                'descrizione' => 'string',
+                'disponibili' => 'integer',
+                'codice' => Rule::unique('prodotti','codice')->ignore($servizio->id),
+                'iva' => 'integer|',
+                'tariffe' => 'array|bail',
+                'tariffe.intero.imponibile' => ''
+            ]);
+
+        }
 
         $servizio->fill($dati);
         
@@ -104,6 +136,8 @@ class EsercenteServizioController extends Controller
 
     public function aggiungiTariffa(Request $request, Esercente $esercente, Servizio $servizio)
     {
+        $this->authorize('update' , $servizio );
+        
         $dati = $request->validate([
             'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('id' , $servizio->id )],
             'imponibile' => 'required|int'
@@ -116,6 +150,8 @@ class EsercenteServizioController extends Controller
 
     public function editTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
     {
+        $this->authorize('update' , $servizio );
+
         $d = $request->validate(['imponibile' => 'required|int']);
 
         if ( ! $tariffa->prodotto_id === $servizio->id || ! $servizio->esercente_id === $esercente->id ) return abort(404);
@@ -133,14 +169,33 @@ class EsercenteServizioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Esercente $esercente, $servizio)
-    {
+    {        
+        
         $servizio = Servizio::di($esercente->id)->findOrFail($servizio);
 
-        // TODO $this->authorize();
+        $this->authorize('delete' , $servizio );
 
         $servizio->delete();
 
         return response(null, 204);
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Esercente  $esercente
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Esercente $esercente, $servizio)
+    {        
+        $servizio = Servizio::di($esercente->id)->onlyTrashed()->findOrFail($servizio);
+
+        $this->authorize('restore' , $servizio );
+
+        $servizio->restore();
+
+        return response($servizio);
 
     }
 }

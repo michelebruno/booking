@@ -24,10 +24,10 @@ class SettingController extends Controller
             $res[$setting->chiave] = $setting->valore;
         }
 
-        $res['varianti_tariffe'] = VarianteTariffa::all();
+        $varianti = VarianteTariffa::all();
 
-        foreach ($res['varianti_tariffe'] as $variante) {
-            $res['varianti_tariffe_assoc'][$variante->slug] = $variante;
+        foreach ($varianti as $variante) {
+            $res['varianti_tariffe'][$variante->slug] = $variante;
         }
 
         return response( $res );

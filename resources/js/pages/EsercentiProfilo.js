@@ -17,10 +17,10 @@ import { Link } from "react-router-dom"
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
 import EditableField from '../components/EditableField';
-import BootstrapTable from "react-bootstrap-table-next"
+import ServiziTabella from '../components/ServiziTabella';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
-const NuovoServizio = React.lazy( () => import( '../components/NuovoServizio' ) );
+const ServizioForm = React.lazy( () => import( '../components/ServizioForm' ) );
 
 const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
 
@@ -37,7 +37,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
     const { esercente } = api 
     
-    const TastiProfiloEsercente = ( { className, ...props } ) => {
+    const TastiProfiloEsercente = ( { className } ) => {
 
         const [showModal, setShowModal] = useState(false)
 
@@ -50,8 +50,8 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
         return <>
             { ! ( api.willBeReloaded || api.status === "loading" ) && esercente && <ButtonToolbar className="d-inline-block">
 
-                <Form className={className} > 
-                    { ! props.isCurrentUser && esercente._links && 
+                <Form className={ className } > 
+                    { esercente._links && 
                         <Button as={Link} to={ { pathname : esercente._links.edit , state: { esercente } } } color="primary" size="sm" >
                             <i className="fas fa-edit" /><span > Modifica</span> 
                         </Button>
@@ -124,22 +124,6 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
             props.unsetTopbarButtons()
         };
     })
-
-    const DeleteServizioButton = props => {
-        const [show, setShow] = useState(false)
-
-        return <div className={props.className}>
-        
-            <Button variant="danger" className="ml-1" onClick={ () => setShow(true) }>
-                <i className="fas fa-trash" />
-            </Button>
-
-            <AxiosConfirmModal url={props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
-                Sei sicuro di cancellare questo servizio?
-            </AxiosConfirmModal>
-        </div>
-    }
-
     return( <>
             { api.status === "loading" && <div className="p-5" ><PreLoaderWidget /></div>}                
             
@@ -148,22 +132,22 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
             <div className="d-flex justify-content-between">
 
                 <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
-            </div>
-                <div className="w-100" />
-                { props.isCurrentUser && <span>
+                { props.isCurrentUser && <span className="d-md-none align-self-center">
                     <Button as={Link} to={ { pathname : '/account/modifica' , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
                     </Button>
                 </span> }
-                { ! props.isCurrentUser && <span>
-                    <TastiProfiloEsercente className="d-md-none py-2" />
+            </div>
+                <div className="w-100" />
+                { ! props.isCurrentUser && <span className="d-md-none m-2">
+                    <TastiProfiloEsercente />
                 </span>}
             
             <Row>
                 { location.state && location.state.success && <Col lg="4">
                     <Alert variant="success" >I dati sono stati aggiornati</Alert> 
-                </Col>  }
+                </Col> }
                 <div className="w-100"></div>
 
                 <Col xs="12" lg="4" xl="3">
@@ -248,7 +232,9 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
 
                                 <h2>Servizi</h2>
                                 
-                                <span><Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button></span>
+                                <span>
+                                    { ! props.isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button>}
+                                </span>
 
                                 { servizioModal !== false && <Modal show={true} onHide={ () => setServizioModal(false)} >
                                     <Modal.Header closeButton>
@@ -256,7 +242,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     </Modal.Header>
                                     <Modal.Body>
                                         <React.Suspense>
-                                            <NuovoServizio { ...servizioModal } url={ esercente._links.servizi } onSuccess={ ( ) => { setTimeout(() => {
+                                            <ServizioForm { ...servizioModal } url={ esercente._links.servizi } onSuccess={ ( ) => { setTimeout(() => {
                                                 reloadApi()
                                                 setServizioModal(false)
                                             }, 3000); } } />
@@ -264,74 +250,7 @@ const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) 
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            { esercente.servizi && <BootstrapTable 
-                                data={ esercente.servizi }
-                                keyField="id"
-                                columns={[
-                                    {
-                                        dataField : 'codice',
-                                        text : 'Cod.'
-                                    },
-                                    {
-                                        dataField : 'titolo',
-                                        text : 'Titolo',
-                                        formatter: ( cell , row ) => <span title={ row.descrizione }>{cell}</span>
-                                    },
-                                    {
-                                        dataField : 'tariffe.intero.imponibile',
-                                        text : 'Imponibile (prezzo intero)',
-                                        formatter : ( cell ) => "€ " + cell || "-",
-                                        classes : "d-none d-md-table-cell",
-                                        headerClasses : "d-none d-md-table-cell",
-                                    },
-                                    {
-                                        dataField : 'iva',
-                                        text : 'IVA',
-                                        formatter : ( cell ) => cell + "%",
-                                        classes : "d-none d-md-table-cell",
-                                        headerClasses : "d-none d-md-table-cell",
-                                    },
-                                    {
-                                        dataField : 'deal',
-                                        text : 'Deals collegati',
-                                        formatter: ( cell ) => {
-                                            if ( Array.isArray(cell) ) {
-
-                                                let deals = "";
-                                                cell.forEach(deal => {
-                                                    deals += deal.titolo + ", "
-                                                });
-    
-                                                return deals.substr(-2);
-                                            } else return cell
-                                        },
-                                        classes : "d-none d-md-table-cell",
-                                        headerClasses : "d-none d-md-table-cell",
-                                    },
-                                    {
-                                        dataField : 'disponibili',
-                                        text : 'Disponibilità',
-                                        classes : "d-none d-md-table-cell",
-                                        headerClasses : "d-none d-md-table-cell",
-                                    },
-                                    {
-                                        dataField : 'modifica',
-                                        text : '',
-                                        formatter : ( cell , row ) => {
-                                            return <>
-                                                <Button as={ Link } to={ { pathname : esercente._links.self + "/servizi/" + row.id , state : { servizio : row , esercente : esercente }}} variant="success">
-                                                    <i className="fas fa-edit" />   
-                                                </Button>
-                                                <DeleteServizioButton url={ esercente._links.servizi + "/" + row.id } className="d-none d-md-inline-block" />
-                                            </>
-                                        }
-                                    }
-                                ] }
-                                bordered={ false }
-                                hover
-                                wrapperClasses="table-responsive"
-                                noDataIndication="Nessun servizio per questo esercente."
-                                />}
+                            { esercente.servizi && <ServiziTabella servizi={ esercente.servizi } url={ esercente._links.servizi } />}
                         </Card.Body>
                     </Card>
                 </Col>

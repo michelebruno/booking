@@ -1,8 +1,6 @@
 import React, { Suspense , useState } from "react";
 import { Container } from 'react-bootstrap';
 
-import profilePic from '../../images/users/user-1.jpg';
-
 // code splitting and lazy loading
 // https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52
 const Topbar = React.lazy(() => import("./Topbar"));
@@ -14,7 +12,7 @@ const loading = () => <div className="text-center"></div>;
 const RightSidebarContent = (props) => {
     return <div className="user-box">
         <div className="user-img">
-            <img src={profilePic} alt="user-img" title="Amministratore"
+            <img { ...{} /* src={profilePic} */ } alt="user-img" title="Amministratore"
                 className="rounded-circle img-fluid" />
             <a href="/" className="user-edit"><i className="mdi mdi-pencil"></i></a>
         </div>

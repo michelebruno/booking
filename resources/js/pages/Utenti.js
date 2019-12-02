@@ -11,7 +11,7 @@ import Alert from "react-bootstrap/Alert"
 import BootstrapTable from "react-bootstrap-table-next"
 import { Redirect , Link } from "react-router-dom"
 import paginationFactory from "react-bootstrap-table2-paginator"
-import FormNuovoUtente from "../components/FormNuovoUtente"
+import UtenteForm from "../components/UtenteForm"
 import PreLoaderWidget from "../components/Loader"
 
 import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
@@ -124,7 +124,7 @@ const Utenti = ( props ) => {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <FormNuovoUtente />
+                            <UtenteForm />
                         </Modal.Body>
                     </Modal>
                 </p>

@@ -11,7 +11,6 @@
 |
 */
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/api/v1/auth', function ()
@@ -60,30 +59,6 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => true , 'register' => false]);
 
 Route::get('/logout', 'Auth\LoginController@logout');
-
-if ( env('APP_ENV') == 'local ') {
-
-    Route::group(['prefix' => 'deploy'], function () {
-        Route::get('', function () {
-            return response()->json( Artisan::all() );
-        });
-    
-        Route::get('migrate', function () {
-            Artisan::call('migrate:fresh --seed') ;
-            return response( nl2br( Artisan::output() ) );
-        });
-    
-        Route::get('key', function ($id) {
-            Artisan::call('key:generate');
-            return response( nl2br( Artisan::output() ) );
-        });
-    
-        Route::get('key', function ($id) {
-            Artisan::call('key:generate');
-            return response( nl2br( Artisan::output() ) );
-        });
-    });
-}

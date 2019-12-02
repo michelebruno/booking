@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
 
-const NuovoServizio = ( props ) => {
+const ServizioForm = ( props ) => {
     const [api, setApi] = useState({ status : false })
     const [titolo, setTitolo] = useState("")
     const [customCod, setCustomCod] = useState(false);
@@ -162,4 +162,4 @@ const NuovoServizio = ( props ) => {
     </Form>
 }
 
-export default NuovoServizio;
+export default ServizioForm;

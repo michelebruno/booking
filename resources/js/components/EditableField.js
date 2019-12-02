@@ -112,7 +112,7 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile,
     }
     
     const Control = () => {
-        return <Form.Control { ...props } { ...dynamicProps() } value={value} onChange={ e => setValue( textMutator(e.target.value) )} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
+        return <Form.Control { ...dynamicProps() } { ...props } value={value} onChange={ e => setValue( textMutator(e.target.value) )} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
     }
 
     return <FormGroup as={Row} controlId={name} >
@@ -133,11 +133,14 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile,
 
                 <InputGroup.Append>
                     <Button variant="outline-primary" onClick={ handleSubmit } ><i className="fas fa-check" /></Button>
-                    <Button variant="outline-primary" onClick={() => { setValue(initialValue) ; setEditing(false) }} ><i className="fas fa-times" /></Button>
+                    <Button variant="outline-primary" onClick={() => { if ( props.readOnly ) return; setValue(initialValue) ; setEditing(false) }} ><i className="fas fa-times" /></Button>
                 </InputGroup.Append>
                 </InputGroup> }
 
-            { ! editing && <div className="d-flex justify-content-between"><span className="align-self-center">{displayValue()}</span><Button variant="outline-primary" onClick={() => setEditing(true)}><i className="fas fa-edit" /></Button></div> }
+            { ! editing && <div className="d-flex justify-content-between h-100">
+                <span className="align-self-center">{ displayValue() }</span>
+                { !props.readOnly && <Button variant="outline-primary" onClick={() => setEditing(true)}><i className="fas fa-edit" /></Button> }
+            </div> }
 
         </Col>
     </FormGroup>

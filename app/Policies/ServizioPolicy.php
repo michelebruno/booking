@@ -53,7 +53,7 @@ class ServizioPolicy
      */
     public function update(User $user, Servizio $servizio)
     {
-        return in_array($user->ruolo, [ 'admin', 'account_manager' ]);
+        return in_array($user->ruolo, [ 'admin', 'account_manager' ]); // ? L'esercente può fare qualcosa?
     }
 
     /**

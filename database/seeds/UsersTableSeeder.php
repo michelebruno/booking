@@ -72,7 +72,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'Manuel',
             'nome' => 'Manuel Perre',
             'email' => 'perre.manuel33@gmail.com',
-            'passwordo' => Hash::make("password"),
+            'password' => Hash::make("password"),
             'ruolo' => 'admin',
             'api_token' => Str::random(20)
         ]);
@@ -83,7 +83,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'Federica',
             'nome' => 'Federica Mari',
             'email' => 'federicamari1994@gmail.com',
-            'passwordo' => Hash::make("password"),
+            'password' => Hash::make("password"),
             'ruolo' => 'admin',
             'api_token' => Str::random(20)
         ]);

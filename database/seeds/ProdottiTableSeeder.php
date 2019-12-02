@@ -19,11 +19,15 @@ class ProdottiTableSeeder extends Seeder
         $variante->nome = 'Intero';
         $variante->save();
 
+        $ridotto = new VarianteTariffa();
+        $ridotto->slug = 'ridotto';
+        $ridotto->nome = 'Ridotto';
+        $ridotto->save();
+
         factory(Servizio::class, 5)
             ->create()
             ->each( function ( $servizio )
             {
-                global $variante;
                 $servizio->tariffe()->save( factory( Tariffa::class )->make() ) ;
             });
     }

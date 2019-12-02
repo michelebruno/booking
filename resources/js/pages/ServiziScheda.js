@@ -26,17 +26,9 @@ const Scheda = ( { location , varianti , ...props} ) => {
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
 
     let disponibiliVariant = "success" 
+    if ( disponibili < 10 ) disponibiliVariant = "danger"
 
-    switch (disponibili) {
-        case disponibili < 10:
-            disponibiliVariant = "danger"
-            break;
-    
-        default:
-            break;
-    }
-
-    let varianti_disponibili = varianti
+    let varianti_disponibili = Object.assign({}, varianti)
 
     if ( varianti ) { Object.keys(servizio.tariffe).map( variante => {
             let keys = Object.keys(varianti) 
@@ -44,7 +36,24 @@ const Scheda = ( { location , varianti , ...props} ) => {
             pos !== -1 && delete varianti_disponibili[keys[pos]]
         })
     }
-    const editableFieldProps = { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
+
+    let editableFieldProps = { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
+    let cellEdit = cellEditFactory({
+        mode: "dbclick",
+        beforeSaveCell : (oldValue, newValue, row, column, done) => {
+            axios.patch(servizio._links.tariffe + "/" + row.id , { imponibile : newValue } )
+                .then( res => {
+                    setServizio(res.data)
+                    done(true)
+                })
+                .catch( error => done(false) )
+            return { async: true };
+          }
+    }) 
+    if ( ( typeof location.state.esercente !== 'undefined' && location.state.esercente.id == props.currentUser.id ) || ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) ) {
+        editableFieldProps.readOnly = true
+        cellEdit = undefined
+    }
     
     if ( servizio ) return(
         <React.Fragment>
@@ -63,7 +72,6 @@ const Scheda = ( { location , varianti , ...props} ) => {
                                 <div className="h3">
                                     <Badge variant={disponibiliVariant} className="h4 p-1 text-white align-items-center" >
                                         Disponibili: { disponibili } 
-                                        <Button className="fas fa-edit ml-1" variant="success" />
                                     </Badge>
                                 </div  > 
                             </div>
@@ -92,7 +100,7 @@ const Scheda = ( { location , varianti , ...props} ) => {
                                     <span className="h3">
                                         Tariffario
                                     </span>
-                                    <strong className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong>
+                                    { !editableFieldProps.readOnly && <strong className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong> }   
                                 </div>
                             </>}
 
@@ -107,23 +115,12 @@ const Scheda = ( { location , varianti , ...props} ) => {
                                     { 
                                         dataField: 'imponibile', 
                                         text: 'Imponibile',
-                                        formatter: cell => cell ? "€" + cell : " - ",
+                                        formatter: cell => typeof cell !== 'undefined' ? "€" + cell : " - ",
                                         editorStyle : { width : "5em" , margin: "0" },
                                     } 
                                 ]}
                                 hover
-                                cellEdit={ cellEditFactory({
-                                    mode: "dbclick",
-                                    beforeSaveCell : (oldValue, newValue, row, column, done) => {
-                                        axios.patch(servizio._links.tariffe + "/" + row.id , { imponibile : newValue } )
-                                            .then( res => {
-                                                setServizio(res.data)
-                                                done(true)
-                                            })
-                                            .catch( error => done(false) )
-                                        return { async: true };
-                                      }
-                                })} 
+                                cellEdit={ cellEdit } 
                                 bordered={ false }
                             /> 
 
@@ -152,4 +149,4 @@ const Scheda = ( { location , varianti , ...props} ) => {
     else return <PreLoaderWidget />
 }
 
-export default connect(state => { return { varianti : state.settings.varianti_tariffe_assoc } })(Scheda);
+export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(Scheda);

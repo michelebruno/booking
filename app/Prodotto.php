@@ -17,7 +17,7 @@ abstract class Prodotto extends Model
     ];
 
     protected $appends = [
-        'tariffe' , '_links'
+        'tariffe' , '_links' , 'cestinato'
     ];
 
     public function setCodiceAttribute($value)
@@ -43,28 +43,27 @@ abstract class Prodotto extends Model
         return $a;
     }
 
+    public function getCestinatoAttribute()
+    {
+        return $this->trashed();
+    }
+
     public function setTariffeAttribute($tariffe)
     {
         if (! $tariffe ) return;
         $etichette = VarianteTariffa::all()->toArray();
 
-        $etichette_slugs = array_column($etichette, 'slug');
-
         foreach ($tariffe as $key => $value) {
 
-            $pos = array_search( $key, $etichette_slugs ) ;
+            $etichetta = VarianteTariffa::slug($key);
 
-            if ( $pos !== -1 ) {
-                $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichette[$pos]['id']], $value );
-            }
+            $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichetta->id ], $value );
+
         }
     }
-
-    public function getLinksAttribute()
+    public function scopeCodice($query, $codice)
     {
-        return [
-            'self' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id
-        ];
+        return $query->where('codice', $codice)->firstOrFail();
     }
 
     public function scopeDisponibili($query, $more_than = 0)

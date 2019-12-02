@@ -1,36 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Collapse , Dropdown } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 import MetisMenu from 'react-metismenu'
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import profilePic from '../../images/users/user-1.jpg';
 import { connect } from "react-redux"
-
-const vociMenu = [
-    {
-        icon: 'mdi mdi-view-dashboard',
-        label: 'Dashboard',
-        to: '/dashboard'
-    },
-    {
-        label: 'Esercenti',
-        content: [
-            {
-                label: 'Scheda esercente',
-                to: '/esercenti/21'
-            },
-            {
-                label: 'Modifica esercente',
-                to: '/esercenti/modifica/21'
-            }
-        ]
-    },
-    {
-        icon: 'fas fa-shopping-cart',
-        label: 'Ordini',
-        to: '/ordini',
-    }
-]
 
 const SideNavContent = ( { user } ) => {
     return <React.Fragment>
@@ -83,13 +56,19 @@ const SideNavContent = ( { user } ) => {
                         <span>Tickets</span>
                     </Link>
                 </li> */}
-                { [ 'admin', 'account_manager'].indexOf(user.ruolo) !== -1 && <li>
+                { [ 'esercente'].indexOf(user.ruolo) !== -1 && <li>
+                    <Link to="/account" >
+                        <i className="fas fa-user" />
+                        <span>Il mio account</span>
+                    </Link>
+                </li>}
+                { [ 'admin' , 'account_manager'].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/utenti" >
                         <i className="fas fa-user" />
                         <span>Utenti</span>
                     </Link>
                 </li>}
-                { [ 'admin', 'account_manager'].indexOf(user.ruolo) !== -1 &&<li>
+                { [ 'admin' , 'account_manager'].indexOf(user.ruolo) !== -1 &&<li>
                     <Link to="/esercenti" className="waves-effect side-nav-link-ref" aria-expanded="false">
                         <i className="mdi mdi-tooltip-account "></i>
                         <span>Esercenti</span>
@@ -100,7 +79,7 @@ const SideNavContent = ( { user } ) => {
                         <i className="mdi mdi-settings"></i>
                         <span>Impostazioni</span>
                     </Link>
-                </li>}
+                </li> }
             </ul>
         </div>
         <div className="clearfix"></div>
@@ -127,7 +106,7 @@ const UserProfile = ( { user , ...props } ) => {
                         <i className="fe-settings mr-1"></i>
                         <span>Impostazioni</span>
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/logout" >
+                    <Dropdown.Item href="/logout">
                         <i className="fe-log-out mr-1"></i>
                         <span>Logout</span>
                     </Dropdown.Item>

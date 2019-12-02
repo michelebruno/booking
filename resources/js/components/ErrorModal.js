@@ -5,13 +5,13 @@ const ErrorModal = ( { onHide, response, ...props} ) => {
 
     const show = props.show ? props.show : true;
 
-    return <Modal show={show} onHide={ onHide } centered >
-        <Modal.Header closeButton >
-            <Modal.Title>
+    return <Modal show={show} onHide={ onHide } centered className="border-danger " >
+        <Modal.Header closeButton className="border-danger" >
+            <Modal.Title className="">
                 Errore { response.status } 
             </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className=" border-danger ">
             { response.data.message }
         </Modal.Body>
     </Modal>

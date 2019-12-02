@@ -13,7 +13,7 @@ class Tariffa extends Model
     ];
 
     public $fillable = [
-        'variante_tariffa_id', 'imponibile'
+        'variante_tariffa_id', 'imponibile', 'slug'
     ];
 
     public $timestamps = false;
@@ -31,6 +31,11 @@ class Tariffa extends Model
     public function getSlugAttribute()
     {
         return $this->variante->slug;
+    }
+
+    public function setSlugAttribute($slug)
+    {
+        return $this->attributes['variante_tariffa_id'] = VarianteTariffa::where('slug', $slug)->firstOrFail()->id;
     }
 
     public function getNomeAttribute()

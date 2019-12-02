@@ -44,7 +44,7 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 
 					<li>
 						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
-						<div className="d-inline-block p-2 p-md-0">
+						<div className="d-none d-md-inline-block p-2 p-md-0">
 							<TopbarButtons/>
 						</div>
 					</li>

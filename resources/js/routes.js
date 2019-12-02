@@ -30,8 +30,8 @@ const PrivateRoute = ({ component: Component, roles, ...rest }) => (
  
 		// check if route is restricted by role
 		if ( roles && roles.indexOf(loggedInUser.ruolo) == -1 ) {
-		// role not authorised so redirect to home page
-		return <Redirect to={{ pathname: '/' }} />
+      // role not authorised so redirect to home page
+      return <Redirect to={{ pathname: '/' }} />
 		}
 
 		// authorised so return component
@@ -43,11 +43,12 @@ const routes = [
 
   // other pages
   { path: '/account', exact:true, component: Account, route: PrivateRoute, title: 'Il tuo profilo' },
+  { path: '/logout', exact:true, component: () => window.location = "/logout" && "", route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/account/modifica', component: AccountModifica, route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/dashboard', component: Dashboard, route: PrivateRoute, title: 'La mia dashboard' },
   { path: '/esercenti/crea', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Nuovo esercente' },
   { path: '/esercenti/:id/modifica', component: EsercentiCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Modifica esercente' },  
-  { path: '/esercenti/:esercente/servizi/:servizio', exact: true, component: ServiziScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda servizio' },
+  { path: '/esercenti/:esercente/servizi/:servizio', exact: true, component: ServiziScheda, route: PrivateRoute, roles: ['admin' , 'account_manager' ,'esercente' ], title: 'Scheda servizio' },
   { path: '/esercenti/:id', exact: true, component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' },  
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },

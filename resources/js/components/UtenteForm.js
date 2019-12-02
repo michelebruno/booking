@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { Form, Button, Alert, Spinner } from "react-bootstrap"
-import StepWizard from 'react-step-wizard';
 import { Link } from 'react-router-dom'
 import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
 
-const FormNuovoUtente =  props => {
+const UtenteForm =  props => {
     
     const [api, setApi] = useState({ status: null, data: null});
 
@@ -106,4 +105,4 @@ const FormNuovoUtente =  props => {
     )
 }
 
-export default FormNuovoUtente
+export default UtenteForm

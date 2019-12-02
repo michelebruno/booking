@@ -21,4 +21,9 @@ class VarianteTariffa extends Model
     {
         return $this->hasManyThrough('App\Prodotto', 'App\Models\Tariffa');
     }
+
+    public function scopeSlug($query, $slug)
+    {
+        return $query->where('slug', $slug)->firstOrFail();
+    }
 }

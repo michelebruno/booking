@@ -1,11 +1,11 @@
 import React from "react"
 import { Card } from "react-bootstrap"
-import FormNuovoUtente from "../components/FormNuovoUtente"
+import UtenteForm from "../components/UtenteForm"
 
 const UtentiCrea = props => {
     return <Card>
             <Card.Body>
-                <FormNuovoUtente />
+                <UtenteForm />
             </Card.Body>
         </Card>
 }
