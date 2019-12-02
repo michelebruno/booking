@@ -41,7 +41,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
             'username' => [ 'required', 'unique:users'],
-            'piva' => ['required', 'digits:11', 'unique:users'], // TODO verificare il formato
+            'piva' => ['required', 'digits:11', 'unique:users'],
             'cf' => ['required', 'max:16', 'unique:users'], // TODO verificare il formato,
             'nome' => 'string|required'
         ]);
@@ -79,7 +79,6 @@ class EsercenteController extends \App\Http\Controllers\Controller
         // * $metas = [];
 
         // TODO Salvare i meta
-
         // ? O forse non servono?
 
         // if( Arr::exists($dati, 'meta') ) {
@@ -129,8 +128,6 @@ class EsercenteController extends \App\Http\Controllers\Controller
     {
         $this->authorize( 'update' , $esercente );
 
-        // TODO Validazione della richiesta
-
         $dati = $request->validate([
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($esercente->email, 'email')],
             'meta.*' => 'nullable',
@@ -159,18 +156,6 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $metas = [];
 
-        // TODO Metadati
-
-        // if( Arr::exists($dati, 'meta') ) {
-        
-        //     foreach($dati['meta'] as $key => $value) {
-        //         if ( $value ) $metas[] = UserMeta::updateOrCreate( ["chiave" => $key , "user_id" => $esercente->id ], [  "valore" => $value ] );
-        //     }
-
-        //     if ( count($metas) ) $esercente->meta()->saveMany($metas);
-
-        // }
-
         return response( $esercente );
     }
 
@@ -187,12 +172,12 @@ class EsercenteController extends \App\Http\Controllers\Controller
         $esercente->delete();
     
         return response( $esercente, 200 );
-            
+
     }
 
     public function restore( $esercente )
     {
-        $this->authorize( 'restore', $esercente = Esercente::withTrashed()->findOrFail( $esercente ) );  // TODO oppure onlyTrashed?
+        $this->authorize( 'restore', $esercente = Esercente::onlyTrashed()->findOrFail( $esercente ) );  // ? oppure withTrashed?
 
         if ( $esercente->restore() ) {
             return response( $esercente );
@@ -202,7 +187,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
     public function setNote( Esercente $esercente , Request $request )
     {
         // TODO : authorize
-        // TODO : e per gli altri campi?
+        // ? e per gli altri campi?
         $dati = $request->validate([
             'note' => 'required|string'
         ]);
