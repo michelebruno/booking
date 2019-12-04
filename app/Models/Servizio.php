@@ -7,10 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Servizio extends Prodotto
 {
-    /*
-     * Imposta i valori di default
-     * 
-     */
     protected $attributes = [
         'tipo' => 'servizio'
     ];
@@ -18,10 +14,6 @@ class Servizio extends Prodotto
     protected $fillable = [
         'titolo' , 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
     ];
-
-    /*
-     * Aggiunge al ::toArray()
-     */
 
     public static function boot()
     {
@@ -51,17 +43,15 @@ class Servizio extends Prodotto
         }
     }
 
-    public function scopeDi($query, $id)
+    public function deals()
     {
-        return $query->where( 'esercente_id' , $id );
+        return $this->belongsToMany('App\Models\Deal', 'prodotti_pivot', 'figlio', 'padre');
     }
-
 
     public function scopeFornitore($query, $id)
     {
         return $query->where( 'esercente_id' , $id );
     }
-
 
     public function getLinksAttribute()
     {

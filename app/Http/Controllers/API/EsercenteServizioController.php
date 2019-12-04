@@ -25,7 +25,7 @@ class EsercenteServizioController extends Controller
 
         if ( $request->query('with_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->withTrashed()->get() );
         
-        return response( Servizio::fornitore($esercente->id)->get() ) ; 
+        return response( Servizio::with('deals')->fornitore($esercente->id)->get() ) ; 
     }
     
 
@@ -77,11 +77,11 @@ class EsercenteServizioController extends Controller
      */
     public function show(Esercente $esercente, $servizio)
     {
-        $servizio = Servizio::di($esercente->id)->findOrFail($servizio);
+        $servizio = Servizio::fornitore($esercente->id)->findOrFail($servizio);
 
         $this->authorize('view' , $servizio) ;
 
-        return response($servizio);
+        return response( $servizio->with('deals') );
     }
 
     /**
@@ -171,7 +171,7 @@ class EsercenteServizioController extends Controller
     public function destroy(Esercente $esercente, $servizio)
     {        
         
-        $servizio = Servizio::di($esercente->id)->findOrFail($servizio);
+        $servizio = Servizio::fornitore($esercente->id)->findOrFail($servizio);
 
         $this->authorize('delete' , $servizio );
 
@@ -189,7 +189,7 @@ class EsercenteServizioController extends Controller
      */
     public function restore(Esercente $esercente, $servizio)
     {        
-        $servizio = Servizio::di($esercente->id)->onlyTrashed()->findOrFail($servizio);
+        $servizio = Servizio::fornitore($esercente->id)->onlyTrashed()->findOrFail($servizio);
 
         $this->authorize('restore' , $servizio );
 

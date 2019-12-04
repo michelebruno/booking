@@ -1,11 +1,12 @@
 import React from 'react'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+import PropTypes from "prop-types"
 
 const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, method , ...props } ) => {
 
     const onConfirm = ( ) => {
-        if ( ! url ) return // TODO dovrebbe dare un errore
+        if ( ! url ) return // TODO dovrebbe dare un errore ->aggiunto Proptype
 
         const source = axios.CancelToken.source()
 
@@ -50,6 +51,8 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
     </Modal >
 }
 
-
+AxiosConfirmModal.propTypes = {
+    url : PropTypes.string.isRequired
+}
 
 export default AxiosConfirmModal
