@@ -13,9 +13,9 @@ const EsercentiCrea = React.lazy(() => import('./pages/EsercentiCrea'));
 const Ordini = React.lazy(() => import('./pages/Ordini'));
 const OrdiniScheda = React.lazy(() => import('./pages/OrdiniScheda'));
 const Deals = React.lazy(() => import('./pages/Deals'));
+const DealsCrea = React.lazy(() => import('./pages/DealsCrea'));
 const DealsScheda = React.lazy(() => import('./pages/DealsScheda'));
 const ServiziScheda = React.lazy(() => import('./pages/ServiziScheda'));
-const DealsModifica = React.lazy(() => import('./pages/DealsModifica'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const Tickets = React.lazy( () => import('./pages/Tickets'));
 const Utenti = React.lazy( () => import('./pages/Utenti')); 
@@ -53,8 +53,8 @@ const routes = [
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
   { path: '/ordini/:id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
-  { path: '/deals/modifica/:id', component: DealsModifica, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
-  { path: '/deals/:id' , component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
+  { path: '/deals/crea', component: DealsCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
+  { path: '/deals/:deal' , component: DealsScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },
   { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
   { path: '/servizi/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda servizio' },
   { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },

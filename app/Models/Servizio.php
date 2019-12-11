@@ -56,8 +56,8 @@ class Servizio extends Prodotto
     public function getLinksAttribute()
     {
         $a = [
-            'self' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id,
-            'tariffe' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->id . '/tariffe' ,
+            'self' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->codice,
+            'tariffe' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->codice . '/tariffe' ,
         ];
 
         if ( $this->deleted_at ) $a['restore'] = $a['self'] . "/restore";

@@ -1,7 +1,7 @@
 import React from 'react'
-import { Form , InputGroup, Card, Row, Col } from 'react-bootstrap'
+import { Form , Card, Row, Col } from 'react-bootstrap'
 import BoostrapTable from 'react-bootstrap-table-next'
-const Scheda = ( { id, ...props} ) => {
+const CreaDeals = ( props ) => {
     
     return(
         <React.Fragment>
@@ -55,4 +55,4 @@ const Scheda = ( { id, ...props} ) => {
     )
 }
 
-export default Scheda;
+export default CreaDeals;

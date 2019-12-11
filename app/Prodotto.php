@@ -20,8 +20,14 @@ abstract class Prodotto extends Model
         'tariffe' , '_links' , 'cestinato'
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'codice';
+    }
+
     public function setCodiceAttribute($value)
     {
+        $value = preg_replace('/\s+/', '-', $value);
         return $this->attributes['codice'] = strtoupper($value);
     }
 

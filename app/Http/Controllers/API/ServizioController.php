@@ -53,7 +53,7 @@ class ServizioController extends Controller
      */
     public function update(Request $request, Servizio $servizio)
     {
-        //
+        // TODO
     }
 
     /**
@@ -64,6 +64,6 @@ class ServizioController extends Controller
      */
     public function destroy(Servizio $servizio)
     {
-        //
+        // TODO
     }
 }

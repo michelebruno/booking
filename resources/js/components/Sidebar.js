@@ -17,7 +17,7 @@ const SideNavContent = ( { user } ) => {
                         <i className="mdi mdi-view-dashboard"></i>
                         <span>Dashboard </span>
                     </Link>
-                 </li>{/*
+                 </li>
                 <li>
                     <Link to="/deals" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-shopping-cart "></i>
@@ -25,12 +25,12 @@ const SideNavContent = ( { user } ) => {
                     </Link>
                     <ul className="nav-second-level nav" >
                         <li>
-                            <Link to="/deals/21" className="side-nav-link-ref"> 
+                            <Link to="/deals/d-2" className="side-nav-link-ref"> 
                                 <span>Scheda deal</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/servizi/21" className="side-nav-link-ref"> 
+                            <Link to="/servizi/3" className="side-nav-link-ref"> 
                                 <span>Scheda servizi</span>
                             </Link>
                         </li>
@@ -38,7 +38,7 @@ const SideNavContent = ( { user } ) => {
                             <Link to="/deals/modifica/12" className="side-nav-link-ref">Modifica deal</Link>
                         </li>
                     </ul>
-                </li>
+                </li>{/*
                 <li>
                     <Link to="/ordini" className="waves-effect side-nav-link-ref" >
                         <i className="dripicons-shopping-bag "></i>

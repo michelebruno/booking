@@ -9,8 +9,8 @@ import PropTypes from "prop-types"
 
 
 const NuovaTariffaPopover = ( { reference , show , url , varianti , onClose , onSuccess , ...props } ) => {
-    let defaulVariant = ( varianti && varianti[0] ) ? varianti[0].id : false
-    const [variante, setVariante] = useState(defaulVariant)
+    let defaultVariant = ( varianti && varianti[0] ) ? varianti[0].id : false
+    const [variante, setVariante] = useState(defaultVariant)
     const [imponibile, setImponibile] = useState("")
     const [error, setError] = useState(false)
 
@@ -18,6 +18,8 @@ const NuovaTariffaPopover = ( { reference , show , url , varianti , onClose , on
         axios.post( url , { imponibile , variante } )
             .then( res => {
                 onSuccess(res.data)
+                setImponibile("")
+                setVariante( ( varianti && varianti[1] ) ? varianti[1].id : false )
                 onClose( res )
             })
             .catch( error => {
@@ -29,7 +31,7 @@ const NuovaTariffaPopover = ( { reference , show , url , varianti , onClose , on
         { ( { show , ...props }) => <Popover id="nuovatariffa" { ...props } >
             <Popover.Title className="bg-dark text-light d-flex justify-content-between"><span>Aggiungi tariffa</span><i className="fas fa-times align-self-center p-1 pl-3" onClick={ onClose } /> </Popover.Title>
             <Popover.Content className="p-3">
-                { defaulVariant ?  <Form onSubmit={ e => {e.preventDefault() ; handleSubmit() }} >
+                { defaultVariant ? <Form onSubmit={ e => {e.preventDefault() ; handleSubmit() }} >
 
                     <Form.Group controlId="variante" as={Row}>
                         <Form.Label column >Variante</Form.Label>
@@ -42,11 +44,11 @@ const NuovaTariffaPopover = ( { reference , show , url , varianti , onClose , on
                     <Form.Group controlId="imponibile" as={Row}>
                         <Form.Label column >Imponibile</Form.Label>
                         <Col >
-                            <Form.Control type="number" step="0.01" min="0" value={imponibile} onChange={ e => setImponibile(e.target.value) } required/>
+                            <Form.Control type="number" min="0" value={imponibile} onChange={ e => setImponibile(e.target.value) } required/>
                         </Col>
                     </Form.Group>
                     <div className="text-right">
-                        <Button type="submit" variant="success" size="sm"><i className="fas fa-check mr-1" />  <span>Salva</span></Button>
+                        <Button type="submit" variant="success" size="sm"><i className="fas fa-check mr-1" /> <span>Salva</span></Button>
                     </div>
                 </Form> : "Hai già impostato tutte le varianti di prezzo per questo servizio." }
 

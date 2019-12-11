@@ -1,56 +1,58 @@
-import React , { useState } from 'react'
-import { Card, Row, Col, Form, InputGroup, Table, Badge, Button, Overlay, Tooltip, Popover } from 'react-bootstrap'
+import React , { useState , useEffect } from 'react'
+import { Card, Row, Col, Badge } from 'react-bootstrap'
 import PreLoaderWidget from '../components/Loader'
 import { connect } from "react-redux"
 import BootstrapTable from 'react-bootstrap-table-next'
 
-import cellEditFactory , { Type } from 'react-bootstrap-table2-editor';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 import EditableField from '../components/EditableField';
 import upperCase from 'upper-case';
 import NuovaTariffaPopover from '../components/NuovaTariffaPopover';
+import ProdottiCollegati from '../components/ProdottiCollegati'
+import TariffeTabella from '../components/TariffeTabella'
 
-const Scheda = ( { location , varianti , ...props} ) => {
+const ServiziScheda = ( { location , varianti , ...props} ) => {
     
     const addTariffaRef = React.useRef(null)
     const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
 
     let initialServizio = false;
 
-    if ( location.state && location.state.servizio ) {
-        initialServizio =  location.state.servizio
+    if ( location && location.state && location.state.servizio ) {
+        initialServizio = location.state.servizio
         initialServizio.willBeReloaded = true
     }
 
     const [servizio, setServizio] = useState(initialServizio)
+
+    useEffect( () => {
+
+        if ( ! servizio || servizio.willBeReloaded ) {
+
+            const source = axios.CancelToken.source()
+
+            let url = ( servizio && servizio._links && servizio._links.self ) || location.pathname
+            axios.get(url, { cancelToken : source.token } )
+                .then( res => setServizio(res.data) )
+                .catch( error =>{
+                    if ( axios.isCancel(error) ) return;
+                })
+
+            return () => {
+                source.cancel()
+            };
+        }
+    }, [ servizio ] )
 
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
 
     let disponibiliVariant = "success" 
     if ( disponibili < 10 ) disponibiliVariant = "danger"
 
-    let varianti_disponibili = Object.assign({}, varianti)
 
-    if ( varianti ) { Object.keys(servizio.tariffe).map( variante => {
-            let keys = Object.keys(varianti) 
-            let pos = keys.findIndex( ( value ) => value == variante ) 
-            pos !== -1 && delete varianti_disponibili[keys[pos]]
-        })
-    }
-
-    let editableFieldProps = { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
-    let cellEdit = cellEditFactory({
-        mode: "dbclick",
-        beforeSaveCell : (oldValue, newValue, row, column, done) => {
-            axios.patch(servizio._links.tariffe + "/" + row.id , { imponibile : newValue } )
-                .then( res => {
-                    setServizio(res.data)
-                    done(true)
-                })
-                .catch( error => done(false) )
-            return { async: true };
-          }
-    }) 
-    if ( ( typeof location.state.esercente !== 'undefined' && location.state.esercente.id == props.currentUser.id ) || ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) ) {
+    let editableFieldProps = servizio && servizio._links && { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
+  
+    if ( ( location && location.state && typeof location.state.esercente !== 'undefined' && location.state.esercente.id == props.currentUser.id ) || ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) ) {
         editableFieldProps.readOnly = true
         cellEdit = undefined
     }
@@ -94,36 +96,7 @@ const Scheda = ( { location , varianti , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            { typeof varianti_disponibili !== 'undefined' && <>
-                                <NuovaTariffaPopover url={servizio._links.tariffe} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ d => setServizio(d) } varianti={ Object.values(varianti_disponibili) } />
-                                <div className="d-flex justify-content-between">
-                                    <span className="h3">
-                                        Tariffario
-                                    </span>
-                                    { !editableFieldProps.readOnly && <strong className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong> }   
-                                </div>
-                            </>}
-
-                            <BootstrapTable
-                                keyField="id"
-                                data={ Object.values(tariffe) }
-                                columns={[
-                                    {
-                                        dataField: 'nome', 
-                                        text: 'Titolo'
-                                    },
-                                    { 
-                                        dataField: 'imponibile', 
-                                        text: 'Imponibile',
-                                        formatter: cell => typeof cell !== 'undefined' ? "€" + cell : " - ",
-                                        editorStyle : { width : "5em" , margin: "0" },
-                                    } 
-                                ]}
-                                hover
-                                cellEdit={ cellEdit } 
-                                bordered={ false }
-                            /> 
-
+                            { servizio._links && tariffe && <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} />}
                         </Card.Body>
                     </Card>
                 </Col>
@@ -132,16 +105,7 @@ const Scheda = ( { location , varianti , ...props} ) => {
             <Card>
                 <Card.Body>
                     <h2>Deas e esperienze collegate</h2>
-                            <Table hover>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nome</th> 
-                                        <th>Prezzo (adulti)</th>
-                                        <th>Disponibilità</th>
-                                    </tr>
-                                </thead>
-                            </Table>
+                    <ProdottiCollegati servizio={ servizio } onSuccess={ setServizio } />
                 </Card.Body>
             </Card>
         </React.Fragment>
@@ -149,4 +113,4 @@ const Scheda = ( { location , varianti , ...props} ) => {
     else return <PreLoaderWidget />
 }
 
-export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(Scheda);
+export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(ServiziScheda);

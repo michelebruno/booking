@@ -1,10 +1,12 @@
-import React from 'react'
+import React , { useState } from 'react'
 import { Card, Table } from 'react-bootstrap'  
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Redirect } from 'react-router-dom'
 
 const Deals = ( props ) => {
     const [ redirectTo, setRedirectTo ] = React.useState(false);
+
+    const [api, setApi] = useState({ willBeReloaded : true })
 
     const colonne = [
         {
@@ -92,7 +94,7 @@ const Deals = ( props ) => {
         }
 
         return(
-            <i title={cell} className={"fa fa-circle " + color } ></i>
+            <i title={cell} className={ "fa fa-circle " + color } ></i>
         )
     }
 
@@ -110,18 +112,18 @@ const Deals = ( props ) => {
                 <Card.Body> 
                     <h1>Deals</h1>
                     <p> {"<!--Azioni di filtraggio varie -->"}</p>
-                    <BootstrapTable
+                    { api.data && <BootstrapTable
                         style={ { 'table-layout' : 'auto' } }
                         hover
                         keyField='id'
-                        data={ data }
+                        data={ api.data }
                         columns={ colonne }
                         rowEvents={ rowEvents }
                         bordered={ false }
-                    />
+                    />}
                 </Card.Body>
             </Card>
-        </React.Fragment>
+        </React.Fragment> 
     )
 }
 

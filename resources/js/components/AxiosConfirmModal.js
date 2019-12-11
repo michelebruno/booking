@@ -17,7 +17,7 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
         })
             .then( response => {
                 if ( typeof onSuccess == 'function') {
-                    onSuccess( response )
+                    onSuccess( response.data )
                 } else onHide()
                 
             })

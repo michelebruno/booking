@@ -28,6 +28,12 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     
     Route::apiResource('users', 'API\UserController');
+
+    Route::apiResource('deals', 'API\DealController');
+    
+    Route::apiResource('deals.tariffe', 'API\DealTariffeController' , [ 'parameters' => [ 'tariffe' => 'tariffa' ] ] );
+
+    Route::apiResource('deals.servizi', 'API\DealServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' ] ] );
     
     Route::apiResource('settings', 'API\SettingController');
     
@@ -39,6 +45,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::patch('/esercenti/{esercente}/servizi/{servizio}/restore', 'API\EsercenteServizioController@restore');
     Route::post('/esercenti/{esercente}/servizi/{servizio}/tariffe', 'API\EsercenteServizioController@aggiungiTariffa');
     Route::patch('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'API\EsercenteServizioController@editTariffa');
+    Route::delete('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'API\EsercenteServizioController@deleteTariffa'); // TODO una risorsa esercente.servizi.tariffe
     
     Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
     

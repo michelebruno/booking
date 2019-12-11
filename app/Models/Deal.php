@@ -32,6 +32,10 @@ class Deal extends Prodotto
 
     public function getLinksAttribute()
     {
-        return ;
+        return [
+            'self' => '/deals/' . $this->codice,
+            'tariffe' => '/deals/' . $this->codice . '/tariffe',
+            'servizi' => '/deals/' . $this->codice . '/servizi',
+        ];
     }
 }

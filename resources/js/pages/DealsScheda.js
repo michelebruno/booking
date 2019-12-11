@@ -1,140 +1,108 @@
-import React from 'react'
-import { Card, Row, Col, Image, Table, Badge } from 'react-bootstrap'
+import React , { useState , useEffect } from 'react'
+import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap'
+import { Link } from "react-router-dom"
 import BootstrapTable from 'react-bootstrap-table-next'
-import faker from 'faker/locale/it'
+
+import { connect } from "react-redux"
+import NuovaTariffaPopover from '../components/NuovaTariffaPopover'
+import ProdottiCollegati from '../components/ProdottiCollegati'
+import TariffeTabella from '../components/TariffeTabella'
+import EditableField from '../components/EditableField'
 
 
-const Scheda = ( props ) => {
+const DealsScheda = ( { varianti,  location , match , ...props } ) => {
 
-    const titolo = "Pranzo a Bologna",
-    descrizione = "Mollit eiusmod veniam amet aliqua. Dolore ullamco deserunt laborum laborum ut in ullamco consequat dolore magna officia aliquip excepteur. Ea deserunt occaecat aute elit deserunt qui est commodo. Elit adipisicing adipisicing duis reprehenderit reprehenderit. Cillum aliquip irure est nisi proident ut aliqua labore qui laboris. Sint dolor reprehenderit nostrud non velit esse. Laborum nulla aute sint anim quis.",
-    thumbnail = {
+    let initialDeal = { willBeReloaded : true }
+
+
+    const [deal, setDeal] = useState(initialDeal)
+
+    const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
+
+    let varianti_disponibili = Object.assign({}, varianti)
+
+    if ( varianti && deal && deal.tariffe ) { Object.keys(deal.tariffe).map( variante => {
+            let keys = Object.keys(varianti) 
+            let pos = keys.findIndex( ( value ) => value == variante ) 
+            pos !== -1 && delete varianti_disponibili[keys[pos]]
+        })
+    }
+    useEffect(() => {
+        if ( ! deal || deal.willBeReloaded ) {
+
+            const source = axios.CancelToken.source()
+            let url = ( ( deal && deal._links ) && deal._links.self ) || location.pathname
+
+            axios.get( url , { cancelToken : source.token })
+                .then( res => setDeal(res.data))
+                .catch( error => {
+                    if ( axios.isCancel(error) ) return;
+                    console.error(error)
+                    return error
+                } )
+
+            return () => {
+                source.cancel()
+            };
+
+        }
+    }, [deal])
+
+    const thumbnail = {
         url : 'http://www.turismo.bologna.it/wp-content/uploads/2019/09/una-inclinata-laltra-di-più-le-torri-asinelli-e-garisenda.jpg',
         alt : 'Vista qualsiasi di Bologna',
         title : 'Vista qualsiasi di Bologna'
     }
 
-    const prezzi = [
-        {
-            id: 125,
-            target: {
-                slug: 'adulti',
-                titolo: 'Adulti'
-            },
-            imponibile: {
-                costo: 12,
-                valuta: 'EUR'
-            },
-            imposta: '22%'
-        }
-    ]
 
-    const serviziCollegati = [
-        {
-            id: 2,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 8,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        },
-        {
-            id: 3,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 6,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        },
-        {
-            id: 4,
-            titolo: 'Pranzo da Gino',
-            disponibilità: 8,
-            fornitore: {
-                id: 8,
-                nome: 'Gino il ristorante',
-                links: {
-                    self: '/esercenti/12',
-                    frontend: 'www.turismo.bologna.it/gino...'
-                }
-            }
-        }
-    ]
+    let editableFieldProps = deal && deal._links && { url : deal._links.self , onSuccess : ( r ) => setDeal(r) } 
+  
+    if ( editableFieldProps && ( ! deal || deal.willBeReloaded || ['admin' , 'account_manager'].indexOf(props.currentUser.ruolo) === -1 ) ) {
+        editableFieldProps.readOnly = true
+    }
+    
     
     return(
         <React.Fragment>
-            <Card>
-                <Card.Body>
-                    <Row>
-                        <Col xs={ { order : 3 , span: 12 } } md={ { order: 1, span: 6 } } > 
-                            <div><span className="h1">{titolo}</span>   <span className="h3"><Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: 31 <i className="fas fa-edit" /></Badge></span  > </div>
-                            <h4 className="text-muted">
-                                Descrizione
-                            </h4>
-                            <p>{descrizione}</p>
-                            <h4 className="text-muted">
-                                Tariffario
-                            </h4>
-                            <BootstrapTable
-                                keyField="id"
-                                data={prezzi}
-                                columns={[
-                                    { dataField: 'target.titolo', text: 'Titolo' },
-                                    { dataField: 'imponibile.costo', text: 'Prezzo' }
-                                ]}
-                                hover
-                                bordered={ false }
-                            />
-                        </Col>
-                        <Col xs={ { order : 2 , span: 12 } } md={ { span: 6 } } >
-                            <Image alt={thumbnail.alt} title={thumbnail.title} src={thumbnail.url} fluid />
-                        </Col>
-                    </Row>
-                    
-                </Card.Body>
-            </Card>
+            {deal && deal.id && <>
+            <Row>
+                <Col xs="12" md="6">
+                    <Card>
+                        <Card.Body>
+
+                            <div><span className="h1 text-red">{titolo}</span>   <span className="h3"><Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }<i className="fas fa-edit" /></Badge></span  > </div>
+
+                            <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
+                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
+                            <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
+                                <option value="pubblico">Pubblico</option>
+                                <option value="privato">Privato</option>
+                                <option value="bozza">Bozza</option>
+                            </EditableField>
+
+                            <EditableField type="number" name="disponibili" label="Disponibili" initialValue={disponibili} { ...editableFieldProps}  />
+
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col xs="12" md="6">
+                    <Card>
+                        <Card.Body>
+                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } onSuccess={ d => setDeal(d) }/* TODO editable */ /> 
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
             <Card>
                 <Card.Body>
                     <h2>Servizi collegati</h2>
-                            <Table hover>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nome</th> 
-                                        <th>Prezzo (adulti)</th>
-                                        <th>Disponibilità</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        [ 0, 1, 2, 3, 4, 5].map( ( value , index ) => {
-                                            return(
-                                                <tr key={index}>
-                                                    <td>{ "S-" + (value*2*value) + "0-1" + value }</td>
-                                                    <td>Pranzo da €12</td> 
-                                                    <td>12</td>
-                                                    <td>{ faker.random.number(28)}</td>
-                                                </tr>
-
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </Table>
+                    { typeof deal.servizi !== 'undefined' && <ProdottiCollegati deal={ deal } onSuccess={ setDeal } />}
                 </Card.Body>
-            </Card>
+            </Card></>}
         </React.Fragment>
     )
 }
 
-export default Scheda;
+export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(DealsScheda);

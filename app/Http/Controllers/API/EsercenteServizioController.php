@@ -65,7 +65,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->tariffe = $request->input('tariffe');
 
-        return response($servizio, 201);
+        return response($servizio->load('deals') , 201);
     }
 
     /**
@@ -75,13 +75,13 @@ class EsercenteServizioController extends Controller
      * @param  int  $servizio
      * @return \Illuminate\Http\Response
      */
-    public function show(Esercente $esercente, $servizio)
+    public function show(Esercente $esercente, Servizio $servizio)
     {
-        $servizio = Servizio::fornitore($esercente->id)->findOrFail($servizio);
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
 
         $this->authorize('view' , $servizio) ;
 
-        return response( $servizio->with('deals') );
+        return response( $servizio->load('deals') );
     }
 
     /**
@@ -93,7 +93,7 @@ class EsercenteServizioController extends Controller
      */
     public function update(Request $request, Esercente $esercente, Servizio $servizio)
     {
-        if ( $esercente->id !== $servizio->esercente_id ) abort(404);
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
 
         $this->authorize('create', $servizio );
 
@@ -131,35 +131,52 @@ class EsercenteServizioController extends Controller
 
         $servizio->tariffe = $request->input('tariffe', null);
 
-        return response($servizio);
+        return response($servizio->load('deals') );
     }
 
     public function aggiungiTariffa(Request $request, Esercente $esercente, Servizio $servizio)
     {
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
+        
         $this->authorize('update' , $servizio );
         
         $dati = $request->validate([
-            'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('id' , $servizio->id )],
+            'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $servizio->id )],
             'imponibile' => 'required|int'
         ]);
 
         $servizio->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'imponibile' => $dati['imponibile']]);
 
-        return response( $servizio , 201);
+        return response( $servizio->load('deals') , 201);
     }
 
     public function editTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
     {
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
+
         $this->authorize('update' , $servizio );
 
         $d = $request->validate(['imponibile' => 'required|int']);
 
-        if ( ! $tariffa->prodotto_id === $servizio->id || ! $servizio->esercente_id === $esercente->id ) return abort(404);
+        if ( $tariffa->prodotto_id !== $servizio->id ) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
         
         $tariffa->imponibile = $d['imponibile'];
         $tariffa->save();
         
-        return response( $servizio );
+        return response( $servizio->load('deals')  );
+    }
+
+    public function deleteTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
+    {
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
+        if ( $tariffa->prodotto_id !== $servizio->id ) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
+
+        $this->authorize('update' , $servizio );
+        // TODO $this->authorize('delete' , $tariffa );
+
+        $tariffa->delete();
+        
+        return response( $servizio->load('deals')  );
     }
 
     /**
@@ -170,7 +187,6 @@ class EsercenteServizioController extends Controller
      */
     public function destroy(Esercente $esercente, $servizio)
     {        
-        
         $servizio = Servizio::fornitore($esercente->id)->findOrFail($servizio);
 
         $this->authorize('delete' , $servizio );
@@ -195,7 +211,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->restore();
 
-        return response($servizio);
+        return response($servizio->load('deals') );
 
     }
 }
