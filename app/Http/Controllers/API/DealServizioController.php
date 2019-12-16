@@ -34,11 +34,16 @@ class DealServizioController extends Controller
                 Rule::exists('prodotti', 'codice')->where('tipo', 'servizio')
             ]
         ]);
+        
+        // TODO authorize
 
-        $deal->servizi()->attach($dati['servizio']);
+        $servizio = Servizio::codice( $dati['servizio'] );
 
+        $deal->servizi()->attach( $servizio->id );
 
-        return response($deal->load('servizi') , 201 );
+        if ( $request->query('from', false) == 'servizio') return response( $servizio->load('deals') );
+
+        return response( $deal->load('servizi') , 201 );
 
     }
 
@@ -66,7 +71,7 @@ class DealServizioController extends Controller
         $dati = $request->validate(['servizi' => 'required|array']);
         $deal->servizi()->sync($dati['servizi']);
 
-        if ( $request->query('from', false) == 'servizio') return response($servizio->load('deals'));
+        if ( $request->query( 'from', false ) == 'servizio') return response($servizio->load('deals'));
 
         return response($deal);
     }

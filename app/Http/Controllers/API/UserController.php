@@ -51,13 +51,13 @@ class UserController extends Controller
             
             $user->saveOrFail();
 
-            $metas = [];
+            // $metas = [];
             
-            foreach($dati['meta'] as $key => $value) {
-                if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
-            }
+            // foreach($dati['meta'] as $key => $value) {
+            //     if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
+            // }
 
-            if ( count($metas) ) $user->meta()->saveMany($metas);
+            // if ( count($metas) ) $user->meta()->saveMany($metas);
 
             $user->markEmailAsVerified();
 
@@ -100,11 +100,11 @@ class UserController extends Controller
 
         $user->nome = $request->input('nome', false);
 
-        if ( $request->has('meta') ) {
+/*         if ( $request->has('meta') ) {
             foreach ($request->input('meta') as $chiave => $valore) {
                 $user->meta()->updateOrCreate(["chiave" => $chiave], ["valore" => $valore]);
             }
-        } 
+        }  */
         return response( new UserResource($user) );
     }
 

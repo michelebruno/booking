@@ -60,7 +60,7 @@ class Servizio extends Prodotto
             'tariffe' => "/esercenti/" . $this->esercente_id . "/servizi/" . $this->codice . '/tariffe' ,
         ];
 
-        if ( $this->deleted_at ) $a['restore'] = $a['self'] . "/restore";
+        if ( $this->trashed() ) $a['restore'] = $a['self'] . "/restore";
 
         return $a;
     }

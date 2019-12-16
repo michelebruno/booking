@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Deal;
 use App\Models\Tariffa;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -15,9 +16,53 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
-        return response(Deal::all()->with('servizi'));
+
+        $response = null; 
+        $query = false;
+
+        if ( $s = $request->query('s', false ) ) {
+
+            $s = urldecode($s);
+
+            $query = Deal::where('titolo', 'LIKE', '%' . $s . '%' );
+
+        } 
+        
+        if ( $notAttachedToServizi = $request->query('notAttachedToServizi', false ) ) { // Separati con la virgola
+
+
+            if ( ! $query ) $query = Deal::whereDoesntHave('servizi' , function (Builder $query ) use ( $notAttachedToServizi )
+            {
+                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToServizi ) );
+            });
+
+            else $query->whereDoesntHave('servizi' , function (Builder $query ) use ( $notAttachedToServizi )
+            {
+                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToServizi ) );
+            });
+
+        } 
+
+        if ( $query ) { 
+            $response = $query->get(); 
+        } else $response = Deal::all()->load('servizi');
+
+        if ( $schema = $request->query( 'schema', false ) ) {
+
+            $schemed = [];
+
+            foreach ($response as $deal ) {
+                if ( $schema == "select-2") {
+                    $schemed[] = [ 'label' => $deal->titolo , 'value' => $deal->codice ];
+                }
+            }
+
+            $response = $schemed;
+        }
+
+        return response($response);
     }
 
     /**

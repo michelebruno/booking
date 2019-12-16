@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Servizio;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ServizioController extends Controller
@@ -13,11 +14,46 @@ class ServizioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
         $this->authorize( 'viewAny' , Servizio::class );
 
-        return response( Servizio::all() );
+        $query = false;
+
+        if ( $s = $request->query('s', false )) {
+
+            $s = urldecode($s);
+            $servizi = Servizio::where('titolo', 'LIKE', '%' . $s . '%' )->get();
+            $response = $servizi->load('deals');
+
+        }
+        if ( $s = $request->query('s', false ) ) {
+
+            $s = urldecode($s);
+
+            $query = Servizio::where('titolo', 'LIKE', '%' . $s . '%' );
+
+        } 
+        
+        if ( $notAttachedToDeals = $request->query('notAttachedToDeals', false ) ) { // Separati con la virgola
+
+            if ( ! $query ) $query = Servizio::whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
+            {
+                return $query->whereIn('padre' , explode(',' ,  $notAttachedToDeals ) );
+            });
+
+            else $query->whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
+            {
+                return $query->whereIn('padre' , explode(',' ,  $notAttachedToDeals ) );
+            });
+
+        }   
+
+        if ( $query ) { 
+            $response = $query->get(); 
+        } else $response = Servizio::all()->load('deals');
+
+        return response( $response );
     }
 
     /**

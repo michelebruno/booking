@@ -44,41 +44,6 @@ const Deals = ( props ) => {
         }
     ]
 
-    let data = [
-        {
-            id: '21',
-            titolo: 'Pranzo tipico a Bologna',
-            link: '/deals/22',
-            disponibilità: '12',
-            stato: 'abilitato',
-            collegati: '8'
-        },
-        {
-            id: '2s1',
-            titolo: 'Tour-tellino',
-            link: '/deals/22',
-            disponibilità: '12',
-            stato: 'abilitato',
-            collegati: 7
-        },
-        {
-            id: '2h1',
-            titolo: 'Tour-divino',
-            link: '/deals/22',
-            disponibilità: '12',
-            stato: 'abilitato',
-            collegati: 4
-        },
-        {
-            id: '221',
-            titolo: 'Corso di cucina bolognese',
-            link: '/deals/22',
-            disponibilità: '12',
-            stato: 'disabilitato',
-            collegati: 12
-        },
-    ]
-
     /* Formattatori */
 
     const formattaStato = ( cell, row, rowIndex ) => {

@@ -10,9 +10,11 @@ const errorHandler = axios.interceptors.response.use( function( response ) {
             let DOMnode = document.getElementById('error-root') 
             const onHide = () => ReactDOM.unmountComponentAtNode(DOMnode)
             ReactDOM.render( <ErrorModal onHide={onHide} response={error.response} /> , DOMnode ); 
-        }
+        } 
+
     } else {
-        // Errore non di axios
+        // Non di axios
+        // ? Lasciare vuoto perché poi la promessa viene rigettata sotto
     }
     
     return Promise.reject(error)

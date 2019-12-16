@@ -5,6 +5,7 @@ namespace App;
 use App\Models\VarianteTariffa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 abstract class Prodotto extends Model
 {
@@ -17,7 +18,7 @@ abstract class Prodotto extends Model
     ];
 
     protected $appends = [
-        'tariffe' , '_links' , 'cestinato'
+        'condensato', 'tariffe' , '_links' , 'cestinato'
     ];
 
     public function getRouteKeyName()
@@ -47,6 +48,13 @@ abstract class Prodotto extends Model
         };
 
         return $a;
+    }
+
+    public function getCondensatoAttribute()
+    {
+        $euro = Arr::exists( $this->tariffe, 'intero' ) ? " | " . " €" . $this->tariffe['intero']->imponibile : '' ;
+
+        return $this->codice . " - " . $this->titolo . $euro ;
     }
 
     public function getCestinatoAttribute()
