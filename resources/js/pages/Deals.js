@@ -1,13 +1,24 @@
-import React , { useState } from 'react'
-import { Card, Table } from 'react-bootstrap'  
+import React , { useState , useEffect } from 'react'
+import { Card , Button } from 'react-bootstrap'  
 import BootstrapTable from 'react-bootstrap-table-next'
-import { Redirect } from 'react-router-dom'
+import { Redirect , Link } from 'react-router-dom'
 
 const Deals = ( props ) => {
     const [ redirectTo, setRedirectTo ] = React.useState(false);
 
-    const [api, setApi] = useState({ willBeReloaded : true })
+    const [ deals , setDeals ] = useState()
 
+    useEffect(() => {
+        const source = axios.CancelToken.source()
+
+        axios.get("/deals", { cancelToken : source.token })
+            .then( res => setDeals(res.data))
+            .catch( error => axios.isCancel(error) || console.error( error ))
+        return () => {
+            source.cancel()
+        };
+
+    }, [])
     const colonne = [
         {
             dataField: 'stato',
@@ -77,15 +88,50 @@ const Deals = ( props ) => {
                 <Card.Body> 
                     <h1>Deals</h1>
                     <p> {"<!--Azioni di filtraggio varie -->"}</p>
-                    { api.data && <BootstrapTable
-                        style={ { 'table-layout' : 'auto' } }
+                    { deals && <BootstrapTable 
+                        keyField="id"
+                        noDataIndication="Non ci sono prodotti collegati."
+                        data={deals}
+                        columns={[
+                            {
+                                text: 'Cod.',
+                                dataField: 'codice'
+                            },
+                            {
+                                text: 'Titolo',
+                                dataField: 'titolo'
+                            },
+                            {
+                                text: 'Imponibile',
+                                dataField: 'tariffe.intero.imponibile'
+                            },
+                            {
+                                text: 'Disponibiiltà',
+                                dataField: 'disponibili'
+                            },
+                            {
+                                text : "",
+                                dataField: "azioni",
+                                formatter : ( cell, row ) =>{
+                                    const Buttons = ( props ) => {
+
+                                        let url = row._links.self
+                                        let state = { deal : row }
+
+                                        
+                                        return <>
+                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
+                                        </>
+
+                                    }
+
+                                    return <Buttons />
+                                }
+                            }
+                        ]}
                         hover
-                        keyField='id'
-                        data={ api.data }
-                        columns={ colonne }
-                        rowEvents={ rowEvents }
                         bordered={ false }
-                    />}
+                        />}
                 </Card.Body>
             </Card>
         </React.Fragment> 

@@ -19,6 +19,46 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
     const [showAddAxios, setShowAddAxios] = useState(false)
 
     return typeof prodotti !== 'undefined' && <div className="prodotti-collegati" >
+        
+        { selectedDealToAdd && <AxiosConfirmModal 
+            onSuccess={ d =>{ 
+                onSuccess(d) ; 
+                setShowAddAxios(false)
+                setSelectedDealToAdd("")
+            } } 
+            onHide={ () => { setSelectedDealToAdd(""); setShowAddAxios(false) }}
+            method="post" 
+            data={ { servizio : selectedDealToAdd ? ( deal ? selectedDealToAdd.codice : self.codice ) : null } } 
+            show={showAddAxios} url={ deal ? self._links.servizi : selectedDealToAdd._links.servizi + "?from=servizio" } 
+            title="Confermi di voler aggiungere questo prodotto?"
+            >
+            { selectedDealToAdd.titolo }
+        </AxiosConfirmModal>
+        }
+
+        <div className="pos-relative">
+            <AsyncSelect 
+                className="w-25 p-2 right-0"
+                placeholder="Aggiungi un prodotto"
+                getOptionLabel={ a => a.condensato } 
+                getOptionValue={ a => a.codice } 
+                cacheOptions
+                defaultOptions
+                value={ selectedDealToAdd } 
+                onChange={ (v) => {
+                    setSelectedDealToAdd(v); 
+                    setShowAddAxios(true)
+                } }
+                loadOptions={
+                    ( inputValue , callback ) => {
+                        let url = servizio ? '/deals?notAttachedToServizi=' + self.id + '&s=' + inputValue  : "/servizi?notAttachedToDeals=" + self.id + "&s=" + inputValue
+                        axios.get( encodeURI( url ) )
+                            .then( res => callback(res.data) )
+                    }
+                }
+            />
+
+        </div>
         <BootstrapTable 
             keyField="id"
             noDataIndication="Non ci sono prodotti collegati."
@@ -74,46 +114,6 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
             bordered={ false }
             />
 
-        <Row>
-            { selectedDealToAdd && <AxiosConfirmModal 
-                    onSuccess={ d =>{ 
-                        onSuccess(d) ; 
-                        setShowAddAxios(false)
-                        setSelectedDealToAdd("")
-                    } } 
-                    method="post" 
-                    data={ { servizio : selectedDealToAdd ? ( deal ? selectedDealToAdd.codice : self.codice ) : null } } 
-                    show={showAddAxios} url={ deal ? self._links.servizi : selectedDealToAdd._links.servizi + "?from=servizio" } 
-                    title="Confermi di voler aggiungere questo prodotto?"
-                >
-                    { selectedDealToAdd.titolo }
-                </AxiosConfirmModal>
-            }
-            <Col sm="12" md="4" lg="2">
-                <h4 className="pl-1">{ aggiungiText || "Aggiungi prodotto" }</h4>
-
-            </Col>
-            <Col lg="6">
-                <AsyncSelect 
-                    getOptionLabel={ a => a.condensato } 
-                    getOptionValue={ a => a.codice } 
-                    cacheOptions
-                    defaultOptions
-                    value={ selectedDealToAdd } 
-                    onChange={ (v) => {
-                        setSelectedDealToAdd(v); 
-                        setShowAddAxios(true)
-                    } }
-                    loadOptions={
-                        ( inputValue , callback ) => {
-                            let url = servizio ? '/deals?notAttachedToServizi=' + self.id + '&s=' + inputValue  : "/servizi?notAttachedToDeals=" + self.id + "&s=" + inputValue
-                            axios.get( encodeURI( url ) )
-                                .then( res => { console.warn(res.data) ; callback(res.data) })
-                        }
-                    }
-                />
-            </Col>
-         </Row>
     </div> || ""
 }
 
