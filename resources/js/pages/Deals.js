@@ -19,41 +19,6 @@ const Deals = ( props ) => {
         };
 
     }, [])
-    const colonne = [
-        {
-            dataField: 'stato',
-            text: '',
-            headerStyle: {
-                width: '4em'
-            },
-            formatter: ( cell ) => formattaStato(cell)
-        },
-        {
-            dataField: 'id',
-            text: 'ID',
-            headerStyle: {
-                width: '12em'
-            }
-        },
-        {
-            dataField: 'titolo',
-            text: 'Titolo'
-        },
-        {
-            dataField: 'disponibilità',
-            text: 'Disponibilità',
-            headerStyle: {
-                width: '12em'
-            }
-        },
-        {
-            dataField: 'collegati',
-            text: 'Servizi collegati',
-            headerStyle: {
-                width: '12em'
-            }
-        }
-    ]
 
     /* Formattatori */
 
@@ -102,8 +67,9 @@ const Deals = ( props ) => {
                                 dataField: 'titolo'
                             },
                             {
-                                text: 'Imponibile',
-                                dataField: 'tariffe.intero.imponibile'
+                                text: 'Prezzo',
+                                dataField: 'tariffe.intero.imponibile',
+                                formatter : ( cell , row ) => cell ? ( cell * ( 1 + row.iva / 100 ) ).toFixed(2) : ""
                             },
                             {
                                 text: 'Disponibiiltà',

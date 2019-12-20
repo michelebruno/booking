@@ -3,7 +3,7 @@ import { Form, Button, Alert, Spinner } from "react-bootstrap"
 import { Link } from 'react-router-dom'
 import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
 
-const UtenteForm =  props => {
+const UtenteForm =  ( { onSuccess }) => {
     
     const [api, setApi] = useState({ status: null, data: null});
 
@@ -28,15 +28,17 @@ const UtenteForm =  props => {
                 password,
                 password_confirmation: passwordConfirmation,
                 nome
-            }).then( res => setApi({status: "success", data: res.data})
-            ).catch( res => {
+            }).then( res => {
+                setApi({status: "success", data: res.data})
+                if ( typeof onSuccess === "function" ) onSuccess( res.data )
+            })
+            .catch( res => {
                 setApi({status: "error", data: res.response.data })
             })
         }
     }, [api])
 
     const errors = ( api.status === "error" && typeof api.data.errors !== 'undefined' ) ? api.data.errors : false;
-
 
     const dynamicProps = field => { 
         let props = {}
@@ -96,9 +98,9 @@ const UtenteForm =  props => {
                 <React.Fragment>
                     <Form.Group controlId="nome">
                         <Form.Label>Nome</Form.Label>
-                        <Form.Control type="text" value={nome} onChange={ e => setNome(e.target.value) } />
+                        <Form.Control type="text" value={nome} onChange={ e => setNome(e.target.value) } { ...dynamicProps("nome") } />
                     </Form.Group>
-                    <Button type="submit" >Invia</Button>
+                    <Button type="submit" disabled={ api.status == "success"} >Invia</Button>
                 </React.Fragment>
             
         </Form>

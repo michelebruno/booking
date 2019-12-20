@@ -19,7 +19,7 @@ import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
 const Utenti = ( props ) => {
 
     const [api, setApi] = useState({status: "loading", data: null})
-    const [ redirect, setRedirect ] = useState(false)
+    const [redirect, setRedirect ] = useState(false)
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const columns = [ 
@@ -92,6 +92,7 @@ const Utenti = ( props ) => {
     React.useEffect(() => {
 
         const source = axios.CancelToken.source()
+
         axios.get('/users' , { cancelToken: source.token } )
             .then( ( response ) => { 
                 setApi({ status: "loaded" , data: response.data })
@@ -124,8 +125,8 @@ const Utenti = ( props ) => {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <UtenteForm />
-                        </Modal.Body>
+                            <UtenteForm onSuccess={ d => { let n = Object.assign({} , api , { data : _.concat(api.data, d) } ) ; setApi(n)} } />
+                        </Modal.Body> 
                     </Modal>
                 </p>
 

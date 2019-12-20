@@ -39,11 +39,13 @@ class EsercenteController extends \App\Http\Controllers\Controller
         $dati = $request->validate([
             'email' => ['required', 'email', 'unique:users'],
             'meta.*' => 'nullable',
-            'indirizzo.*' => 'nullable',
+            'indirizzo.*' => 'nullable', // TODO cap numerico etc...
             'username' => [ 'required', 'unique:users'],
             'piva' => ['required', 'digits:11', 'unique:users'],
             'cf' => ['required', 'max:16', 'unique:users'], // TODO verificare il formato,
-            'nome' => 'string|required'
+            'nome' => 'string|required',
+            'sdi' => 'sometimes|nullable|max:7',
+            'pec' => 'sometimes|nullable|email'
         ]);
 
         $user = new Esercente($dati);
@@ -134,8 +136,10 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'indirizzo.*' => 'nullable',
             'username' => [ 'required', Rule::unique('users', 'username')->ignore($esercente->username, 'username')],
             'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($esercente->piva, 'piva')], 
-            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($esercente->cf, 'cf')],
-            'nome' => 'string|required'
+            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($esercente->cf, 'cf' )],
+            'nome' => 'string|required',
+            'sdi' => 'sometimes|nullable|max:7',
+            'pec' => 'sometimes|nullable|email'
         ]);
 
         $esercente->fill($dati); // TODO: quanto è sicuro? L'attributo fillable come è impostato?

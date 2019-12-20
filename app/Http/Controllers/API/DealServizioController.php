@@ -31,7 +31,10 @@ class DealServizioController extends Controller
         $dati = $request->validate([
             'servizio' => [
                 'required',
-                Rule::exists('prodotti', 'codice')->where('tipo', 'servizio')
+                Rule::exists('prodotti', 'codice')->where('tipo', 'servizio'),
+                function ( $attribute , $value, $fail ) {
+
+                }
             ]
         ]);
         
@@ -39,11 +42,22 @@ class DealServizioController extends Controller
 
         $servizio = Servizio::codice( $dati['servizio'] );
 
+        $dati = $request->validate([
+            'servizio' => [ 
+                function ( $attribute , $value, $fail ) use ( $servizio , $deal ) {
+                    if ( $deal->servizi->contains( $servizio->id ) ) {
+                        $fail($attribute. " è già associato al deal.");
+                    }
+                }
+            ]
+        ]); 
+
         $deal->servizi()->attach( $servizio->id );
 
         if ( $request->query('from', false) == 'servizio') return response( $servizio->load('deals') );
 
         return response( $deal->load('servizi') , 201 );
+            
 
     }
 

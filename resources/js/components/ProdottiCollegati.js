@@ -42,8 +42,6 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
                 placeholder="Aggiungi un prodotto"
                 getOptionLabel={ a => a.condensato } 
                 getOptionValue={ a => a.codice } 
-                cacheOptions
-                defaultOptions
                 value={ selectedDealToAdd } 
                 onChange={ (v) => {
                     setSelectedDealToAdd(v); 
@@ -73,8 +71,14 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
                     dataField: 'titolo'
                 },
                 {
+                    text: 'Esercente',
+                    dataField: 'esercente.nome',
+                    hidden: !deal
+                },
+                {
                     text: 'Imponibile',
-                    dataField: 'tariffe.intero.imponibile'
+                    dataField: 'tariffe.intero.imponibile',
+                    formatter : cell => cell ? "€ " + cell : ""
                 },
                 {
                     text: 'Disponibiiltà',

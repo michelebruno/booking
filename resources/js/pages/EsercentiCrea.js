@@ -263,7 +263,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
                                     <Form.Group as={Row} controlId="cf">
                                         <Form.Label column sm="4" >Codice fiscale</Form.Label>
                                         <Col sm="8">
-                                            <Form.Control size="16" maxLength="16"  required isInvalid={isInvalid(errors, "cf" )} value={cf} onChange={ e => setCf(e.target.value)} />
+                                            <Form.Control size="16" maxLength="16"  required isInvalid={isInvalid(errors, "cf" )} value={cf} onChange={ e => setCf(e.target.value.toUpperCase())} />
                                             { showErrorsFeedback(errors, "cf") }
                                         </Col>
                                     </Form.Group>
@@ -274,7 +274,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
                                     <Form.Group as={Row} controlId="pec">
                                         <Form.Label column sm="4" >PEC</Form.Label>
                                         <Col sm="8">
-                                            <Form.Control isInvalid={isInvalid(errors, "pec" )} value={pec} onChange={ e => setPec(e.target.value)}/>
+                                            <Form.Control isInvalid={isInvalid(errors, "pec" )} type="email" value={pec} onChange={ e => setPec(e.target.value)}/>
                                             { showErrorsFeedback(errors, "pec") }
                                         </Col>
                                     </Form.Group>
@@ -283,7 +283,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
                                     <Form.Group as={Row} controlId="SDI">
                                         <Form.Label column sm="4" >SDI</Form.Label>
                                         <Col sm="8">
-                                            <Form.Control isInvalid={isInvalid(errors, "sdi" )} value={sdi} onChange={ e => setSdi(e.target.value)} />
+                                            <Form.Control isInvalid={isInvalid(errors, "sdi" )} type="text" maxLength="7" value={sdi} onChange={ e => setSdi( e.target.value.toUpperCase() )} />
                                             { showErrorsFeedback(errors, "sdi") }
                                         </Col>
                                     </Form.Group>
