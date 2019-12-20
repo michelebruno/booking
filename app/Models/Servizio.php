@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Prodotto;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class Servizio extends Prodotto
 {
@@ -46,6 +47,14 @@ class Servizio extends Prodotto
     public function deals()
     {
         return $this->belongsToMany('App\Models\Deal', 'prodotti_pivot', 'figlio', 'padre');
+    }
+
+
+    public function getCondensatoAttribute()
+    {
+        $euro = Arr::exists( $this->tariffe, 'intero' ) ? " | " . " €" . $this->tariffe['intero']->imponibile : '' ;
+
+        return $this->esercente->nome . " - " . $this->codice . " - " . $this->titolo . $euro ;
     }
 
     public function scopeFornitore($query, $id)

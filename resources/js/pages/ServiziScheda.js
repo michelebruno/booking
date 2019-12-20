@@ -11,7 +11,7 @@ import NuovaTariffaPopover from '../components/NuovaTariffaPopover';
 import ProdottiCollegati from '../components/ProdottiCollegati'
 import TariffeTabella from '../components/TariffeTabella'
 
-const ServiziScheda = ( { location , varianti , ...props} ) => {
+const ServiziScheda = ( { location , history , varianti , ...props} ) => {
     
     const addTariffaRef = React.useRef(null)
     const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)

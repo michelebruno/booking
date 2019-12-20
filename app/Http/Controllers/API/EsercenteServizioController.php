@@ -185,11 +185,11 @@ class EsercenteServizioController extends Controller
      * @param  \App\Models\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Esercente $esercente, $servizio)
+    public function destroy(Esercente $esercente, Servizio $servizio)
     {        
-        $servizio = Servizio::fornitore($esercente->id)->findOrFail($servizio);
-
         $this->authorize('delete' , $servizio );
+
+        if ( $esercente->id !== $servizio->esercente_id ) abort(404);
 
         $servizio->delete();
 
@@ -205,9 +205,9 @@ class EsercenteServizioController extends Controller
      */
     public function restore(Esercente $esercente, $servizio)
     {        
-        $servizio = Servizio::fornitore($esercente->id)->onlyTrashed()->findOrFail($servizio);
-
         $this->authorize('restore' , $servizio );
+
+        $servizio = Servizio::fornitore($esercente->id)->onlyTrashed()->findOrFail($servizio);
 
         $servizio->restore();
 

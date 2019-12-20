@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Row , Col , Table , Card, Nav, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );

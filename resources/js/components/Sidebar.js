@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Dropdown } from 'react-bootstrap';
-import MetisMenu from 'react-metismenu'
+import { Dropdown } from 'react-bootstrap'; 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { connect } from "react-redux"
 
@@ -30,12 +29,7 @@ const SideNavContent = ( { user } ) => {
                             </Link>
                         </li>
                         <li>
-                            <Link to="/servizi/3" className="side-nav-link-ref"> 
-                                <span>Scheda servizi</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/deals/modifica/12" className="side-nav-link-ref">Modifica deal</Link>
+                            <Link to="/deals/crea" className="side-nav-link-ref">Crea deal</Link>
                         </li>
                     </ul>
                 </li>{/*
@@ -56,19 +50,19 @@ const SideNavContent = ( { user } ) => {
                         <span>Tickets</span>
                     </Link>
                 </li> */}
-                { [ 'esercente'].indexOf(user.ruolo) !== -1 && <li>
+                { [ 'esercente' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/account" >
                         <i className="fas fa-user" />
                         <span>Il mio account</span>
                     </Link>
                 </li>}
-                { [ 'admin' , 'account_manager'].indexOf(user.ruolo) !== -1 && <li>
+                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/utenti" >
                         <i className="fas fa-user" />
                         <span>Utenti</span>
                     </Link>
-                </li>}
-                { [ 'admin' , 'account_manager'].indexOf(user.ruolo) !== -1 &&<li>
+                </li>} 
+                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 &&<li>
                     <Link to="/esercenti" className="waves-effect side-nav-link-ref" aria-expanded="false">
                         <i className="mdi mdi-tooltip-account "></i>
                         <span>Esercenti</span>

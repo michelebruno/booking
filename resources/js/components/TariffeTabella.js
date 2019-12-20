@@ -1,6 +1,5 @@
-import React , { useState } from "react"
+import React , { useState , useEffect } from "react"
 
-import { connect } from "react-redux"
 import cellEditFactory from 'react-bootstrap-table2-editor';
 
 import BootstrapTable from 'react-bootstrap-table-next'
@@ -8,20 +7,14 @@ import Button from "react-bootstrap/Button"
 import NuovaTariffaPopover from "./NuovaTariffaPopover"
 import AxiosConfirmModal from "./AxiosConfirmModal";
 
-const TariffeTabella = ( { tariffe, varianti , url , onSuccess } ) => {
+const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
     
     const addTariffaRef = React.useRef(null) 
 
+    const [varianti_disponibili, setVarianti_disponibili] = useState()
+
     const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
 
-    let varianti_disponibili = Object.assign({}, varianti)
-
-    if ( varianti && tariffe ) { Object.keys( tariffe).map( variante => {
-            let keys = Object.keys(varianti) 
-            let pos = keys.findIndex( ( value ) => value == variante ) 
-            pos !== -1 && delete varianti_disponibili[keys[pos]]
-        })
-    }
 
     let cellEdit = cellEditFactory({
         mode: "dbclick",
@@ -37,15 +30,14 @@ const TariffeTabella = ( { tariffe, varianti , url , onSuccess } ) => {
     }) 
 
     return <>
-        { typeof varianti !== 'undefined' && <>
-            { url && <NuovaTariffaPopover url={url} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ onSuccess } varianti={ Object.values(varianti_disponibili) } />}
+    
+            { url && <NuovaTariffaPopover url={url} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ onSuccess } tariffe={tariffe} />}
             <div className="d-flex justify-content-between">
                 <span className="h3">
                     Tariffario
                 </span>
                 { <strong title="Aggiungi una tariffa per il prodotto" className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong> }   
             </div>
-        </> || <h3>Tariffario</h3>}
         {typeof tariffe !== 'undefined' && <BootstrapTable
             keyField="id"
             data={ Object.values( tariffe ) }
@@ -82,7 +74,7 @@ const TariffeTabella = ( { tariffe, varianti , url , onSuccess } ) => {
                                 >
                                     Questa azione non è reversibile.
                                 </AxiosConfirmModal>
-                                <i title="Elimina tariffa." className="fas fa-minus-circle text-danger fa-2x" onClick={ () => setShowAxios(true) } />
+                                { row.slug !== "intero" && <i title="Elimina tariffa." className="fas fa-minus-circle text-danger fa-2x" onClick={ () => setShowAxios(true) } />}
                             </>
                         }
                         
@@ -98,4 +90,4 @@ const TariffeTabella = ( { tariffe, varianti , url , onSuccess } ) => {
     </>
 }
 
-export default connect( state => { return { varianti : state.settings.varianti_tariffe } } )( TariffeTabella )
+export default TariffeTabella

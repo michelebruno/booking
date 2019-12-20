@@ -22,7 +22,7 @@ import ServiziTabella from '../components/ServiziTabella';
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 const ServizioForm = React.lazy( () => import( '../components/ServizioForm' ) );
 
-const EsercentiProfilo = ( { location , match , shouldBeReloaded , ...props } ) => {
+const EsercentiProfilo = ( { location , match , history, shouldBeReloaded , ...props } ) => {
 
     const [ tabAttivitàAperta, setTabAttivitàAperta ] = useState("convalide");
 

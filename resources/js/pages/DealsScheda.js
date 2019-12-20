@@ -1,6 +1,6 @@
 import React , { useState , useEffect } from 'react'
 import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap'
-import { Link } from "react-router-dom"
+import { Link  , Redirect} from "react-router-dom"
 import BootstrapTable from 'react-bootstrap-table-next'
 
 import { connect } from "react-redux"
@@ -10,7 +10,7 @@ import TariffeTabella from '../components/TariffeTabella'
 import EditableField from '../components/EditableField'
 
 
-const DealsScheda = ( { varianti,  location , match , ...props } ) => {
+const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
 
     let initialDeal = { willBeReloaded : true }
 
@@ -73,8 +73,8 @@ const DealsScheda = ( { varianti,  location , match , ...props } ) => {
                             <div><span className="h1 text-red">{titolo}</span>   <span className="h3"><Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }<i className="fas fa-edit" /></Badge></span  > </div>
 
                             <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
-                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps} textMutator={ str => upperCase(str) } />
-                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps}  textMutator={ str => str.toUpperCase() } />
+                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps } onSuccess={ d => { setDeal(d); history.replace(d._links.self) }} textMutator={ str => upperCase(str) } />
                             <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
                             <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
                                 <option value="pubblico">Pubblico</option>
@@ -105,4 +105,4 @@ const DealsScheda = ( { varianti,  location , match , ...props } ) => {
     )
 }
 
-export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(DealsScheda);
+export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } } )( DealsScheda );

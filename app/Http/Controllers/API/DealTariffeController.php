@@ -86,7 +86,9 @@ class DealTariffeController extends Controller
         // TODO authorize
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
-        $tariffa->delete();
+
+        $tariffa->forceDelete();
+
         return response( $deal->load('servizi') );
     }
 }

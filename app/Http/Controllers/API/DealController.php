@@ -7,6 +7,7 @@ use App\Models\Deal;
 use App\Models\Tariffa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class DealController extends Controller
@@ -26,12 +27,11 @@ class DealController extends Controller
 
             $s = urldecode($s);
 
-            $query = Deal::where('titolo', 'LIKE', '%' . $s . '%' );
+            $query = Deal::where('titolo', 'LIKE', '%' . $s . '%' )->orWhere( 'codice', 'LIKE', '%' . $s . '%' );
 
         } 
         
         if ( $notAttachedToServizi = $request->query('notAttachedToServizi', false ) ) { // Separati con la virgola
-
 
             if ( ! $query ) $query = Deal::whereDoesntHave('servizi' , function (Builder $query ) use ( $notAttachedToServizi )
             {
@@ -73,7 +73,32 @@ class DealController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Deal::class );
+
+        $dati = $request->validate([
+            'stato' => 'required|string|in:pubblico,privato,bozza',
+            'titolo' => 'required|string',
+            'descrizione' => 'nullable|string',
+            'disponibili' => 'integer',
+            'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
+            'iva' => 'integer|required',
+            'tariffe' => 'array|bail',
+            'tariffe.intero.imponibile' => 'required',
+            'tariffe.*.imponibile' => 'required'
+        ]);
+ 
+        // TODO Creare un codice non random ma unico
+        //  ? Il valore di dafault deve essere true?
+
+        if ( $request->input( 'codice_personalizzato' , true ) ) $dati['codice'] = Str::random(10);
+
+        $prodotto = new Deal($dati);
+        
+        $prodotto->save();
+
+        $prodotto->tariffe = $dati['tariffe'];
+
+        return response( $prodotto->load('servizi') , 201);
     }
 
     /**
@@ -96,7 +121,7 @@ class DealController extends Controller
      */
     public function update(Request $request, Deal $deal)
     {
-        //
+        $this->authorize('update', $deal); 
     }
 
     /**
@@ -111,7 +136,9 @@ class DealController extends Controller
     }
 
     public function aggiungiTariffa(Request $request, Deal $deal)
-    {        
+    {
+        $this->authorize('update', $deal); 
+
         $dati = $request->validate([
             'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
             'imponibile' => 'required|int'
@@ -123,7 +150,9 @@ class DealController extends Controller
     }
 
     public function editTariffa( Request $request , Deal $deal , Tariffa $tariffa )
-    {
+    {        
+        $this->authorize('update', $deal); 
+
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
         $d = $request->validate( ['imponibile' => 'required|int'] );
@@ -137,6 +166,8 @@ class DealController extends Controller
 
     public function deleteTariffa( Request $request , Deal $deal , Tariffa $tariffa )
     {
+        $this->authorize('update', $deal);  // TODO TariffaPolicy
+
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
         $tariffa->delete();
