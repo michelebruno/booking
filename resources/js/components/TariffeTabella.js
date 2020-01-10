@@ -6,8 +6,9 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import Button from "react-bootstrap/Button"
 import NuovaTariffaPopover from "./NuovaTariffaPopover"
 import AxiosConfirmModal from "./AxiosConfirmModal";
+import PropTypes from "prop-types"
 
-const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
+const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable } ) => {
     
     const addTariffaRef = React.useRef(null) 
 
@@ -15,11 +16,11 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
 
     const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
 
-
     let cellEdit = cellEditFactory({
         mode: "dbclick",
         beforeSaveCell : (oldValue, newValue, row, column, done) => {
-            axios.patch( url + "/" + row.id , { imponibile : newValue } )
+            let invia = ivaInclusa ? { importo : newValue } : { imponibile : newValue}
+            axios.patch( url + "/" + row.id , invia )
                 .then( res => {
                     onSuccess(res.data)
                     done(true)
@@ -27,7 +28,9 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
                 .catch( error => done(false) )
             return { async: true };
           }
-    }) 
+    })
+    
+    const prezziFormatter = new Intl.NumberFormat('en-US', { style : 'currency' , currency: 'EUR' } ).format
 
     return <>
     
@@ -36,7 +39,7 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
                 <span className="h3">
                     Tariffario
                 </span>
-                { <strong title="Aggiungi una tariffa per il prodotto" className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong> }   
+                { editable && <strong title="Aggiungi una tariffa per il prodotto" className="text-muted align-self-center" ref={addTariffaRef} onClick={ () => setShowTariffeTooltip(!showTariffeTooltip) } >Nuovo</strong> }   
             </div>
         {typeof tariffe !== 'undefined' && <BootstrapTable
             keyField="id"
@@ -50,13 +53,24 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
                 { 
                     dataField: 'imponibile',
                     text: 'Imponibile',
-                    formatter: cell => typeof cell !== 'undefined' ? "€ " + cell : " - ",
-                    editorStyle : { width : "5em" , margin: "0" } 
+                    formatter: cell => typeof cell !== 'undefined' ? prezziFormatter(cell) : " - ",
+                    editorStyle : { width : "5em" , margin: "0" } ,
+                    editable,
+                    hidden: ivaInclusa
+                },
+                { 
+                    dataField: 'importo',
+                    text: 'Importo',
+                    formatter: cell => typeof cell !== 'undefined' ? prezziFormatter(cell) : " - ",
+                    editorStyle : { width : "5em" , margin: "0" } ,
+                    editable,
+                    hidden: !ivaInclusa
                 },
                 {
                     dataField: 'azioni',
                     text : "",
                     editable: false,
+                    hidden: !editable,
                     classes: "text-right",
                     formatter : ( cell , row ) => {
                         const Formatter = (props) => {
@@ -74,7 +88,7 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
                                 >
                                     Questa azione non è reversibile.
                                 </AxiosConfirmModal>
-                                { row.slug !== "intero" && <i title="Elimina tariffa." className="fas fa-minus-circle text-danger fa-2x" onClick={ () => setShowAxios(true) } />}
+                                { row.slug !== "intero" && editable && <i title="Elimina tariffa." className="fas fa-minus-circle text-danger fa-2x" onClick={ () => setShowAxios(true) } />}
                             </>
                         }
                         
@@ -88,6 +102,17 @@ const TariffeTabella = ( { tariffe, url , onSuccess } ) => {
             bordered={ false }
         />}
     </>
+}
+
+TariffeTabella.propTypes = {
+    iva : PropTypes.number.isRequired,
+    editable: PropTypes.bool
+}
+
+
+TariffeTabella.defaultProps = {
+    ivaInclusa: true,
+    editable: true,
 }
 
 export default TariffeTabella

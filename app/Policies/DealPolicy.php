@@ -33,6 +33,11 @@ class DealPolicy
         return true; // ? Va bene?
     }
 
+    public function viewTrashed(User $user, Deal $deal)
+    {
+        return in_array($user->ruolo, [ 'admin' , 'account_manager' ]);
+    }
+
     /**
      * Determine whether the user can create deals.
      *

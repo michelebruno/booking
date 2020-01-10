@@ -9,7 +9,7 @@ import AxiosConfirmModal from "./AxiosConfirmModal"
 
 import AsyncSelect from 'react-select/async'
 
-const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
+const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText, editable } ) => {
 
     const self = deal || servizio
 
@@ -36,7 +36,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
         </AxiosConfirmModal>
         }
 
-        <div className="pos-relative">
+        { editable && <div className="pos-relative">
             <AsyncSelect 
                 className="w-25 p-2 right-0"
                 placeholder="Aggiungi un prodotto"
@@ -56,7 +56,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
                 }
             />
 
-        </div>
+        </div>}
         <BootstrapTable 
             keyField="id"
             noDataIndication="Non ci sono prodotti collegati."
@@ -105,7 +105,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
                             return <>
                                 { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L'azione non è reversibile.</AxiosConfirmModal> }
                                 <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
-                                <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>
+                                { editable && <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>}
                             </>
 
                         }
@@ -119,6 +119,9 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText } ) => {
             />
 
     </div> || ""
+}
+ProdottiCollegati.defaultProps = {
+    editable: true
 }
 
 export default ProdottiCollegati

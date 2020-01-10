@@ -17,7 +17,8 @@ class DealTariffeController extends Controller
      */
     public function index(Deal $deal)
     {
-        // TODO authorize
+        // TODO authorize?
+
         return response( $deal->tariffe() );
     }
 
@@ -28,13 +29,15 @@ class DealTariffeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Deal $deal)
-    {   
+    {  
+        // TODO authorize
+
         $dati = $request->validate([
-            'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
-            'imponibile' => 'required|numeric'
+            'variante' => [ 'required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
+            'importo' => 'numeric|required'
         ]);
 
-        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'imponibile' => $dati['imponibile']]);
+        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => $dati['importo']]);
 
         return response( $deal->load('servizi') , 201);
     }
@@ -46,10 +49,12 @@ class DealTariffeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Deal $deal, Tariffa $tariffa)
-    {
-        
+    {        
+        // TODO authorize?
+
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
-        // TODO authorize
+
+        return response($tariffa);
 
     }
 
@@ -66,9 +71,11 @@ class DealTariffeController extends Controller
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
-        $d = $request->validate( [ 'imponibile' => 'required|numeric' ] );
+        $d = $request->validate( [ 
+            'importo' => 'numeric|nullable' 
+        ] );
 
-        $tariffa->imponibile = $d['imponibile'];
+        $tariffa->importo = $d['importo'];
 
         $tariffa->save();
         

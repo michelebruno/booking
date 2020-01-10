@@ -2,13 +2,15 @@ import React , { useState , useEffect } from 'react'
 import { Card , Button } from 'react-bootstrap'  
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Redirect , Link } from 'react-router-dom'
+import AxiosConfirmModal from '../components/AxiosConfirmModal'
 
 const Deals = ( props ) => {
     const [ redirectTo, setRedirectTo ] = React.useState(false);
 
     const [ deals , setDeals ] = useState()
 
-    useEffect(() => {
+    const loadDeals = ( ) => {
+
         const source = axios.CancelToken.source()
 
         axios.get("/deals", { cancelToken : source.token })
@@ -17,6 +19,11 @@ const Deals = ( props ) => {
         return () => {
             source.cancel()
         };
+    }
+
+    useEffect(() => {
+
+        return loadDeals()
 
     }, [])
 
@@ -44,7 +51,39 @@ const Deals = ( props ) => {
         onDoubleClick : ( e , row , rowIndex ) => {
             setRedirectTo('/deals/' + row.id);
         }
+    }   
+    
+    const DeleteServizioButton = props => {
+        const [show, setShow] = useState(false)
+
+        return <div className={props.className}>
+        
+            <Button variant="danger" className="ml-1" onClick={ () => setShow(true) }>
+                <i className="fas fa-trash" />
+            </Button>
+
+            <AxiosConfirmModal url={ props.url } show={show} method="delete" onHide={() => { setShow(false); loadDeals()}} title="Conferma" >
+                Sei sicuro di cancellare questo servizio?
+            </AxiosConfirmModal>
+        </div>
     }
+
+    const RestoreServizioButton = props => {
+        const [show, setShow] = useState(false)
+
+        return <div className={props.className}>
+        
+            <Button variant="danger" className="ml-1" onClick={ () => setShow(true) }>
+                <i className="fas fa-undo" />
+            </Button>
+
+            <AxiosConfirmModal url={ props.url } show={show} method="patch" onHide={() => { setShow(false); loadDeals() }} title="Conferma" >
+                Sei sicuro di voler ripristinare questo servizio?
+            </AxiosConfirmModal>
+        </div>
+    }
+
+    const prezziFormatter = new Intl.NumberFormat('en-US', { style : 'currency' , currency: 'EUR' } ).format
 
     return(
         <React.Fragment>
@@ -52,7 +91,7 @@ const Deals = ( props ) => {
             <Card>
                 <Card.Body> 
                     <h1>Deals</h1>
-                    <p> {"<!--Azioni di filtraggio varie -->"}</p>
+                    { process.env.NODE_ENV === "development" && <p>Azioni di filtraggio varie...</p>}
                     { deals && <BootstrapTable 
                         keyField="id"
                         noDataIndication="Non ci sono prodotti collegati."
@@ -67,9 +106,9 @@ const Deals = ( props ) => {
                                 dataField: 'titolo'
                             },
                             {
-                                text: 'Prezzo',
-                                dataField: 'tariffe.intero.imponibile',
-                                formatter : ( cell , row ) => cell ? ( cell * ( 1 + row.iva / 100 ) ).toFixed(2) : ""
+                                text: 'Importo',
+                                dataField: 'tariffe.intero.importo',
+                                formatter : ( cell , row ) => cell ? prezziFormatter(cell) : "-"
                             },
                             {
                                 text: 'Disponibiiltà',
@@ -86,7 +125,8 @@ const Deals = ( props ) => {
 
                                         
                                         return <>
-                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
+                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" className=" d-md-inline-block" ><i className="fas fa-edit"/></Button>
+                                            <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" />
                                         </>
 
                                     }

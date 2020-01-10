@@ -33,7 +33,7 @@ const ServiziTabella = ( { readOnly , url , ... props } ) => {
     let esercente = false
 
     const reloadApi = () => {
-        let n = Object.assign({}, api,{willBeReloaded: true})
+        let n = Object.assign({}, api, {willBeReloaded: true})
         return setApi(n)
     }
 

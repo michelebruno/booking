@@ -22,18 +22,25 @@ const ProdottiForm = ( props ) => {
     const [disponibili, setDisponibili] = useState(0)
 
  
-    const data = {
+    let data = {
         titolo,
         descrizione,
         stato,
         codice,
         codice_personalizzato : ! customCod,
         iva: IVA,
-        disponibili,
-        tariffe : {
+        disponibili
+    }
+
+    if ( modIVAinc ) { 
+        data.tariffe = {
             intero: {
-                imponibile: Number.parseFloat( modIVAinc ? ( prezzoII / ( 1 + IVA / 100 ) ) : prezzo ).toFixed(2)
+                importo: Number.parseFloat( prezzoII ).toFixed(2)
             }
+        } 
+    } else data.tariffe = {
+        intero: {
+            imponibile: Number.parseFloat( prezzo ).toFixed(2)
         }
     }
 

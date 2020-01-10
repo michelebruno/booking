@@ -9,18 +9,20 @@ class Tariffa extends Model
     protected $table = "tariffe";
 
     protected $appends = [
-        'slug' , 'nome'
-    ];
+        'imponibile', 'slug' , 'nome'
+    ];    
 
     public $fillable = [
-        'variante_tariffa_id', 'imponibile', 'slug'
+        'variante_tariffa_id', 'imponibile', 'importo', 'slug'
     ];
+
+    public $hidden = [ 'variante' ];
 
     public $timestamps = false;
 
     public function prodotto()
     {
-        return $this->belongsTo('App\Prodotto');
+        return $this->belongsTo('App\Prodotto', 'prodotto_id');
     }
 
     public function variante()
@@ -33,7 +35,7 @@ class Tariffa extends Model
         return $this->variante->slug;
     }
 
-    public function setSlugAttribute($slug)
+    public function setSlugAttribute( $slug )
     {
         return $this->attributes['variante_tariffa_id'] = VarianteTariffa::where('slug', $slug)->firstOrFail()->id;
     }
@@ -41,5 +43,19 @@ class Tariffa extends Model
     public function getNomeAttribute()
     {
         return $this->variante->nome;
+    }
+    
+    public function getImponibileAttribute()
+    {
+        // TODO farlo funzionare senza la query
+        $iva = $this->prodotto()->withTrashed()->first()->iva; 
+        return round($this->importo / ( 1 + $iva / 100 ) , 2 );
+    }
+    
+    public function setImponibileAttribute( $value )
+    {
+        // TODO farlo funzionare senza la query
+        $iva = $this->prodotto()->first()->iva; 
+        return $this->attributes['importo'] = round( $value * ( 1 + $iva / 100 ) , 2 );
     }
 }

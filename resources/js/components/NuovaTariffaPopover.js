@@ -9,7 +9,7 @@ import PropTypes from "prop-types"
 import { connect } from "react-redux"
 
 
-const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , ...props } ) => {
+const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , iva , ivaInclusa , ...props } ) => {
 
     const [disponibili, setDisponibili] = useState( Object.values(varianti) )
 
@@ -17,7 +17,7 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
 
     const firstOption = _.head( disponibili ) ? _.head( disponibili ).id : undefined
     const [variante, setVariante] = useState( firstOption )
-    const [imponibile, setImponibile] = useState("")
+    const [prezzo, setPrezzo] = useState("")
     const [error, setError] = useState(false)
 
     const source = axios.CancelToken.source()
@@ -30,14 +30,23 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
     }, [tariffe])
 
     const handleSubmit = ( ) => {
-        axios.post( url , { imponibile , variante } , { cancelToken: source.token } )
+        let requestData = { 
+            variante
+        }
+
+        if ( ivaInclusa ) requestData.importo = prezzo
+        else requestData.imponibile = prezzo
+
+        axios.post( url , requestData , { cancelToken: source.token } )
             .then( res => {
-                setImponibile("")
+                setPrezzo("")
+
                 setVariante( false )
 
                 setError(false)
 
                 onSuccess(res.data)
+
                 onClose( res )
             })
             .catch( error => {
@@ -61,10 +70,10 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
                         </Col>
                     </Form.Group>
 
-                    <Form.Group controlId="imponibile" as={Row}>
-                        <Form.Label column >Imponibile</Form.Label>
+                    <Form.Group controlId="prezzo" as={Row}>
+                        <Form.Label column >{ ivaInclusa ? "Importo" : "Imponibile" }</Form.Label>
                         <Col >
-                            <Form.Control type="number" min="0" value={imponibile} onChange={ e => setImponibile(e.target.value) } required/>
+                            <Form.Control type="number" min="0" value={prezzo} onChange={ e => setPrezzo(e.target.value) } required/>
                         </Col>
                     </Form.Group>
 
@@ -85,6 +94,11 @@ NuovaTariffaPopover.propTypes = {
     onSuccess : PropTypes.func,
     show : PropTypes.bool.isRequired,
     url : PropTypes.string.isRequired,
+    ivaInclusa: PropTypes.bool
+}
+
+NuovaTariffaPopover.defaultProps = {
+    ivaInclusa : true
 }
 
 export default connect( state => { return { varianti : state.settings.varianti_tariffe } } )( NuovaTariffaPopover )

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 
-abstract class Prodotto extends Model
+class Prodotto extends Model
 {
     use SoftDeletes;
 
@@ -18,12 +18,17 @@ abstract class Prodotto extends Model
     ];
 
     protected $appends = [
-        'condensato', 'tariffe' , '_links' , 'cestinato'
+        'condensato', 'cestinato' , 'tariffe' , '_links' 
     ];
 
     public function getRouteKeyName()
     {
         return 'codice';
+    }
+
+    public function getLinksAttribute()
+    {
+        return [];
     }
 
     public function setCodiceAttribute($value)
@@ -50,6 +55,21 @@ abstract class Prodotto extends Model
         return $a;
     }
 
+    public function setTariffeAttribute($tariffe)
+    {
+        if (! $tariffe ) return;
+
+        $etichette = VarianteTariffa::all()->toArray();
+
+        foreach ($tariffe as $key => $value) { 
+
+            $etichetta = VarianteTariffa::slug($key);
+
+            $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichetta->id ], $value );
+
+        }
+    }
+
     public function getCondensatoAttribute()
     {
         $euro = Arr::exists( $this->tariffe, 'intero' ) ? " | " . " €" . $this->tariffe['intero']->imponibile : '' ;
@@ -60,20 +80,6 @@ abstract class Prodotto extends Model
     public function getCestinatoAttribute()
     {
         return $this->trashed();
-    }
-
-    public function setTariffeAttribute($tariffe)
-    {
-        if (! $tariffe ) return;
-        $etichette = VarianteTariffa::all()->toArray();
-
-        foreach ($tariffe as $key => $value) {
-
-            $etichetta = VarianteTariffa::slug($key);
-
-            $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichetta->id ], $value );
-
-        }
     }
     public function scopeCodice($query, $codice)
     {

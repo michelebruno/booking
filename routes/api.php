@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('users', 'API\UserController');
 
     Route::apiResource('deals', 'API\DealController');
+    Route::patch('/deals/{deal}', 'API\DealController@restore');
     
     Route::apiResource('deals.tariffe', 'API\DealTariffeController' , [ 'parameters' => [ 'tariffe' => 'tariffa' ] ] );
 

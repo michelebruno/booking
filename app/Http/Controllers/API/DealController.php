@@ -83,8 +83,8 @@ class DealController extends Controller
             'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
             'iva' => 'integer|required',
             'tariffe' => 'array|bail',
-            'tariffe.intero.imponibile' => 'required',
-            'tariffe.*.imponibile' => 'required'
+            'tariffe.intero.imponibile' => 'sometimes|numeric',
+            'tariffe.intero.importo' => 'required_if:tariffe.intero.imponibile,null|numeric'
         ]);
  
         // TODO Creare un codice non random ma unico
@@ -98,6 +98,8 @@ class DealController extends Controller
 
         $prodotto->tariffe = $dati['tariffe'];
 
+        $prodotto->save();
+
         return response( $prodotto->load('servizi') , 201);
     }
 
@@ -107,8 +109,14 @@ class DealController extends Controller
      * @param  \App\Models\Deal  $deal
      * @return \Illuminate\Http\Response
      */
-    public function show(Deal $deal)
+    public function show($deal)
     {
+        $deal = Deal::withTrashed()->codice($deal);
+
+        if ( $deal->trashed()) {
+            $this->authorize('viewTrashed', $deal );
+        }
+
         return response( $deal->load('servizi') );
     }
 
@@ -132,7 +140,20 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal)
     {
-        //
+        // TODO authorize
+        if ( $deal->delete() ) {
+            return response(204);
+        }
+    }
+
+    public function restore($deal)
+    {
+        // TODO authorize
+        $deal = Deal::onlyTrashed()->codice($deal);
+
+        if ( $deal->restore() ) {
+            return response( $deal->load('servizi') );
+        } else abort(500);
     }
 
     public function aggiungiTariffa(Request $request, Deal $deal)
@@ -141,10 +162,10 @@ class DealController extends Controller
 
         $dati = $request->validate([
             'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
-            'imponibile' => 'required|int'
+            'importo' => 'required|int'
         ]);
 
-        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'imponibile' => $dati['imponibile']]);
+        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => $dati['importo']]);
 
         return response( $deal->load('servizi') , 201);
     }
@@ -155,9 +176,9 @@ class DealController extends Controller
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
-        $d = $request->validate( ['imponibile' => 'required|int'] );
+        $d = $request->validate( ['importo' => 'required|int'] );
 
-        $tariffa->imponibile = $d['imponibile'];
+        $tariffa->importo = $d['importo'];
 
         $tariffa->save();
         
