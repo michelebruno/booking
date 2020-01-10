@@ -50,10 +50,10 @@ const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
         return <div className={props.className}>
         
             <Button size="sm" variant="primary" className="ml-1" onClick={ () => setShow(true) }>
-                <i className="fas fa-undo mr-1" /> Ripristina deal
+                <i className="fas fa-trash-restore mr-1" /> Ripristina deal
             </Button>
 
-            <AxiosConfirmModal url={ deal._links.self } show={show} method="patch" onHide={() => { setShow(false); reloadDeal() }} title="Conferma" >
+            <AxiosConfirmModal url={ deal._links.restore } show={show} method="patch" onHide={() => { setShow(false); reloadDeal() }} title="Conferma" >
                 Sei sicuro di voler ripristinare questo deal?
             </AxiosConfirmModal>
         </div>
@@ -127,7 +127,7 @@ const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
                             <div>
                                 <span className="h1 text-red">{titolo}</span>   
                                 <span className="h3">
-                                    { !deal.cestinato && <Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }<i className="fas fa-edit" /></Badge>}
+                                    { !deal.cestinato && <Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }</Badge>}
                                     { deal.cestinato && <Badge variant="dark" className="h3 ml-2 p-1 text-white" >Cestinato</Badge>}
                                 </span> 
                             </div>

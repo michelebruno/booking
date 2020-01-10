@@ -35,7 +35,7 @@ class DealPolicy
 
     public function viewTrashed(User $user, Deal $deal)
     {
-        return in_array($user->ruolo, [ 'admin' , 'account_manager' ]);
+        return in_array($user->ruolo, [ 'admin' , 'account_manager' ] );
     }
 
     /**
@@ -58,7 +58,7 @@ class DealPolicy
      */
     public function update(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ]);
+        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
     }
 
     /**
@@ -70,7 +70,7 @@ class DealPolicy
      */
     public function delete(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ]);
+        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
     }
 
     /**
@@ -82,7 +82,7 @@ class DealPolicy
      */
     public function restore(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ]);
+        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
     }
 
     /**
@@ -94,6 +94,6 @@ class DealPolicy
      */
     public function forceDelete(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , [ 'admin' ]);
+        return in_array( $user->ruolo , [ 'admin' ] );
     }
 }

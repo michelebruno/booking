@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Deal;
 use App\Models\Tariffa;
+use App\Models\TariffaDeal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,8 +18,6 @@ class DealTariffeController extends Controller
      */
     public function index(Deal $deal)
     {
-        // TODO authorize?
-
         return response( $deal->tariffe() );
     }
 
@@ -30,7 +29,7 @@ class DealTariffeController extends Controller
      */
     public function store(Request $request, Deal $deal)
     {  
-        // TODO authorize
+        $this->authorize('create', TariffaDeal::class);
 
         $dati = $request->validate([
             'variante' => [ 'required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
@@ -48,9 +47,9 @@ class DealTariffeController extends Controller
      * @param  \App\Models\Deal  $deal
      * @return \Illuminate\Http\Response
      */
-    public function show(Deal $deal, Tariffa $tariffa)
+    public function show(Deal $deal, TariffaDeal $tariffa)
     {        
-        // TODO authorize?
+        $this->authorize('create', $tariffa);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
@@ -67,7 +66,7 @@ class DealTariffeController extends Controller
      */
     public function update(Request $request, Deal $deal, Tariffa $tariffa)
     {
-        // TODO authorize
+        $this->authorize('update', $tariffa);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
@@ -90,7 +89,7 @@ class DealTariffeController extends Controller
      */
     public function destroy(Deal $deal, Tariffa $tariffa)
     {
-        // TODO authorize
+        $this->authorize('delete', $tariffa);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 

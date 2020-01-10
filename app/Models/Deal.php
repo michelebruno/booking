@@ -34,6 +34,7 @@ class Deal extends Prodotto
     {
         return [
             'self' => '/deals/' . $this->codice,
+            'restore' => '/deals/' . $this->codice . '/restore',
             'tariffe' => '/deals/' . $this->codice . '/tariffe',
             'servizi' => '/deals/' . $this->codice . '/servizi',
         ];

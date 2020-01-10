@@ -11,6 +11,8 @@ import { connect } from "react-redux"
 
 const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , iva , ivaInclusa , ...props } ) => {
 
+    if ( ! varianti ) return null;
+    
     const [disponibili, setDisponibili] = useState( Object.values(varianti) )
 
     const keys = Object.keys(tariffe)

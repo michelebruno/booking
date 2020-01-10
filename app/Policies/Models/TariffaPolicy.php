@@ -53,7 +53,7 @@ class TariffaPolicy
      */
     public function update(User $user, Tariffa $tariffa)
     {
-        return in_array($user->ruolo, [ 'admin', 'account_manager' ]);
+        return in_array($user->ruolo, [ 'admin' , 'account_manager' ]);
     }
 
     /**

@@ -130,6 +130,21 @@ class DealController extends Controller
     public function update(Request $request, Deal $deal)
     {
         $this->authorize('update', $deal); 
+
+        $dati = $request->validate([
+            'stato' => 'string|in:pubblico,privato,bozza',
+            'titolo' => 'string',
+            'descrizione' => 'string',
+            'disponibili' => 'integer',
+            'codice' => Rule::unique('prodotti', 'codice')->ignore($deal->id),
+            'iva' => 'integer|'
+        ]);
+
+        $deal->fill($dati);
+        
+        $deal->save();
+
+        return response($deal->load('servizi') );
     }
 
     /**
@@ -140,7 +155,7 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal)
     {
-        // TODO authorize
+        $this->authorize('delete', $deal); 
         if ( $deal->delete() ) {
             return response(204);
         }
@@ -148,7 +163,8 @@ class DealController extends Controller
 
     public function restore($deal)
     {
-        // TODO authorize
+        $this->authorize('restore', $deal);
+
         $deal = Deal::onlyTrashed()->codice($deal);
 
         if ( $deal->restore() ) {
@@ -156,43 +172,4 @@ class DealController extends Controller
         } else abort(500);
     }
 
-    public function aggiungiTariffa(Request $request, Deal $deal)
-    {
-        $this->authorize('update', $deal); 
-
-        $dati = $request->validate([
-            'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
-            'importo' => 'required|int'
-        ]);
-
-        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => $dati['importo']]);
-
-        return response( $deal->load('servizi') , 201);
-    }
-
-    public function editTariffa( Request $request , Deal $deal , Tariffa $tariffa )
-    {        
-        $this->authorize('update', $deal); 
-
-        if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
-
-        $d = $request->validate( ['importo' => 'required|int'] );
-
-        $tariffa->importo = $d['importo'];
-
-        $tariffa->save();
-        
-        return response( $deal->load('servizi') );
-    }
-
-    public function deleteTariffa( Request $request , Deal $deal , Tariffa $tariffa )
-    {
-        $this->authorize('update', $deal);  // TODO TariffaPolicy
-
-        if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
-
-        $tariffa->delete();
-        
-        return response( $deal->load('servizi') );
-    }
 }

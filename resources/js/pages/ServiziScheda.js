@@ -96,7 +96,7 @@ const ServiziScheda = ( { location , history , varianti , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            { servizio._links && tariffe && <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} />}
+                            { servizio._links && tariffe && <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} />}
                         </Card.Body>
                     </Card>
                 </Col>

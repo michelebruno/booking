@@ -19,7 +19,7 @@ class EsercenteServizioController extends Controller
      */
     public function index( Request $request, Esercente $esercente )
     {
-        // TODO authorize
+        $this->authorize('view', $esercente);
 
         if ( $request->query('only_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->onlyTrashed()->get() );
 
@@ -131,7 +131,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->tariffe = $request->input('tariffe', null);
 
-        return response($servizio->load('deals') );
+        return response( $servizio->load('deals') );
     }
 
     public function aggiungiTariffa(Request $request, Esercente $esercente, Servizio $servizio)

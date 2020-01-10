@@ -34,7 +34,7 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
 
     return <>
     
-            { url && <NuovaTariffaPopover url={url} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ onSuccess } tariffe={tariffe} />}
+            { url && iva && <NuovaTariffaPopover url={url} reference={addTariffaRef} show={ showTariffeTooltip } onClose={ ( ) => setShowTariffeTooltip(false) } onSuccess={ onSuccess } ivaInclusa={ivaInclusa} tariffe={tariffe} />}
             <div className="d-flex justify-content-between">
                 <span className="h3">
                     Tariffario
