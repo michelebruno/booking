@@ -31,7 +31,7 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
                     if ( axios.isCancel(error) )  return;
 
                     if ( error.response  ) {
-                        return window.alert(error.response.data.message)
+                        return window.alert( error.response.data.message )
                     }
                     
                     return console.error(error)
@@ -54,7 +54,7 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
             <Button variant="primary" onClick={ onConfirm } >Conferma</Button>
             <Button variant="light" onClick={ onHide } >Annulla</Button>
         </Modal.Footer>
-    </Modal >
+    </Modal>
 }
 
 AxiosConfirmModal.propTypes = {

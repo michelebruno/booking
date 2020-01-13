@@ -137,7 +137,7 @@ class DealController extends Controller
             'descrizione' => 'string',
             'disponibili' => 'integer',
             'codice' => Rule::unique('prodotti', 'codice')->ignore($deal->id),
-            'iva' => 'integer|'
+            'iva' => 'integer'
         ]);
 
         $deal->fill($dati);
@@ -155,7 +155,8 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal)
     {
-        $this->authorize('delete', $deal); 
+        $this->authorize('delete', $deal);
+
         if ( $deal->delete() ) {
             return response(204);
         }
@@ -163,7 +164,7 @@ class DealController extends Controller
 
     public function restore($deal)
     {
-        $this->authorize('restore', $deal);
+        $this->authorize('restore', Deal::class);
 
         $deal = Deal::onlyTrashed()->codice($deal);
 

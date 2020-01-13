@@ -80,7 +80,7 @@ class DealPolicy
      * @param  \App\Models\Deal  $deal
      * @return mixed
      */
-    public function restore(User $user, Deal $deal)
+    public function restore(User $user)
     {
         return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
     }
