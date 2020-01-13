@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap'; 
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -81,7 +81,7 @@ const SideNavContent = ( { user } ) => {
 }
 
 
-const UserProfile = ( { user , ...props } ) => {
+const UserProfile = ( { user } ) => {
     const profilePic = ( typeof user.links !== 'undefined' && typeof user.links.avatar !== 'undefined' ) ? user.links.avatar : false;
     return <React.Fragment>
         <div className="user-box text-center">

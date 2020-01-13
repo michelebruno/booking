@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React , { useState, useEffect } from 'react';
 
 import Loader from '../components/Loader';
@@ -9,7 +10,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import PreLoaderWidget from '../components/Loader';
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
-const Esercenti = ( { id, ...props } ) => {
+const Esercenti = ( props ) => {
 
     const [api, setApi] = useState({ status: "loading", data: null})
 
@@ -42,6 +43,7 @@ const Esercenti = ( { id, ...props } ) => {
         {
             dataField: 'username',
             text: "Username",
+            // eslint-disable-next-line react/display-name
             formatter : (cell, row) => <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
         },
         {

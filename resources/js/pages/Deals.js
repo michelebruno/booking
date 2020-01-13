@@ -1,11 +1,11 @@
+/* eslint-disable react/prop-types */
 import React , { useState , useEffect } from 'react'
 import { Card , Button } from 'react-bootstrap'  
 import BootstrapTable from 'react-bootstrap-table-next'
-import { Redirect , Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import AxiosConfirmModal from '../components/AxiosConfirmModal'
 
-const Deals = ( props ) => {
-    const [ redirectTo, setRedirectTo ] = React.useState(false);
+const Deals = ( ) => {
 
     const [ deals , setDeals ] = useState()
 
@@ -29,7 +29,7 @@ const Deals = ( props ) => {
 
     /* Formattatori */
 
-    const formattaStato = ( cell, row, rowIndex ) => {
+    const formattaStato = ( cell ) => {
         let color;
 
         switch (cell) {
@@ -45,13 +45,6 @@ const Deals = ( props ) => {
             <i title={cell} className={ "fa fa-circle " + color } ></i>
         )
     }
-
-
-    const rowEvents = {
-        onDoubleClick : ( e , row , rowIndex ) => {
-            setRedirectTo('/deals/' + row.id);
-        }
-    }   
     
     const DeleteServizioButton = props => {
         const [show, setShow] = useState(false)
@@ -87,7 +80,6 @@ const Deals = ( props ) => {
 
     return(
         <React.Fragment>
-            { redirectTo && <Redirect push to={ redirectTo } />} 
             <Card>
                 <Card.Body> 
                     <h1>Deals</h1>
@@ -108,7 +100,7 @@ const Deals = ( props ) => {
                             {
                                 text: 'Importo',
                                 dataField: 'tariffe.intero.importo',
-                                formatter : ( cell , row ) => cell ? prezziFormatter(cell) : "-"
+                                formatter : ( cell ) => cell ? prezziFormatter(cell) : "-"
                             },
                             {
                                 text: 'Disponibiiltà',
@@ -117,16 +109,17 @@ const Deals = ( props ) => {
                             {
                                 text : "",
                                 dataField: "azioni",
+                                // eslint-disable-next-line react/display-name
                                 formatter : ( cell, row ) =>{
-                                    const Buttons = ( props ) => {
+                                    const Buttons = ( ) => {
 
                                         let url = row._links.self
                                         let state = { deal : row }
 
                                         
                                         return <>
-                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" className=" d-md-inline-block" ><i className="fas fa-edit"/></Button>
-                                            <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" />
+                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1 d-md-inline-block" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit"/></Button>
+                                            { row.cestinato ? <RestoreServizioButton url={url} /> : <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" /> }
                                         </>
 
                                     }

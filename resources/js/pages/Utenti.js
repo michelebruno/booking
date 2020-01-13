@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react"
 
 import { connect } from "react-redux"
@@ -9,7 +10,7 @@ import Modal  from "react-bootstrap/Modal"
 import Alert from "react-bootstrap/Alert"
 
 import BootstrapTable from "react-bootstrap-table-next"
-import { Redirect , Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import paginationFactory from "react-bootstrap-table2-paginator"
 import UtenteForm from "../components/UtenteForm"
 import PreLoaderWidget from "../components/Loader"
@@ -19,7 +20,6 @@ import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
 const Utenti = ( props ) => {
 
     const [api, setApi] = useState({status: "loading", data: null})
-    const [redirect, setRedirect ] = useState(false)
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const columns = [ 
@@ -43,7 +43,8 @@ const Utenti = ( props ) => {
         {
             dataField: 'meta',
             text: '',
-            formatter: ( cell , row ) => {
+            // eslint-disable-next-line react/display-name
+            formatter: ( _cell , row ) => {
                 let url = ""
 
                 switch (row.ruolo) {
@@ -63,27 +64,6 @@ const Utenti = ( props ) => {
             }
         }
     ]
-
-    const rowEvents = {
-        onDoubleClick: ( e, row ) => { 
-            let url = ""
-            switch (row.ruolo) {
-                case "cliente":
-                    url += "/clienti/"
-                    break;
-
-                case "esercente":
-                    url += "/esercenti/"
-                    break;
-            
-                default:
-                    url += "/utenti/"
-                    break;
-            }
-
-            setRedirect(url+row.id)
-        }
-    }
 
     props.setTopbarButtons( () => <ButtonToolbar className="d-inline-block align-self-center" >
         <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
@@ -115,7 +95,6 @@ const Utenti = ( props ) => {
 
     return(
         <Card>
-            { redirect && <Redirect to={redirect} push /> }
             <Card.Body>
                 <p>
                     <Modal show={aggiungiModal} onHide={() => setAggiungiModal(false)}>

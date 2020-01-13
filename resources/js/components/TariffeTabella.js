@@ -1,18 +1,15 @@
-import React , { useState , useEffect } from "react"
+import React , { useState } from "react"
+import PropTypes from 'prop-types'
 
 import cellEditFactory from 'react-bootstrap-table2-editor';
 
 import BootstrapTable from 'react-bootstrap-table-next'
-import Button from "react-bootstrap/Button"
 import NuovaTariffaPopover from "./NuovaTariffaPopover"
 import AxiosConfirmModal from "./AxiosConfirmModal";
-import PropTypes from "prop-types"
 
 const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable } ) => {
     
     const addTariffaRef = React.useRef(null) 
-
-    const [varianti_disponibili, setVarianti_disponibili] = useState()
 
     const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
 
@@ -25,7 +22,7 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
                     onSuccess(res.data)
                     done(true)
                 })
-                .catch( error => done(false) )
+                .catch( () => done(false) )
             return { async: true };
           }
     })
@@ -72,8 +69,9 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
                     editable: false,
                     hidden: !editable,
                     classes: "text-right",
+                    // eslint-disable-next-line react/display-name
                     formatter : ( cell , row ) => {
-                        const Formatter = (props) => {
+                        const Formatter = () => {
 
                             const [showAxios, setShowAxios] = useState(false)
 
@@ -104,9 +102,13 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
     </>
 }
 
-TariffeTabella.propTypes = {
+TariffeTabella.propTypes = {    
+    editable: PropTypes.bool,
     iva : PropTypes.number.isRequired,
-    editable: PropTypes.bool
+    ivaInclusa : PropTypes.bool,
+    onSuccess : PropTypes.func,
+    tariffe : PropTypes.array,
+    url : PropTypes.string
 }
 
 

@@ -1,7 +1,9 @@
+/* eslint-disable react/display-name */
 import React , { useState , useEffect } from "react"
+import PropTypes from 'prop-types'
+
 import BootstrapTable from "react-bootstrap-table-next"
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import { Link } from "react-router-dom"
 
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
@@ -92,15 +94,19 @@ const ServiziTabella = ( { readOnly , url , ... props } ) => {
                 {
                     dataField: 'stato',
                     text : "",
-                    formatter: ( cell , row ) => {
+                    // eslint-disable-next-line react/display-name
+                    formatter: ( _cell , row ) => {
                         if ( row.cestinato ) return <i className="fas fa-circle text-dark fa-lg" title="Cestinato" />
+
                         switch (row.stato) {
                             case "pubblico":
                                 return <i className="fas fa-circle text-success fa-lg" title="Pubblico" />
+                                // eslint-disable-next-line no-unreachable
                                 break;
                         
                             case "privato":
                                 return <i className="fas fa-circle text-secondary fa-lg" title="Privato" />
+                                // eslint-disable-next-line no-unreachable
                                 break;
                         }
                     }
@@ -147,5 +153,10 @@ const ServiziTabella = ( { readOnly , url , ... props } ) => {
             />
         </>)
 }
-
+ServiziTabella.propTypes = {
+    className : PropTypes.string,
+    readOnly : PropTypes.bool,
+    servizi : PropTypes.array,
+    url : PropTypes.string
+}
 export default ServiziTabella

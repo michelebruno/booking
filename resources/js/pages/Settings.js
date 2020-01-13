@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState , useEffect } from "react"
 
 import { connect } from "react-redux"
@@ -12,13 +13,12 @@ import { settingUpdated } from "../_actions"
 import EditableField from "../components/EditableField"
 
 const SettingEditableField = ( props ) => {
-
     return <EditableField method="post" url="/settings" { ...props } />
 }
 
 const Settings = props => {
 
-    const [data, setData] = useState(null);
+    const [ data, setData ] = useState(null);
 
     useEffect(() => {
         const source = axios.CancelToken.source()

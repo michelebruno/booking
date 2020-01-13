@@ -1,4 +1,7 @@
 import React , { useState } from "react"
+
+import PropTypes from 'prop-types'
+
 import { Link } from 'react-router-dom'
 import Alert from "react-bootstrap/Alert"
 import Form from "react-bootstrap/Form"
@@ -6,6 +9,7 @@ import Button from "react-bootstrap/Button"
 import InputGroup from "react-bootstrap/InputGroup"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+
 import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
 
 const ProdottiForm = ( props ) => {
@@ -85,7 +89,7 @@ const ProdottiForm = ( props ) => {
                 if ( axios.isCancel(error) ) return;
 
                 if ( error.response ) {
-                    if ( error.response.status = 422 ) setApi( { status: "invalid" , errors : error.response.data.errors} )
+                    if ( error.response.status == 422 ) setApi( { status: "invalid" , errors : error.response.data.errors} )
 
                 }
 
@@ -103,7 +107,7 @@ const ProdottiForm = ( props ) => {
 
         { !created && <Form.Group as={Row} controlId="customCod">
             <Col xs="8" md={ { offset : 4 , span : 8 }}>
-                <Form.Check className={ "align-self-center" } type="switch" checked={!customCod} label="Assegna codice prodotto automaticamente" onChange={ e => setCustomCod(!customCod) } />
+                <Form.Check className={ "align-self-center" } type="switch" checked={!customCod} label="Assegna codice prodotto automaticamente" onChange={ () => setCustomCod(!customCod) } />
             </Col>
         </Form.Group> }
 
@@ -147,7 +151,7 @@ const ProdottiForm = ( props ) => {
         <Form.Group as={ Row } controlId="prezzo" required >
             <Form.Label column xs="12" md="4">Tariffa base
                 <Form.Group controlId="modIvainc">
-                    <Form.Check size="sm" className={ " my-1" } type="switch" label={ <span className="text-muted" >Iva { modIVAinc ? "inclusa" : "esclusa" }</span>} checked={!modIVAinc} onChange={ e => { setPrezzoII(""); setPrezzo(""); setModIVAinc(!modIVAinc)} } />
+                    <Form.Check size="sm" className={ " my-1" } type="switch" label={ <span className="text-muted" >Iva { modIVAinc ? "inclusa" : "esclusa" }</span>} checked={!modIVAinc} onChange={ () => { setPrezzoII(""); setPrezzo(""); setModIVAinc(!modIVAinc)} } />
                 </Form.Group>
             </Form.Label>
             <Col xs="12" md="8">
@@ -180,5 +184,8 @@ const ProdottiForm = ( props ) => {
         <Button type="submit" { ...{ disabled: api.status === "sending" || api.status === "Created" }} >Invia</Button>
     </Form>
 }
-
+ProdottiForm.propTypes = {
+    url : PropTypes.string,
+    onSuccess : PropTypes.func
+}
 export default ProdottiForm;

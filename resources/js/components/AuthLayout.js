@@ -79,10 +79,5 @@ const AuthLayout = ( props ) => {
 
 }
 
-const mapStateToProps = (state) => {
-    return {
-        user: state.Auth.user
-    }
-}
 export default AuthLayout;
 

@@ -3,13 +3,11 @@ import React , { useState } from "react"
 import { Link } from "react-router-dom"
 import BootstrapTable from 'react-bootstrap-table-next'
 import Button from "react-bootstrap/Button"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
 import AxiosConfirmModal from "./AxiosConfirmModal"
 
 import AsyncSelect from 'react-select/async'
 
-const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText, editable } ) => {
+const ProdottiCollegati = ( { servizio , deal , onSuccess, editable } ) => {
 
     const self = deal || servizio
 
@@ -87,8 +85,9 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText, editabl
                 {
                     text : "",
                     dataField: "azioni",
-                    formatter : ( cell, row ) =>{
-                        const Buttons = ( props ) => {
+                    // eslint-disable-next-line react/display-name
+                    formatter : ( _cell, row ) =>{
+                        const Buttons = ( ) => {
                             const [showModal, setShowModal] = useState(false)
 
                             let url ;
@@ -103,7 +102,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, aggiungiText, editabl
                             }
                             
                             return <>
-                                { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L'azione non è reversibile.</AxiosConfirmModal> }
+                                { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L&#39azione non è reversibile.</AxiosConfirmModal> }
                                 <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
                                 { editable && <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>}
                             </>

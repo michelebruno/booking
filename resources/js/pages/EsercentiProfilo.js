@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState , useEffect } from 'react';
 
 import { connect } from 'react-redux'
@@ -22,7 +23,7 @@ import ServiziTabella from '../components/ServiziTabella';
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 const ServizioForm = React.lazy( () => import( '../components/ServizioForm' ) );
 
-const EsercentiProfilo = ( { location , match , history, shouldBeReloaded , ...props } ) => {
+const EsercentiProfilo = ( { location , match , ...props } ) => {
 
     const [ tabAttivitàAperta, setTabAttivitàAperta ] = useState("convalide");
 
@@ -41,7 +42,7 @@ const EsercentiProfilo = ( { location , match , history, shouldBeReloaded , ...p
 
         const [showModal, setShowModal] = useState(false)
 
-        const deleteProfile = ( e ) => {
+        const deleteProfile = ( ) => {
             setShowModal(true)
         }
 

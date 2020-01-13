@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Renders the preloader
  */
-const PreLoaderWidget = (props) => {
+const PreLoaderWidget = ( ) => {
 
     return (
         <div className="preloader" style={ { zIndex : 25 }}>

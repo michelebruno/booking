@@ -1,4 +1,5 @@
-import React, {useState, useEffect } from "react"
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect } from "react"
 import { Card, Form, Row, Col , Button, Spinner } from "react-bootstrap"
 import PreLoaderWidget from "../components/Loader"
 import EditableField from "../components/EditableField"
@@ -59,7 +60,7 @@ const Profilo = ( { match , ...props }) => {
                                             setResettingPassword("resetting")
                                             axios.post("/password/email", { email: utente.email }, { baseURL: "" })
                                                 .then(
-                                                    res => { setResettingPassword("success") }
+                                                    () => { setResettingPassword("success") }
                                                 ).catch( error => {
                                                     setResettingPassword(false)
                                                     window.alert(

@@ -1,9 +1,9 @@
-import React , { useState } from 'react'
-import { Form , Card, Row, Col , Button } from 'react-bootstrap'
-import { Redirect } from 'react-router-dom'
+/* eslint-disable react/prop-types */
+import React from 'react'
+import { Card } from 'react-bootstrap'
 
 import ProdottoForm from '../components/ProdottiForm'
-const CreaDeals = ( props ) => { 
+const CreaDeals = ( ) => { 
  
     
     return(

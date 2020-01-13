@@ -1,21 +1,16 @@
+/* eslint-disable react/prop-types */
 import React , { useState , useEffect } from 'react'
 import { Card, Row, Col, Badge } from 'react-bootstrap'
 import PreLoaderWidget from '../components/Loader'
 import { connect } from "react-redux"
-import BootstrapTable from 'react-bootstrap-table-next'
 
-import cellEditFactory from 'react-bootstrap-table2-editor';
 import EditableField from '../components/EditableField';
 import upperCase from 'upper-case';
-import NuovaTariffaPopover from '../components/NuovaTariffaPopover';
 import ProdottiCollegati from '../components/ProdottiCollegati'
 import TariffeTabella from '../components/TariffeTabella'
 
-const ServiziScheda = ( { location , history , varianti , ...props} ) => {
+const ServiziScheda = ( { location , ...props} ) => {
     
-    const addTariffaRef = React.useRef(null)
-    const [showTariffeTooltip, setShowTariffeTooltip] = useState(false)
-
     let initialServizio = false;
 
     if ( location && location.state && location.state.servizio ) {
@@ -54,7 +49,6 @@ const ServiziScheda = ( { location , history , varianti , ...props} ) => {
   
     if ( ( location && location.state && typeof location.state.esercente !== 'undefined' && location.state.esercente.id == props.currentUser.id ) || ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) ) {
         editableFieldProps.readOnly = true
-        cellEdit = undefined
     }
     
     if ( servizio ) return(

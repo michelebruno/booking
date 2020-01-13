@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 
 import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';

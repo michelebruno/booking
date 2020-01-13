@@ -9,7 +9,7 @@ import InputGroup  from "react-bootstrap/InputGroup"
 import Spinner  from "react-bootstrap/Spinner"
 import dot from "dot-object" 
 
-const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile, textMutator, append, prepend , ...props} ) => {
+const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMutator, append, prepend , ...props} ) => {
     
     const [editing, setEditing] = useState(false)
     
@@ -49,13 +49,7 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile,
         setSending(true) ;
 
         let data = dot.str(name, value, {});
-        let headers = {}
-
-        if ( isFile ) {
-            data = new FormData()
-            data.append(name, value)
-            headers['Content-Type'] = 'multipart/form-data'
-        }
+        let headers = {} 
    
         axios({
             method: props.method ? props.method : "patch",
@@ -147,12 +141,27 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, isFile,
 }
 
 EditableField.propTypes = {
+    append : PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]),
+    children : PropTypes.node,
+    initialValue : PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]),
     name : PropTypes.string.isRequired,
     label : PropTypes.string,
+    method: PropTypes.oneOf(['post', 'put', 'patch']),    
     noLabel : PropTypes.bool,
-    url: PropTypes.string.isRequired,
-    method: PropTypes.oneOf(['post', 'put', 'patch']),
-    onSuccess: PropTypes.func
+    onSuccess: PropTypes.func,
+    prepend : PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]),
+    readOnly : PropTypes.bool,
+    textMutator : PropTypes.func,
+    url: PropTypes.string.isRequired
 }
 
 EditableField.defaultProps = {

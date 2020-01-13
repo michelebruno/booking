@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Card } from 'react-bootstrap'

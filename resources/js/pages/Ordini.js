@@ -1,12 +1,31 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
+import React , { useState , useEffect } from 'react';
 import { Card, Table } from 'react-bootstrap'; 
 import Loader from '../components/Loader';
 
-const TabellaOrdini = ( props ) => {
+const TabellaOrdini = ( ) => {
+
+    const [api, setApi] = useState()
+
+    const ordini = ( api && api.ordini ) || undefined;
+
+    useEffect(() => {
+        if ( api && ! api.willBeReloaded ) return;
+
+        const source = axios.CancelToken.source()
+
+        axios.get('/ordini', { cancelToken : source.token })   
+            .then( res => setApi({ ordini : res.data }) )
+            .catch()
+        
+        return () => {
+            source.cancel()
+        };
+    }, [api])
 
     return(
         <React.Fragment>
-            <Table hover>
+            { ordini && <Table hover responsive>
                 <thead>
                     <tr>
                         <th>#</th>
@@ -17,23 +36,23 @@ const TabellaOrdini = ( props ) => {
                     </tr>
                 </thead>
                 <tbody>
-                    { [0,1,2,3,4,5,6].map( (v, i) => {
-                        return <tr key={v} >
-                            <td>{ faker.random.number(45899) }</td>
-                            <td>{faker.name.findName()} </td>
-                            <td>Pranzo tipico a Bologna</td>
-                            <td>20-09-2019</td>
-                            <td>{ "€" + faker.commerce.price(16,150)}</td>
+                    { ordini.map( (o) => {
+                        return <tr key={o.id} >
+                            <td>{ o.id }</td>
+                            <td>{ o.cliente.email } </td>
+                            <td className="text-truncate">{ o.voci.map( v => { return v.descrizione }) } </td>
+                            <td>{ o.data }</td>
+                            <td>€ { o.importo }</td>
                         </tr>
                         
                     })}
                 </tbody>
-            </Table>
+            </Table>}
         </React.Fragment>
     )
 }
 
-export default ( props ) => {
+const Ordini = ( props ) => {
     return(
         <React.Fragment>
             <div className="position-relative">
@@ -50,3 +69,5 @@ export default ( props ) => {
 
     )
 }
+
+export default Ordini 

@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 import React , { useState , useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Link  , Redirect} from "react-router-dom"
 
-import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap'
+import { Card, Row, Col, Badge, Button } from 'react-bootstrap'
 
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 
@@ -12,7 +12,7 @@ import TariffeTabella from '../components/TariffeTabella'
 import EditableField from '../components/EditableField'
 
 
-const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
+const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
     let initialDeal = { willBeReloaded : true }
 
@@ -58,7 +58,7 @@ const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
             </AxiosConfirmModal>
         </div>
     }
-    const TastiDeal = ( props ) => {
+    const TastiDeal = ( ) => {
         if ( ! deal || ! deal._links ) return null;
 
         return deal.cestinato ? <RestoreDealButton></RestoreDealButton> : <DeleteDealButton><span className="ml-2 d-none d-md-inline">Elimina deal</span></DeleteDealButton>
@@ -101,13 +101,6 @@ const DealsScheda = ( { varianti,  location , match , history, ...props } ) => {
 
         }
     }, [deal])
-
-    const thumbnail = {
-        url : 'http://www.turismo.bologna.it/wp-content/uploads/2019/09/una-inclinata-laltra-di-più-le-torri-asinelli-e-garisenda.jpg',
-        alt : 'Vista qualsiasi di Bologna',
-        title : 'Vista qualsiasi di Bologna'
-    }
-
 
     let editableFieldProps = deal && deal._links && { url : deal._links.self , onSuccess : ( r ) => setDeal(r) } 
   

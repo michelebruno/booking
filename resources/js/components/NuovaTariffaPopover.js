@@ -9,7 +9,7 @@ import PropTypes from "prop-types"
 import { connect } from "react-redux"
 
 
-const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , iva , ivaInclusa , ...props } ) => {
+const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , iva , ivaInclusa } ) => {
 
     if ( ! varianti ) return null;
     
@@ -58,7 +58,7 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
 
     
     return <Overlay target={reference.current} show={ show } placement="auto">
-        { ( { show , ...props } ) => <Popover id="nuovatariffa" { ...props } >
+        { ( props ) => <Popover id="nuovatariffa" { ...props } >
             <Popover.Title className="bg-dark text-light d-flex justify-content-between"><span>Aggiungi tariffa</span><i className="fas fa-times align-self-center p-1 pl-3" onClick={ onClose } /> </Popover.Title>
             <Popover.Content className="p-3">
                 { variante ? <Form onSubmit={ e => { e.preventDefault() ; handleSubmit() }} >
@@ -67,7 +67,7 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
                         <Form.Label column >Variante</Form.Label>
                         <Col >
                             <Form.Control as="select" value={ variante } onChange={ e => { setVariante( e.target.value ) } } required>
-                                { disponibili.map( ( v , index ) => { return <option value={ v.id } key={ v.id } >{ v.nome }</option> })}
+                                { disponibili.map( ( v ) => { return <option value={ v.id } key={ v.id } >{ v.nome }</option> })}
                             </Form.Control>
                         </Col>
                     </Form.Group>
@@ -96,7 +96,10 @@ NuovaTariffaPopover.propTypes = {
     onSuccess : PropTypes.func,
     show : PropTypes.bool.isRequired,
     url : PropTypes.string.isRequired,
-    ivaInclusa: PropTypes.bool
+    iva : PropTypes.number,
+    ivaInclusa: PropTypes.bool,
+    tariffe : PropTypes.array,
+    varianti : PropTypes.array
 }
 
 NuovaTariffaPopover.defaultProps = {

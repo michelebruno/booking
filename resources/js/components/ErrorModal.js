@@ -17,8 +17,10 @@ const ErrorModal = ( { onHide, response, ...props} ) => {
     </Modal>
 }
 
-ErrorModal.propTypes = { 
+ErrorModal.propTypes = {
+    show : PropTypes.bool,
     onHide: PropTypes.func.isRequired,
+    response : PropTypes.object
 }
 
 export default ErrorModal

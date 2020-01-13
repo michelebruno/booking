@@ -1,4 +1,6 @@
 import React , { useState } from "react"
+import PropTypes from 'prop-types'
+
 import Alert from "react-bootstrap/Alert"
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
@@ -71,7 +73,7 @@ const ServizioForm = ( props ) => {
                 if ( axios.isCancel(error) ) return;
 
                 if ( error.response ) {
-                    if ( error.response.status = 422 ) setApi( { status: "invalid" , errors : error.response.data.errors} )
+                    if ( error.response.status == 422 ) setApi( { status: "invalid" , errors : error.response.data.errors} )
 
                 }
 
@@ -89,7 +91,7 @@ const ServizioForm = ( props ) => {
 
         { !created && <Form.Group as={Row} controlId="customCod">
             <Col xs="8" md={ { offset : 4 , span : 8 }}>
-                <Form.Check className={ "align-self-center" } type="switch" checked={!customCod} label="Assegna codice prodotto automaticamente" onChange={ e => setCustomCod(!customCod) } />
+                <Form.Check className={ "align-self-center" } type="switch" checked={!customCod} label="Assegna codice prodotto automaticamente" onChange={ () => setCustomCod(!customCod) } />
             </Col>
         </Form.Group> }
 
@@ -160,6 +162,11 @@ const ServizioForm = ( props ) => {
         { created && <Alert variant="success" >Prodotto creato con codice {codice}.</Alert>}
         <Button type="submit" { ...{ disabled: api.status === "sending" || api.status === "Created" }} >Invia</Button>
     </Form>
+}
+
+ServizioForm.propTypes = {
+    onSuccess : PropTypes.func,
+    url : PropTypes.string
 }
 
 export default ServizioForm;

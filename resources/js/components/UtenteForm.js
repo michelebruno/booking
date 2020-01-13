@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+import PropTypes from 'prop-types'
+
 import { Form, Button, Alert, Spinner } from "react-bootstrap"
 import { Link } from 'react-router-dom'
 import { showErrorsFeedback , isInvalid } from "../_services/formValidation";
@@ -105,6 +107,10 @@ const UtenteForm =  ( { onSuccess }) => {
             
         </Form>
     )
+}
+
+UtenteForm.propTypes = {
+    onSuccess : PropTypes.func
 }
 
 export default UtenteForm

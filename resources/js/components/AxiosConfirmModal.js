@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import PropTypes from "prop-types"
 
-const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, method , data, ...props } ) => {
+const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, method , data, ...props } ) => {
 
     const onConfirm = ( ) => {
         if ( ! url ) return // TODO dovrebbe dare un errore ->aggiunto Proptype
@@ -48,7 +48,7 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
             </Modal.Title>
         </Modal.Header>}
         <Modal.Body>
-            { children }
+            { props.children }
         </Modal.Body>
         <Modal.Footer>
             <Button variant="primary" onClick={ onConfirm } >Conferma</Button>
@@ -58,8 +58,14 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, children, 
 }
 
 AxiosConfirmModal.propTypes = {
-    url : PropTypes.string.isRequired,
-    onHide : PropTypes.func.isRequired
+    children : PropTypes.node,
+    data : PropTypes.object,
+    method: PropTypes.oneOf(['get', 'post', 'delete', 'put']),
+    onHide : PropTypes.func.isRequired,
+    onSuccess: PropTypes.func,
+    show: PropTypes.bool.isRequired,
+    title : PropTypes.element,
+    url : PropTypes.string.isRequired
 }
 
 export default AxiosConfirmModal
