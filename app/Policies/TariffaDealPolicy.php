@@ -1,6 +1,6 @@
-<?php
+<?php // TODO tutto
 
-namespace App\Policies\Models;
+namespace App\Policies;
 
 use App\Models\TariffaDeal;
 use App\User;
@@ -30,7 +30,7 @@ class TariffaDealPolicy
      */
     public function view(User $user, TariffaDeal $tariffaDeal)
     {
-        //
+        return true; // TODO
     }
 
     /**
@@ -41,7 +41,7 @@ class TariffaDealPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class TariffaDealPolicy
      */
     public function update(User $user, TariffaDeal $tariffaDeal)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class TariffaDealPolicy
      */
     public function delete(User $user, TariffaDeal $tariffaDeal)
     {
-        //
+        return true;
     }
 
     /**

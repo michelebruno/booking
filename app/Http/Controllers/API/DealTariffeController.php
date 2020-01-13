@@ -49,7 +49,7 @@ class DealTariffeController extends Controller
      */
     public function show(Deal $deal, TariffaDeal $tariffa)
     {        
-        $this->authorize('create', $tariffa);
+        $this->authorize('show', $tariffa);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
@@ -87,7 +87,7 @@ class DealTariffeController extends Controller
      * @param  \App\Models\Deal  $deal
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Deal $deal, Tariffa $tariffa)
+    public function destroy(Deal $deal, TariffaDeal $tariffa)
     {
         $this->authorize('delete', $tariffa);
 

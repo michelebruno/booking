@@ -44,6 +44,17 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    /* 
+     *
+     * SCOPES
+     * 
+     */
+
+    public function scopeEsercente($query)
+    {
+        return $query->where('ruolo', 'esercente');
+    }
 
     public function meta()
     {
@@ -107,14 +118,31 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->attributes['abilitato'] = ! $this->trashed();
     }
     
-    /* 
-     *
-     * SCOPES
-     * 
-     */
-
-    public function scopeEsercente($query)
+    protected function _getPrefixedIndirizzo($prefix)
     {
-        return $query->where('ruolo', 'esercente');
+        $indirizzo = [];
+        $meta = $this->meta;
+        
+        if ( Arr::exists( $this->meta , $prefix . 'via' ) ) {
+            $indirizzo['via'] = $this->meta[$prefix . 'via'];
+        }
+        
+        if ( Arr::exists( $meta , $prefix . 'civico' ) ) {
+            $indirizzo['civico'] = $meta[$prefix . 'civico'];
+        }
+        
+        if ( Arr::exists( $meta , $prefix . 'citta' ) ) {
+            $indirizzo['citta'] = $meta[$prefix . 'citta'];
+        }
+        
+        if ( Arr::exists( $meta , $prefix . 'provincia' ) ) {
+            $indirizzo['provincia'] = $meta[$prefix . 'provincia'];
+        }
+        
+        if ( Arr::exists( $meta , $prefix . 'cap' ) ) {
+            $indirizzo['cap'] = $meta[$prefix . 'cap'];
+        }
+
+        return $indirizzo;
     }
 }

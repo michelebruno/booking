@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Models;
+namespace App\Policies;
 
 use App\Models\Tariffa;
 use App\User;

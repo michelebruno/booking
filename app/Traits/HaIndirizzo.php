@@ -24,29 +24,11 @@ trait HaIndirizzo
 
     public function getIndirizzoAttribute()
     {
-        $indirizzo = [];
-        $meta = $this->meta;
-        
-        if ( Arr::exists( $this->meta , 'indirizzo_via' ) ) {
-            $indirizzo['via'] = $this->meta['indirizzo_via'];
-        }
-        
-        if ( Arr::exists( $meta , 'indirizzo_civico' ) ) {
-            $indirizzo['civico'] = $meta['indirizzo_civico'];
-        }
-        
-        if ( Arr::exists( $meta , 'indirizzo_citta' ) ) {
-            $indirizzo['citta'] = $meta['indirizzo_citta'];
-        }
-        
-        if ( Arr::exists( $meta , 'indirizzo_provincia' ) ) {
-            $indirizzo['provincia'] = $meta['indirizzo_provincia'];
-        }
-        
-        if ( Arr::exists( $meta , 'indirizzo_cap' ) ) {
-            $indirizzo['cap'] = $meta['indirizzo_cap'];
-        }
+        return $this->_getPrefixedIndirizzo('indirizzo_');
+    }
 
-        return $indirizzo;
+    public function getSedeLegaleAttribute()
+    {
+        return $this->_getPrefixedIndirizzo('sede_legale_');
     }
 }
