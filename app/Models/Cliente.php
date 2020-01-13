@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Cliente extends User
 {
+    protected $table = 'users';
+
     public static function boot()
     {
         parent::boot();
@@ -15,5 +17,10 @@ class Cliente extends User
         {
             return $builder->where('ruolo', 'cliente');
         });
+    }
+
+    public function ordini()
+    {
+        return $this->hasMany('App\Ordine');
     }
 }

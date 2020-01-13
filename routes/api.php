@@ -36,6 +36,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::apiResource('deals.servizi', 'API\DealServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' ] ] );
     
+    Route::apiResource('ordini', 'API\OrdineController', [ 'parameters' => [ 'ordini' => 'ordine' ] ]);
+    
+    Route::apiResource('ordini.voci', 'API\VoceOrdineController', [ 'parameters' => [ 'ordini' => 'ordine', 'voci' => 'voce' ] ]);
+
     Route::apiResource('settings', 'API\SettingController');
     
     Route::apiResource('servizi', 'API\ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
