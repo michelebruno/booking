@@ -56,6 +56,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->where('ruolo', 'esercente');
     }
 
+    public function scopeEmail($query, $email)
+    {
+        return $query->where('email', $email)->firstOrFail();
+    }
+    
+
     public function meta()
     {
         return $this->hasMany('App\Models\UserMeta', 'user_id', 'id' );

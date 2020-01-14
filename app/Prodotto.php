@@ -70,6 +70,11 @@ class Prodotto extends Model
         }
     }
 
+    public function getSmartAttribute()
+    {
+        # code...
+    }
+
     public function getCondensatoAttribute()
     {
         $euro = Arr::exists( $this->tariffe, 'intero' ) ? " | " . " €" . $this->tariffe['intero']->imponibile : '' ;

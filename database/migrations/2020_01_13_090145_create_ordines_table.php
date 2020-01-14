@@ -17,9 +17,15 @@ class CreateOrdinesTable extends Migration
         Schema::create('ordini', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('stato');
-            $table->float('imponibile', 12, 2);
-            $table->float('imposta', 12, 2);
-            $table->float('importo', 12, 2);
+            $table->float('imponibile', 12, 2)
+                ->nullable()
+                ->default(null);
+            $table->float('imposta', 12, 2)
+                ->nullable()
+                ->default(null);
+            $table->float('importo', 12, 2)
+                ->nullable()
+                ->default(null);
             $table->unsignedBigInteger('cliente_id');
             $table->date('data')
                 ->nullable()

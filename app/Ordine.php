@@ -9,6 +9,10 @@ class Ordine extends Model
 {
     protected $table = "ordini";
 
+    protected $attributes = [
+        'stato' => 'processing'
+    ];
+
     public function voci()
     {
         return $this->hasMany(VoceOrdine::class);

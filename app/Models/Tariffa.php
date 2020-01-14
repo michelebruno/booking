@@ -16,13 +16,11 @@ class Tariffa extends Model
         'variante_tariffa_id', 'imponibile', 'importo', 'slug'
     ];
 
-    public $hidden = [ 'variante' ];
-
     public $timestamps = false;
 
     public function prodotto()
     {
-        return $this->belongsTo('App\Prodotto', 'prodotto_id');
+        return $this->belongsTo('App\Prodotto', 'prodotto_id', 'id');
     }
 
     public function variante()
@@ -44,18 +42,21 @@ class Tariffa extends Model
     {
         return $this->variante->nome;
     }
+
+    public function getIvaAttribute()
+    {
+        return $this->prodotto->iva;
+    }
     
     public function getImponibileAttribute()
     {
         // TODO farlo funzionare senza la query
         $iva = $this->prodotto()->withTrashed()->first()->iva; 
-        return round($this->importo / ( 1 + $iva / 100 ) , 2 );
+        return round( $this->importo / ( 1 + $iva / 100 ) , 2 );
     }
     
     public function setImponibileAttribute( $value )
     {
-        // TODO farlo funzionare senza la query
-        $iva = $this->prodotto()->first()->iva; 
-        return $this->attributes['importo'] = round( $value * ( 1 + $iva / 100 ) , 2 );
+        return $this->attributes['importo'] = round( $value * ( 1 + $this->iva / 100 ) , 2 );
     }
 }
