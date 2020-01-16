@@ -33,7 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'abilitato'
+        'abilitato' , '_links'
     ];
 
     /**
@@ -119,6 +119,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $meta;
     }
 
+    public function getLinksAttribute()
+    {
+        return;
+    }
     public function getAbilitatoAttribute()
     {
         return $this->attributes['abilitato'] = ! $this->trashed();
@@ -151,4 +155,5 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $indirizzo;
     }
+
 }

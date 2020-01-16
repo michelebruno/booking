@@ -15,7 +15,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        //
+        return response( Cliente::all() );
     }
 
     /**
@@ -26,7 +26,12 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dati = $request->validate([
+            'email' => 'required|unique:users,email',
+            'tipo' => 'required|in:privato,business',
+            'cellulare' => 'string',
+            'consenso' => 'required'
+        ]);
     }
 
     /**
@@ -37,7 +42,9 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
-        //
+        // TODO $this->authorize();
+
+        return response($cliente->load('ordini'));
     }
 
     /**

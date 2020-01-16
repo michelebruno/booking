@@ -107,7 +107,7 @@ TariffeTabella.propTypes = {
     iva : PropTypes.number.isRequired,
     ivaInclusa : PropTypes.bool,
     onSuccess : PropTypes.func,
-    tariffe : PropTypes.array,
+    tariffe : PropTypes.object,
     url : PropTypes.string
 }
 

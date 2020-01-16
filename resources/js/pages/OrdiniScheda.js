@@ -1,18 +1,74 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 
 import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
+import PreLoaderWidget from '../components/Loader';
+import { prezziFormatter } from '../_services/helpers';
 
-const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
+const OrdiniScheda = ( { match , location } ) => {
 
-const OrdiniScheda = ( props ) => {
+    let i;
 
-    const [ tabAttivitàAperta, setTabAttivitàAperta] = useState("convalide");
+    if ( location && location.state && location.state.ordine ) {
+        i = location.state.ordine
+        i.willBeReloaded = true
+    }
+
+    const [ordine, setOrdine] = useState(i);
+
+    useEffect(() => {
+        if ( ordine && ! ordine.willBeReloaded ) return;
+
+        const s = axios.CancelToken.source();
+
+        const url = ordine ? ordine._links.self : '/ordini/' + match.params.ordine_id
+
+        axios.get( url , { cancelToken : s.token } )
+            .then( res => setOrdine(res.data) )
+            .catch( e => e )
+        return () => {
+            s.cancel()
+        };
+    }, [ordine])
+
+    if ( ! ordine ) return <PreLoaderWidget />
+
+    if ( ordine && ordine.stato ) {
+        switch (ordine.stato) {
+            case "pending":
+                i = {
+                    label : "In attesa di pagamento.",
+                    variant : "warning",
+                    colorClass : "text-warning"
+                }
+                break;
+
+            case "completo":
+                i = {
+                    label : "Completo",
+                    variant : "success",
+                    colorClass : "text-success"
+                }
+                break;
+        
+            default:
+                i = {
+                    label : ordine.stato,
+                    variant : ordine.stato,
+                    colorClass : ordine.stato
+                }
+                break;
+        }
+    }
+
     return(
         <React.Fragment>
             <div className="d-flex justify-content-between">
-                <h1>Ordine #2657 <i title="Saldato" className="fa fa-circle text-success" /> </h1>
+                <div>
+                <h1 className="d-inline-block">Ordine { ordine.id } </h1> <Badge className="h3" variant={i.variant } pill={true} >{ i.label }</Badge> 
+
+                </div>
                 <span className="d-table h-100 align-middle">
                     <ButtonGroup aria-label="Azioni rapide" className="align-middle">
                         <Button>Emetti ricevuta</Button>
@@ -21,13 +77,22 @@ const OrdiniScheda = ( props ) => {
                 </span>
             </div>
             <Row>
-                <Col lg="9" /* Dati cliente */ >
+                <Col lg="4" /* Dati cliente */ >
                     <Card>
                         <Card.Body>
-                            <div className="d-table"><span className="h1">Cliente </span><Badge pill variant="dark" className="align-middle">Privato</Badge></div>
-                            <p>
-                                <strong>Nome: </strong>Leonardo <strong>Cognome: </strong>Rossi <strong>Email: </strong> <a href="mailto:l.rossi95@example.com" >l.rossi95@example.com</a> 
-                            </p>
+                            <div className="d-table"><span className="h2">Cliente </span><Badge pill variant="dark" className="align-middle">Privato</Badge></div>
+                            <div className="d-flex justify-content-between ">
+                                <strong>Nome:</strong><span>{ ordine.cliente.username } </span>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <strong>Email:</strong><span>{ ordine.cliente.email }</span>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <strong>Cod. Fiscale:</strong><span>{ ordine.cliente.cf }</span>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <strong>P. Iva:</strong><span>{ ordine.cliente.piva }</span>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -36,26 +101,27 @@ const OrdiniScheda = ( props ) => {
                         <Card.Body>
                             <h2>Riepilogo ordine</h2>
                             <div className="d-flex justify-content-between ">
-                                <strong>Stato</strong><span>Saldato <i className="fa fa-circle text-success" /></span>
+                                <strong>Stato</strong><span>{ i.label } <i className={"fa fa-circle " + i.colorClass } /></span>
                             </div>
                             <div className="d-flex justify-content-between">
-                                <strong>Data</strong><span>21/12/2019</span>
+                                <strong>Data</strong><span>{ ordine.data }</span>
                             </div>
                             <div className="d-flex justify-content-between">
                                 <strong>Prodotti</strong><span>2</span>
                             </div>
                             <div className="d-flex justify-content-between">
-                                <strong>Imponibile</strong><span>€24</span>
+                                <strong>Imponibile</strong><span>{ prezziFormatter(ordine.imponibile) }</span>
                             </div>
                             <div className="d-flex justify-content-between">
-                                <strong>Imposta</strong><span>€6</span>
+                                <strong>Imposta</strong><span>{ prezziFormatter(ordine.imposta) }</span>
                             </div>
                             <div className="d-flex justify-content-between h4">
-                                <strong>Totale</strong><span>€30</span>
+                                <strong>Totale</strong><span>{ prezziFormatter(ordine.importo) }</span>
                             </div>
                         </Card.Body>
                     </Card>
                 </Col>
+                <div className="w-100" />
                 <Col md="12">
                     <Card>
                         <Card.Body>
@@ -63,20 +129,19 @@ const OrdiniScheda = ( props ) => {
                             <BootstrapTable
                                 keyField="id"
                                 columns={[
-                                    { dataField: 'prodotto.id', text: 'Cod. prodotto'},
-                                    { dataField: 'prodotto.titolo', text: 'Descrizione' },
+                                    { dataField: 'codice', text: 'Cod. prodotto'},
+                                    { dataField: 'descrizione', text: 'Descrizione' },
                                     { dataField: 'tickets.token', text: 'Tickets associati' },
                                     { dataField: 'tickets.stato', text: 'Riscattati' },
                                     { dataField: 'tickets.scadenza', text: 'Scadenza' },
-                                    { dataField: 'prodotto.costo', text: 'Costo unitario' },
-                                    { dataField: 'qta', text: 'Quantità' },
-                                    { dataField: 'costo', text: 'Totale'}
+                                    { dataField: 'costo_unitario', text: 'Costo unitario', formatter: prezziFormatter },
+                                    { dataField: 'quantita', text: 'Quantità' },
+                                    { dataField: 'importo', text: 'Totale', formatter: prezziFormatter}
                                 ]}
-                                data={[
-                                    { id: 'Ddsaffsd', prodotto: { id: 'DEAL-PTIPICO', titolo: 'Pranzo tipico', costo: '€15'}, tickets: { token: 'TERX54, GDFG654', stato: '1/2', scadenza: '24-03-2020'}, costo: '€30', qta: 2,}
-                                ]}
+                                data={ordine.voci}
                                 bordered={false}
                                 hover
+                                responsive
                             />
                         </Card.Body>
                     </Card>

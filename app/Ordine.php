@@ -13,6 +13,10 @@ class Ordine extends Model
         'stato' => 'processing'
     ];
 
+    protected $appends = [
+        "_links"
+    ];
+
     public function voci()
     {
         return $this->hasMany(VoceOrdine::class);
@@ -21,5 +25,14 @@ class Ordine extends Model
     public function cliente()
     {
         return $this->belongsTo('App\Models\Cliente');
+    }
+
+    /* ATTRIBUTI */
+
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => "/ordini/" . $this->id
+        ];
     }
 }

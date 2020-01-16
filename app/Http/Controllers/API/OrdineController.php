@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrdineRequest;
+use App\Http\Resources\OrdineCollection;
+use App\Http\Resources\OrdineResource;
 use App\Models\Cliente;
 use App\Models\Deal;
 use App\Models\Tariffa;
@@ -18,9 +20,14 @@ class OrdineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
-        return Ordine::all()->load(['voci' , 'cliente']);
+        $request->validate(['per_page' => 'int']);
+
+        $per_page = $request->query('per_page', 10);
+
+        return response( Ordine::with(['cliente' , 'voci' ])->paginate($per_page) );
+
     }
 
     /**
@@ -96,7 +103,7 @@ class OrdineController extends Controller
      */
     public function show(Ordine $ordine)
     {
-        //
+        return response($ordine->load(['voci' , 'cliente']));
     }
 
     /**

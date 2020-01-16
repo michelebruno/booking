@@ -98,8 +98,8 @@ NuovaTariffaPopover.propTypes = {
     url : PropTypes.string.isRequired,
     iva : PropTypes.number,
     ivaInclusa: PropTypes.bool,
-    tariffe : PropTypes.array,
-    varianti : PropTypes.array
+    tariffe : PropTypes.object,
+    varianti : PropTypes.object
 }
 
 NuovaTariffaPopover.defaultProps = {

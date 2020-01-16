@@ -64,7 +64,7 @@ AxiosConfirmModal.propTypes = {
     onHide : PropTypes.func.isRequired,
     onSuccess: PropTypes.func,
     show: PropTypes.bool.isRequired,
-    title : PropTypes.element,
+    title : PropTypes.node,
     url : PropTypes.string.isRequired
 }
 

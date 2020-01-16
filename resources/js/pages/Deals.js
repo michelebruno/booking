@@ -4,6 +4,7 @@ import { Card , Button } from 'react-bootstrap'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Link } from 'react-router-dom'
 import AxiosConfirmModal from '../components/AxiosConfirmModal'
+import { prezziFormatter } from '../_services/helpers'
 
 const Deals = ( ) => {
 
@@ -75,8 +76,6 @@ const Deals = ( ) => {
             </AxiosConfirmModal>
         </div>
     }
-
-    const prezziFormatter = new Intl.NumberFormat('en-US', { style : 'currency' , currency: 'EUR' } ).format
 
     return(
         <React.Fragment>

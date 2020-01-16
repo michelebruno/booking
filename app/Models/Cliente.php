@@ -21,6 +21,14 @@ class Cliente extends User
 
     public function ordini()
     {
-        return $this->hasMany('App\Ordine');
+        return $this->hasMany('App\Ordine', 'cliente_id');
+    }
+
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => '/clienti/' . $this->id,
+            'forceDelete' => '/clienti/' . $this->id . '/forceDelete'
+        ];
     }
 }

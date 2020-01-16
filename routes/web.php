@@ -33,6 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
         return view('app');
     });
     
+    Route::get('/clienti/{a?}/{b?}', function() {
+        return view('app');
+    });
+    
     Route::get('/ordini/{a?}/{b?}', function() {
         return view('app');
     });

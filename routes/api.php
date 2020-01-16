@@ -29,6 +29,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     
     Route::apiResource('users', 'API\UserController');
 
+    Route::apiResource('clienti', 'API\ClienteController' , [ 'parameters' => [ 'clienti' => 'cliente' ] ] );
+
     Route::apiResource('deals', 'API\DealController');
     Route::patch('/deals/{deal}/restore', 'API\DealController@restore');
     

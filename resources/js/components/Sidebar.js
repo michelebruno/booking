@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap'; 
@@ -32,18 +33,13 @@ const SideNavContent = ( { user } ) => {
                             <Link to="/deals/crea" className="side-nav-link-ref">Crea deal</Link>
                         </li>
                     </ul>
-                </li>{/*
+                </li>
                 <li>
                     <Link to="/ordini" className="waves-effect side-nav-link-ref" >
-                        <i className="dripicons-shopping-bag "></i>
+                        <i className="fas fa-shopping "></i>
                         <span>Ordini</span>
                     </Link>
-                    <ul className="nav-second-level nav" aria-expanded="false">
-                        <li>
-                            <Link to="/ordini/12" className="side-nav-link-ref">Dettagli ordine</Link>
-                        </li> 
-                    </ul>
-                </li>
+                </li>{/*
                 <li>
                     <Link to="/tickets" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-ticket-alt "></i>
@@ -56,6 +52,12 @@ const SideNavContent = ( { user } ) => {
                         <span>Il mio account</span>
                     </Link>
                 </li>}
+                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
+                    <Link to="/clienti" >
+                        <i className="fas fa-user-friends" />
+                        <span>Clienti</span>
+                    </Link>
+                </li>} 
                 { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/utenti" >
                         <i className="fas fa-user" />
