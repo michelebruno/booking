@@ -10,6 +10,7 @@ import AxiosConfirmModal from '../components/AxiosConfirmModal';
 import ProdottiCollegati from '../components/ProdottiCollegati'
 import TariffeTabella from '../components/TariffeTabella'
 import EditableField from '../components/EditableField'
+import PreLoaderWidget from '../components/Loader';
 
 
 const DealsScheda = ( { varianti,  location , history, ...props } ) => {
@@ -101,6 +102,8 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
         }
     }, [deal])
+
+    if ( ! deal || ! deal.id ) return <PreLoaderWidget />
 
     let editableFieldProps = deal && deal._links && { url : deal._links.self , onSuccess : ( r ) => setDeal(r) } 
   

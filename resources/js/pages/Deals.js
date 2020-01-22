@@ -5,17 +5,22 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import { Link } from 'react-router-dom'
 import AxiosConfirmModal from '../components/AxiosConfirmModal'
 import { prezziFormatter } from '../_services/helpers'
+import PreLoaderWidget from '../components/Loader'
 
 const Deals = ( ) => {
 
-    const [ deals , setDeals ] = useState()
+    const [ deals , setDeals ] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const loadDeals = ( ) => {
 
         const source = axios.CancelToken.source()
 
         axios.get("/deals", { cancelToken : source.token })
-            .then( res => setDeals(res.data))
+            .then( res => {
+                setDeals(res.data)
+                setLoading(false)
+            })
             .catch( error => axios.isCancel(error) || console.error( error ))
         return () => {
             source.cancel()
@@ -26,7 +31,7 @@ const Deals = ( ) => {
 
         return loadDeals()
 
-    }, [])
+    }, [] )
 
     /* Formattatori */
 
@@ -83,7 +88,8 @@ const Deals = ( ) => {
                 <Card.Body> 
                     <h1>Deals</h1>
                     { process.env.NODE_ENV === "development" && <p>Azioni di filtraggio varie...</p>}
-                    { deals && <BootstrapTable 
+                    { loading && <PreLoaderWidget />}
+                    <BootstrapTable 
                         keyField="id"
                         noDataIndication="Non ci sono prodotti collegati."
                         data={deals}
@@ -129,7 +135,7 @@ const Deals = ( ) => {
                         ]}
                         hover
                         bordered={ false }
-                        />}
+                        />
                 </Card.Body>
             </Card>
         </React.Fragment> 

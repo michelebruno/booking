@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +15,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(Setting::class, function ($app) {
+            
+            $s = Setting::all();
+
+            $n = new \stdClass();
+
+            foreach ($s as $setting ) {
+                $n[$s->chiave] = $setting;
+            }
+
+            return $n;
+        } );
     }
 
     /**

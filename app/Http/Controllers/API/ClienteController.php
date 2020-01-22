@@ -67,6 +67,13 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
-        //
+        // todo
+        
+    }
+
+    public function forceDelete(Cliente $cliente)
+    {
+        $cliente->forceDelete();
+        return response(null, 204);
     }
 }
