@@ -29,6 +29,7 @@ class StoreOrdineRequest extends FormRequest
             ],
             'voci.*.qta' => 'required|int',
             'voci.*.tariffa_id' => 'required|exists:tariffe,id',
+            'cliente' => 'required',
             'cliente.email' => 'email' // TODO
         ];
     }

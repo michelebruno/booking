@@ -27,6 +27,15 @@ class AppServiceProvider extends ServiceProvider
 
             return $n;
         } );
+
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential(
+                config( 'services.paypal.client_id' ),     // ClientID
+                config( 'services.paypal.client_secret' )      // ClientSecret
+            )
+        );
+        
+        $this->app->instance(\Paypal\Rest\ApiContext::class, $apiContext);
     }
 
     /**

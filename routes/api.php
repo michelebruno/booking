@@ -13,6 +13,9 @@ use App\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::post('/webhooks/paypal', 'PaypalController@store');
+
 Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('account', function() { 
@@ -61,5 +64,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     
     Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore');
     Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote');
+
+
     
 });

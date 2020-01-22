@@ -1,6 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, { useState , useEffect } from 'react';
+import { connect } from 'react-redux'
 
+import { setTopbarButtons , unsetTopbarButtons } from '../_actions'
+
+import { PayPalButton } from 'react-paypal-button-v2'
 import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import PreLoaderWidget from '../components/Loader';
@@ -121,6 +125,22 @@ const OrdiniScheda = ( { match , location } ) => {
                         </Card.Body>
                     </Card>
                 </Col>
+                <Col>
+                    <Card>
+                        <Card.Body>
+                            <PayPalButton 
+                                amount={ ordine.importo }
+                                createOrder={ () => {
+                                    let url = new URL(ordine.meta.paypal_approval_url)
+                                    return url.searchParams.get('token')
+
+                                }}
+                                shippingPreference="NO_SHIPPING"
+                                onSuccess={console.warn}
+                            />
+                        </Card.Body>
+                    </Card>
+                </Col>
                 <div className="w-100" />
                 <Col md="12">
                     <Card>
@@ -146,7 +166,7 @@ const OrdiniScheda = ( { match , location } ) => {
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col md="12" /* Transazioni */>
+                <Col md="12" /* Transazioni */ >
                     <Card>
                         <Card.Body>
                             <h3>Transazioni</h3>
@@ -159,7 +179,7 @@ const OrdiniScheda = ( { match , location } ) => {
                                     { dataField: 'descrizione', text: "Descrizione"}
                                 ]}
                                 data={[
-                                    { id: '2', gateway: 'Paypal', importo: '€30', descrizione: "Saldato", codice: 'TE4325754XXV4325' },
+                                    { id: '2', gateway: 'Paypal', importo: '€30', descrizione: "Saldato", codice: 'TE43257d54XXV4325' },
                                     { id: '2d', gateway: 'Paypal', importo: '€0', descrizione: "Fallita", codice: 'TE4325754XXVytr5' }
                                 ]}
                                 bordered={false}
@@ -173,4 +193,4 @@ const OrdiniScheda = ( { match , location } ) => {
     )
 }
 
-export default OrdiniScheda;
+export default connect(null, { setTopbarButtons , unsetTopbarButtons } )(OrdiniScheda);

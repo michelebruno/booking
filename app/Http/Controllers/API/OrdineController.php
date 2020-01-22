@@ -12,6 +12,8 @@ use App\Models\Tariffa;
 use App\Models\VoceOrdine;
 use App\Ordine;
 use Illuminate\Http\Request;
+use PayPal\Api\Order;
+use PayPal\Rest\ApiContext;
 
 class OrdineController extends Controller
 {
@@ -91,7 +93,9 @@ class OrdineController extends Controller
 
         $ordine->saveOrFail();
 
-        return response($ordine->load(['voci', 'cliente']), 201);
+        event( \App\Events\NuovoOrdine::class, $ordine );
+
+        return response(Ordine::find($ordine->id)->load(['voci', 'cliente']), 201);
 
     }
 

@@ -30,4 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'paypal' => [
+        'webhooks' => [
+            'all' => env('PAYPAL_ALL_EVENT_WEBHOOK')
+        ],
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET')
+    ]
+
 ];

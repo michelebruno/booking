@@ -18,6 +18,20 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \App\Events\NuovoOrdine::class => [
+            \App\Listeners\CreaOrdinePaypal::class,
+        ],
+        \App\Events\Paypal\NuovaApprovazioneOrdine::class => [
+            \App\Listeners\Paypal\EseguiTransazione::class,
+        ],
+        \App\Events\NuovoPagamento::class => [
+            \App\Listeners\InserisciTransazioni::class,
+            \App\Listeners\AggiornaStatoOrdine::class
+        ],
+        \App\Events\OrdinePagato::class => [
+            \App\Listeners\GeneraTickets::class,
+            \App\Listeners\InviaTicketsMail::class
+        ]
     ];
 
     /**

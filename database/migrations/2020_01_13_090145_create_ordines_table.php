@@ -30,6 +30,9 @@ class CreateOrdinesTable extends Migration
             $table->date('data')
                 ->nullable()
                 ->default(null);
+            $table->string('paypal_order_id')
+                ->nullable()
+                ->default(null);
             $table->timestamps();
 
             $table->foreign('cliente_id')->on('users')->references('id');
