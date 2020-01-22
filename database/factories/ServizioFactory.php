@@ -5,15 +5,19 @@
 use App\Models\Esercente;
 use App\Models\Servizio;
 use Faker\Generator as Faker;
-
-$factory->define(Servizio::class, function (Faker $faker) {
+$servizio_counter = 0;
+$factory->define(Servizio::class, function (Faker $faker)  {
+    global $servizio_counter;
+    
     $esercenti = Esercente::all(['id']);
+    $servizio_counter += 1;
+    $es = $faker->randomElement($esercenti);
     return [
-        'codice' => $faker->text(10),
+        'codice' => 'S-'. $es->id . "-" . $servizio_counter,
         'titolo' => $faker->text(15),
         'descrizione' => $faker->text(20),
         'stato' => 'pubblico',
-        'esercente_id' => $faker->randomElement($esercenti),
+        'esercente_id' => $es,
         'iva' => 22
     ];
 });

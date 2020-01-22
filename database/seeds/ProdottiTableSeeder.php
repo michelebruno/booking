@@ -28,24 +28,47 @@ class ProdottiTableSeeder extends Seeder
         $deal = new Deal(['titolo' => 'Deal di prova' , 'codice' => 'D-Prova', 'stato' => 'pubblico' , 'iva' => '22' , 'disponibili' => 15 ]);
         $deal->save();
 
+        $deal->tariffe()->create([
+            'importo' => 70,
+            'variante_tariffa_id' => $variante->id
+        ]);
+
+        $deal->tariffe()->create([
+            'importo' => 60,
+            'variante_tariffa_id' => $ridotto->id
+        ]);
+
         factory(Servizio::class, 3)
             ->create()
             ->each( function ( $servizio ) use ( $deal )
             {
+                $servizio->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
                 $servizio->tariffe()->save( factory( Tariffa::class )->make() ) ;
                 $deal->servizi()->attach($servizio);
             });
+
+        
 
         $deal = new Deal(['titolo' => 'Deal secondo' , 'codice' => 'D-2', 'stato' => 'pubblico' , 'iva' => '22' , 'disponibili' => 18 ]);
         $deal->save();
 
+        $deal->tariffe()->create([
+            'importo' => 15,
+            'variante_tariffa_id' => $variante->id
+        ]);
+
+        $deal->tariffe()->create([
+            'importo' => 10,
+            'variante_tariffa_id' => $ridotto->id
+        ]);
+
         factory(Servizio::class, 3)
             ->create()
             ->each( function ( $servizio ) use ( $deal )
             {
+                $servizio->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
                 $servizio->tariffe()->save( factory( Tariffa::class )->make() ) ;
                 $deal->servizi()->attach($servizio);
             });
-            
     }
 }

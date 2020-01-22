@@ -7,9 +7,18 @@ use App\Models\VarianteTariffa;
 use Faker\Generator as Faker;
 
 $factory->define(Tariffa::class, function (Faker $faker) {
-    $varianti = VarianteTariffa::all('id');
+    $varianti = VarianteTariffa::where('slug', '<>', 'intero')->get(['id']);
+
     return [
-        'imponibile' => $faker->numberBetween(8,200),
+        'importo' => $faker->numberBetween(8,200),
         'variante_tariffa_id' => $faker->randomElement($varianti)
     ];
 });
+
+$factory->define(Tariffa::class,  function (Faker $faker) {
+    $tariffa = VarianteTariffa::slug('intero');
+    return [
+        'importo' => $faker->numberBetween(8,200),
+        'variante_tariffa_id' => $tariffa->id
+    ];
+}, 'intero');
