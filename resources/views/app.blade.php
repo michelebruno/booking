@@ -7,7 +7,7 @@
     <title>Booking app</title> 
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     <script src="https://kit.fontawesome.com/cb57072874.js" crossorigin="anonymous"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=<?php echo config( 'services.paypal.client_id'); ?>&currency=EUR" ></script>
+    <script src="https://www.sandbox.paypal.com/sdk/js?client-id=<?php echo config( 'services.paypal.client_id'); ?>&currency=USD" ></script>
 </head>
 <body class="left-side-menu-dark">
     <div id="root"></div>

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Events\Paypal;
+namespace App\Events;
 
+use App\Transazione;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,18 +11,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NuovaApprovazioneOrdine
+class TransazioneCreata
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public $transazione;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Transazione $transazione)
     {
-        //
+        $this->transazione = $transazione;
     }
 
     /**

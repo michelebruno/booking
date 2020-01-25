@@ -15,7 +15,7 @@ class CreateOrdineMetasTable extends Migration
     {
         Schema::create('ordini_meta', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('ordine_id');
+            $table->string('ordine_id');
             $table->string('chiave', 30);
             $table->text('valore');
 

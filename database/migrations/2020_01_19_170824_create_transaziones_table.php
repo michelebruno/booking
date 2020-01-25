@@ -15,7 +15,16 @@ class CreateTransazionesTable extends Migration
     {
         Schema::create('transazioni', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('gateway');
+            $table->string('transazione_id');
+            $table->float('importo', 12, 2);
+            $table->string('ordine_id');
+            $table->string('verified_by_event_id')
+                ->nullable()
+                ->default(null);
             $table->timestamps();
+
+            $table->foreign('ordine_id')->on('ordini')->references('id'); // TODO onDelete...
         });
     }
 

@@ -128,16 +128,17 @@ const OrdiniScheda = ( { match , location } ) => {
                 <Col>
                     <Card>
                         <Card.Body>
-                            <PayPalButton 
+                            { ordine.meta && ordine.meta.paypal_approve_url && <PayPalButton 
                                 amount={ ordine.importo }
-                                createOrder={ () => {
-                                    let url = new URL(ordine.meta.paypal_approval_url)
+                                createOrder={ ( a, b) => {
+                                    console.log(a,b)
+                                    let url = new URL(ordine.meta.paypal_approve_url)
                                     return url.searchParams.get('token')
 
                                 }}
                                 shippingPreference="NO_SHIPPING"
                                 onSuccess={console.warn}
-                            />
+                            />}
                         </Card.Body>
                     </Card>
                 </Col>

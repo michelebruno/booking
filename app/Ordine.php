@@ -9,6 +9,10 @@ class Ordine extends Model
 {
     protected $table = "ordini";
 
+    public $incrementing = false;
+
+    public $keyType = "string";
+
     protected $attributes = [
         'stato' => 'processing'
     ];
@@ -16,6 +20,8 @@ class Ordine extends Model
     protected $appends = [
         "_links" , "meta"
     ];
+
+    protected $year;
 
     public function voci()
     {
@@ -30,6 +36,11 @@ class Ordine extends Model
     public function cliente()
     {
         return $this->belongsTo('App\Models\Cliente');
+    }
+
+    public function transazioni()
+    {
+        return $this->hasMany( \App\Models\Transazione::class );
     }
 
     /* ATTRIBUTI */
@@ -53,4 +64,13 @@ class Ordine extends Model
 
         return $meta;
     }
+
+    public static function id()
+    {
+
+        $y = date('Y');
+        
+        return $y . "-" . Setting::progressivo( 'ordini' , $y )->valore;
+    }
+
 }

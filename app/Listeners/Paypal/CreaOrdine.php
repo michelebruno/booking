@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Paypal;
 
 use App\Events\NuovoOrdine;
 use App\Mail\DebugMail;
@@ -9,22 +9,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\Item;
-use PayPal\Api\ItemList;
-use PayPal\Api\Payer;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction;
-
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use PayPal\Api\InputFields;
+use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+use PayPalHttp\HttpResponse;
 use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\Debug\ExceptionHandler as SymfonyExceptionHandler;
 
-class CreaOrdinePaypal
+class CreaOrdine
 {
     /**
      * Create the event listener.
@@ -43,8 +38,85 @@ class CreaOrdinePaypal
      * @param  NuovoOrdine  $event
      * @return void
      */
-    public function handle(\App\Ordine $ordine)
+    public function handle(\App\Events\NuovoOrdine $event)
     {
+        $ordine = $event->ordine;
+        
+        $request = new OrdersCreateRequest;
+
+        $request->prefer('return=representation');
+
+        $items = [];
+
+        foreach ($ordine->voci as $v ) {
+            $item = [
+                "name" => $v->descrizione,
+                "unit_amount" => [
+                    "value" => $v->costo_unitario,
+                    "currency_code" => "EUR"
+                ],
+                "quantity" => $v->quantita,
+                "sku" => $v->codice,
+                "category" => "DIGITAL_GOODS"
+            ];
+
+            $items[] = $item;
+
+        }
+
+        $request->body = [
+            "intent" => "CAPTURE",
+            "invoice_id" => $ordine->id,
+            "purchase_units" => [
+                [
+                    "invoice_id" => $ordine->id,
+                    "items" => $items,
+                    "amount" => [
+                        "value" => $ordine->importo,
+                        "currency_code" => "EUR",
+                        "breakdown" => [
+                            "item_total" => [
+                                "value" => $ordine->importo,
+                                "currency_code" => "EUR"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "application_context" => [
+                "shipping_preference" => "NO_SHIPPING"
+            ]
+
+        ];
+
+        try {
+            $response = app(PayPalHttpClient::class)->execute($request);
+
+            Log::notice( json_encode( $response ) );            
+            
+            $ordine->paypal_order_id = $response->result->id;
+
+            $ordine->save();
+
+            $links = new \stdClass;
+
+            foreach ($response->result->links as $link ) {
+                $links->{$link->rel} = $link;
+            }
+
+            $ordine->meta()->updateOrCreate([ 'chiave' => 'paypal_approve_url' ], [ 'valore' => $links->approve->href  ]);
+
+        } catch (\PayPalHttp\HttpException $th) {
+            Log::error( $th->getMessage() );
+            Log::error($request->body );
+        }
+
+
+
+/* 
+        // EX
+
+
         $payer = new Payer();
         $payer->setPaymentMethod("paypal");
 
@@ -113,7 +185,7 @@ class CreaOrdinePaypal
 
         } catch (\PayPal\Exception\PayPalConnectionException $ex) {
             return dd( $ex->getData() );
-        }
+        } */
         
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Events\NuovoPagamento;
+use App\Events\TransazioneCreata;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class AggiornaStatoOrdine
+class AggiornaOrdineDopoTransazione
 {
     /**
      * Create the event listener.
@@ -21,10 +21,10 @@ class AggiornaStatoOrdine
     /**
      * Handle the event.
      *
-     * @param  NuovoPagamento  $event
+     * @param  TransazioneCreata  $event
      * @return void
      */
-    public function handle(NuovoPagamento $event)
+    public function handle(TransazioneCreata $event)
     {
         //
     }

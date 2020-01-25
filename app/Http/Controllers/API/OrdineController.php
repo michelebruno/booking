@@ -11,6 +11,7 @@ use App\Models\Deal;
 use App\Models\Tariffa;
 use App\Models\VoceOrdine;
 use App\Ordine;
+use App\Setting;
 use Illuminate\Http\Request;
 use PayPal\Api\Order;
 use PayPal\Rest\ApiContext;
@@ -28,7 +29,7 @@ class OrdineController extends Controller
 
         $per_page = $request->query('per_page', 10);
 
-        return response( Ordine::with(['cliente' , 'voci' ])->paginate($per_page) );
+        return response( Ordine::orderBy('created_at', 'desc')->with(['cliente' , 'voci' ])->paginate($per_page) );
 
     }
 
@@ -75,25 +76,31 @@ class OrdineController extends Controller
 
         $ordine = new Ordine();
 
+        $ordine->id = Ordine::id();
+
         $ordine->cliente()->associate($cliente);
 
         $ordine->save();
+
+        Setting::progressivo('ordini' , date('Y') )->increment('valore'); 
 
         $ordine->voci()->saveMany( $voci );
 
         $ordine->importo = $ordine->voci()->sum( 'importo' );
 
+        $ordine->dovuto = $ordine->voci()->sum( 'importo' );
+
         $ordine->imponibile = round( $ordine->voci()->sum( 'imponibile' ), 2);
 
         $ordine->imposta = round( $ordine->voci()->sum( 'imposta' ) , 2 );
 
-        $ordine->stato = 'pending';
+        $ordine->stato = 'attende_pagamento';
 
         $ordine->data = date("Y-m-d");
 
         $ordine->saveOrFail();
 
-        event( \App\Events\NuovoOrdine::class, $ordine );
+        event( new \App\Events\NuovoOrdine($ordine) );
 
         return response(Ordine::find($ordine->id)->load(['voci', 'cliente']), 201);
 

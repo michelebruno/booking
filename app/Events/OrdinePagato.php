@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Ordine;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -13,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class OrdinePagato
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     public $ordine;
 
     /**
@@ -21,9 +22,9 @@ class OrdinePagato
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Ordine $ordine )
     {
-        $this->ordine = "TODO";
+        $this->ordine = $ordine;
     }
 
     /**

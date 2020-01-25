@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Setting;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -24,5 +25,7 @@ class NuovoOrdine
     public function __construct($ordine)
     {
         $this->ordine = $ordine;
+
+
     } 
 }

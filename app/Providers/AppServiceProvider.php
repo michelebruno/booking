@@ -36,6 +36,15 @@ class AppServiceProvider extends ServiceProvider
         );
         
         $this->app->instance(\Paypal\Rest\ApiContext::class, $apiContext);
+
+        $environment = new \PayPalCheckoutSdk\Core\SandboxEnvironment(
+            config( 'services.paypal.client_id' ),     // ClientID
+            config( 'services.paypal.client_secret' )      // ClientSecret
+        );
+        $client = new \PayPalCheckoutSdk\Core\PayPalHttpClient($environment);
+
+        $this->app->instance(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, $client);
+
     }
 
     /**
@@ -46,5 +55,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+        \App\Transazione::observe(\App\Observers\TransazioneObserver::class);
+        \App\Models\TransazionePaypal::observe(\App\Observers\TransazioneObserver::class);
     }
 }

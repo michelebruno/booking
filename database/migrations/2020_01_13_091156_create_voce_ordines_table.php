@@ -15,7 +15,7 @@ class CreateVoceOrdinesTable extends Migration
     {
         Schema::create('ordini_voci', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('ordine_id');
+            $table->string('ordine_id');
             $table->unsignedBigInteger('prodotto_id');
             $table->string('codice');
             $table->text('descrizione')

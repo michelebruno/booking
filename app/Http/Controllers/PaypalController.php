@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NuovoPagamento;
-use App\Mail\DebugMail;
+use App\Events\PayPal\PaymentCapture;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use PayPal\Api\VerifyWebhookSignature;
 use PayPal\Rest\ApiContext;
 
@@ -20,8 +19,8 @@ class PaypalController extends Controller
      */
     public function store(Request $request, ApiContext $apiContext)
     { 
-
-        $v = new VerifyWebhookSignature();
+        // TODO 
+/*      $v = new VerifyWebhookSignature();
 
         $v->setAuthAlgo( $request->header('PAYPAL-AUTH-ALGO') );
         $v->setTransmissionId( $request->header('PAYPAL-TRANSMISSION-ID') );
@@ -32,21 +31,22 @@ class PaypalController extends Controller
 
         $v->setRequestBody( $request->all() );
 
-        try {
-            $response = $v->post( $apiContext );
+            $response = $v->post( $apiContext ); */
 
-            if ( true || \App::environment('local')) {
-                Mail::to('bm.michelebruno@gmail.com')->send(new DebugMail);
+            if ( $event_type = $request->input('event_type', false) ) {
+                switch ($event_type) {
+                    case 'PAYMENTS.PAYMENT.CREATED':
+                    case 'PAYMENT.CAPTURE.PENDING':
+                        event( new PaymentCapture( $request->input('resource') , true, $request->all()) );
+                        return response( null , 201);
+                        break;
+                    
+                    default:
+                        Log::warning("Il Webhook di PayPal ha registrato un evento attualmente non previsto: $event_type" );
+                        return response(null, 200);
+                        break;
+                }
             }
 
-            if (
-                $request->input('')
-            )
-
-            event( NuovoPagamento::class );
-            return response();
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 }

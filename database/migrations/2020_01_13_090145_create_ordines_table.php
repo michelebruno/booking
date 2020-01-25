@@ -15,7 +15,8 @@ class CreateOrdinesTable extends Migration
     public function up()
     {
         Schema::create('ordini', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string('id')
+                ->primary();
             $table->string('stato');
             $table->float('imponibile', 12, 2)
                 ->nullable()
@@ -24,6 +25,9 @@ class CreateOrdinesTable extends Migration
                 ->nullable()
                 ->default(null);
             $table->float('importo', 12, 2)
+                ->nullable()
+                ->default(null);
+            $table->float('dovuto', 12, 2)
                 ->nullable()
                 ->default(null);
             $table->unsignedBigInteger('cliente_id');
