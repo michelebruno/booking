@@ -29,7 +29,7 @@ class OrdineController extends Controller
 
         $per_page = $request->query('per_page', 10);
 
-        return response( Ordine::orderBy('created_at', 'desc')->with(['cliente' , 'voci' ])->paginate($per_page) );
+        return response( Ordine::orderBy('created_at', 'desc')->with([ 'cliente' , 'voci', 'transazioni' ])->paginate($per_page) );
 
     }
 
@@ -82,8 +82,6 @@ class OrdineController extends Controller
 
         $ordine->save();
 
-        Setting::progressivo('ordini' , date('Y') )->increment('valore'); 
-
         $ordine->voci()->saveMany( $voci );
 
         $ordine->importo = $ordine->voci()->sum( 'importo' );
@@ -102,7 +100,7 @@ class OrdineController extends Controller
 
         event( new \App\Events\NuovoOrdine($ordine) );
 
-        return response(Ordine::find($ordine->id)->load(['voci', 'cliente']), 201);
+        return response(Ordine::find($ordine->id)->completo(), 201);
 
     }
 
@@ -114,7 +112,7 @@ class OrdineController extends Controller
      */
     public function show(Ordine $ordine)
     {
-        return response($ordine->load(['voci' , 'cliente']));
+        return response($ordine->completo());
     }
 
     /**

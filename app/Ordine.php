@@ -40,15 +40,18 @@ class Ordine extends Model
 
     public function transazioni()
     {
-        return $this->hasMany( \App\Models\Transazione::class );
+        return $this->hasMany( \App\Transazione::class );
     }
 
     /* ATTRIBUTI */
 
     public function getLinksAttribute()
     {
+
+        $base = "/ordini/" . $this->id;
         return [
-            'self' => "/ordini/" . $this->id
+            'self' => $base,
+            'transazioni' => $base . "/transazioni"
         ];
     }
 
@@ -65,12 +68,22 @@ class Ordine extends Model
         return $meta;
     }
 
+    public function completo()
+    {
+        return $this->load(['cliente' , 'transazioni', 'voci']);
+    }
+
+    public function statoElaborazionePagamento()
+    {
+        $this->stato = "Pagamento in elaborazione";
+    }
+
     public static function id()
     {
 
         $y = date('Y');
         
-        return $y . "-" . Setting::progressivo( 'ordini' , $y )->valore;
+        return $y . "-" . sprintf('%08d', Setting::progressivo( 'ordini' , $y )->valore );
     }
 
 }

@@ -40,10 +40,14 @@ class PaypalController extends Controller
                         event( new PaymentCapture( $request->input('resource') , true, $request->all()) );
                         return response( null , 201);
                         break;
+
+                    case 'CHECKOUT.ORDER.APPROVED':
+                        # code...
+                        break;
                     
                     default:
                         Log::warning("Il Webhook di PayPal ha registrato un evento attualmente non previsto: $event_type" );
-                        return response(null, 200);
+                        return response( null, 200);
                         break;
                 }
             }

@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('users', 'API\UserController');
 
     Route::apiResource('clienti', 'API\ClienteController' , [ 'parameters' => [ 'clienti' => 'cliente' ] ] );
-    Route::delete('clienti/{cliente}/forceDelete', 'API\ClienteControllre@forceDelete');
+    Route::delete('clienti/{cliente}/forceDelete', 'API\ClienteController@forceDelete');
 
     Route::apiResource('deals', 'API\DealController');
     Route::patch('/deals/{deal}/restore', 'API\DealController@restore');
@@ -45,6 +45,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('ordini', 'API\OrdineController', [ 'parameters' => [ 'ordini' => 'ordine' ] ]);
     
     Route::apiResource('ordini.voci', 'API\VoceOrdineController', [ 'parameters' => [ 'ordini' => 'ordine', 'voci' => 'voce' ] ]);
+
+    Route::post('/ordini/{ordine}/transazioni/paypal', 'API\OrdineTransazioneController@storePaypal' );
+
+    Route::apiResource('ordini.transazioni', 'API\OrdineTransazioneController', [ 'parameters' => [ 'ordini' => 'ordine', 'transazioni' => 'transazione' ] ])
+        ->only([ 'post' ]);
 
     Route::apiResource('settings', 'API\SettingController');
     

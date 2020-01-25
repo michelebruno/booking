@@ -17,9 +17,6 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        \App\Events\NuovoOrdine::class => [
-            \App\Listeners\Paypal\CreaOrdine::class,
-        ],
         \App\Events\PayPal\PaymentCapture::class => [
             \App\Listeners\Paypal\PaymentCaptureListener::class
         ],

@@ -21,6 +21,11 @@ const OrdiniScheda = ( { match , location } ) => {
 
     const [ordine, setOrdine] = useState(i);
 
+    const reloadApi = () => {
+        let n = Object.assign({}, ordine, { willBeReloaded : true });
+        setOrdine(n)
+    }
+
     useEffect(() => {
         if ( ordine && ! ordine.willBeReloaded ) return;
 
@@ -125,23 +130,27 @@ const OrdiniScheda = ( { match , location } ) => {
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col>
+                { ordine.dovuto > 0 && <Col>
                     <Card>
                         <Card.Body>
                             { ordine.meta && ordine.meta.paypal_approve_url && <PayPalButton 
-                                amount={ ordine.importo }
-                                createOrder={ ( a, b) => {
-                                    console.log(a,b)
+                                amount={ ordine.dovuto }
+                                createOrder={ () => {
+
                                     let url = new URL(ordine.meta.paypal_approve_url)
                                     return url.searchParams.get('token')
 
                                 }}
                                 shippingPreference="NO_SHIPPING"
-                                onSuccess={console.warn}
+                                onSuccess={( data ) => {
+                                    axios.post(ordine._links.transazioni + "/paypal" , data.purchase_units[0].payments.captures[0] )
+                                        .then( response => setOrdine(response.data) )
+                                        .catch( console.error )
+                                }}
                             />}
                         </Card.Body>
                     </Card>
-                </Col>
+                </Col>}
                 <div className="w-100" />
                 <Col md="12">
                     <Card>
@@ -175,14 +184,11 @@ const OrdiniScheda = ( { match , location } ) => {
                                 keyField="id"
                                 columns={[
                                     { dataField: 'gateway', text: 'Gateway'}, 
-                                    { dataField: 'importo', text: 'Importo'},
-                                    { dataField: 'codice', text: 'ID transizione'},
-                                    { dataField: 'descrizione', text: "Descrizione"}
+                                    { dataField: 'importo', text: 'Importo', formatter: prezziFormatter},
+                                    { dataField: 'transazione_id', text: 'ID transizione'},
+                                    { dataField: 'stato', text: "Stato"}
                                 ]}
-                                data={[
-                                    { id: '2', gateway: 'Paypal', importo: '€30', descrizione: "Saldato", codice: 'TE43257d54XXV4325' },
-                                    { id: '2d', gateway: 'Paypal', importo: '€0', descrizione: "Fallita", codice: 'TE4325754XXVytr5' }
-                                ]}
+                                data={ ordine.transazioni }
                                 bordered={false}
                                 hover
                             />

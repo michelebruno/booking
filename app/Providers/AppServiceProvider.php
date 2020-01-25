@@ -56,7 +56,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        \App\Ordine::observe(\App\Observers\OrdineObserver::class);
+
         \App\Transazione::observe(\App\Observers\TransazioneObserver::class);
-        \App\Models\TransazionePaypal::observe(\App\Observers\TransazioneObserver::class);
+        \App\Models\TransazionePayPal::observe(\App\Observers\TransazioneObserver::class);
     }
 }

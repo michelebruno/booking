@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 
-class TransazionePaypal extends \App\Transazione
+class TransazionePayPal extends \App\Transazione
 {
     protected $attributes = [
-        'gateway' => 'paypal'
+        'gateway' => 'PayPal'
     ];
 
     public static function boot()
@@ -16,7 +16,7 @@ class TransazionePaypal extends \App\Transazione
 
         static::addGlobalScope('gateway_paypal', function (Builder $builder)
         {
-            return $builder->where('gateway', 'paypal');
+            return $builder->where('gateway', 'PayPal');
         });
     }
     

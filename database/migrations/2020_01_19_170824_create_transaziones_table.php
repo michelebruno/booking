@@ -16,13 +16,18 @@ class CreateTransazionesTable extends Migration
         Schema::create('transazioni', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('gateway');
-            $table->string('transazione_id');
+            $table->string('transazione_id'); // TODO Bisognerebbe aggiungere una pk gateway / transazione
+            $table->string('stato')
+                ->nullable()
+                ->default(null);
             $table->float('importo', 12, 2);
             $table->string('ordine_id');
             $table->string('verified_by_event_id')
                 ->nullable()
                 ->default(null);
             $table->timestamps();
+
+            $table->unique(['transazione_id', 'gateway']);
 
             $table->foreign('ordine_id')->on('ordini')->references('id'); // TODO onDelete...
         });
