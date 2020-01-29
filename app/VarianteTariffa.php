@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,12 +14,12 @@ class VarianteTariffa extends Model
 
     public function tariffe()
     {
-        return $this->belongsTo('App\Models\Tariffa');
+        return $this->belongsTo('App\Tariffa');
     }
 
     public function prodotti()
     {
-        return $this->hasManyThrough('App\Prodotto', 'App\Models\Tariffa');
+        return $this->hasManyThrough('App\Prodotto', 'App\Tariffa');
     }
 
     public function scopeSlug($query, $slug)

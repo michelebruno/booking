@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use App\Prodotto;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +27,7 @@ class Deal extends Prodotto
 
     public function servizi()
     {
-        return $this->belongsToMany('App\Models\Servizio', 'prodotti_pivot', 'padre', 'figlio');
+        return $this->belongsToMany('App\Servizio', 'prodotti_pivot', 'padre', 'figlio');
     }
 
     public function getLinksAttribute()

@@ -2,8 +2,8 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\Esercente;
-use App\Models\Servizio;
+use App\Esercente;
+use App\Servizio;
 use Faker\Generator as Faker;
 $servizio_counter = 0;
 $factory->define(Servizio::class, function (Faker $faker)  {

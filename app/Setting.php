@@ -23,7 +23,7 @@ class Setting extends Model
         return $query->where('autoload', true );
     }
 
-    public function scopeProgressivo($query, $scope)
+    public function scopeProgressivo($query)
     {
         $args = func_get_args();
 

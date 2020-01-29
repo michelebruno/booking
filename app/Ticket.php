@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Models\VoceOrdine;
+use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model

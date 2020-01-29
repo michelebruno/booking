@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUser;
 use App\Http\Resources\UserResource;
 use App\User;
-use App\Models\UserMeta;
+use App\UserMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Tariffa;
+use App\Tariffa;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,7 +25,7 @@ class TariffaPolicy
      * Determine whether the user can view the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Tariffa  $tariffa
+     * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
     public function view(User $user, Tariffa $tariffa)
@@ -48,7 +48,7 @@ class TariffaPolicy
      * Determine whether the user can update the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Tariffa  $tariffa
+     * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
     public function update(User $user, Tariffa $tariffa)
@@ -60,7 +60,7 @@ class TariffaPolicy
      * Determine whether the user can delete the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Tariffa  $tariffa
+     * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
     public function delete(User $user, Tariffa $tariffa)
@@ -74,7 +74,7 @@ class TariffaPolicy
      * Determine whether the user can restore the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Tariffa  $tariffa
+     * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
     public function restore(User $user, Tariffa $tariffa)
@@ -86,7 +86,7 @@ class TariffaPolicy
      * Determine whether the user can permanently delete the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Tariffa  $tariffa
+     * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
     public function forceDelete(User $user, Tariffa $tariffa)

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Events\Paypal\PaymentCapture;
 use App\Http\Controllers\Controller;
-use App\Models\TransazionePayPal;
+use App\TransazionePayPal;
 use App\Ordine;
 use Illuminate\Http\Request;
 

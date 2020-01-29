@@ -26,24 +26,28 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $n;
-        } );
+        } ); 
+        
+        $this->app->singleton(\PayPal\Rest\ApiContext::class, function ( $app )
+        {
+            return new \PayPal\Rest\ApiContext(
+                new \PayPal\Auth\OAuthTokenCredential(
+                    config( 'services.paypal.client_id' ),     // ClientID
+                    config( 'services.paypal.client_secret' )      // ClientSecret
+                )
+            );
+        });
 
-        $apiContext = new \PayPal\Rest\ApiContext(
-            new \PayPal\Auth\OAuthTokenCredential(
+
+        $this->app->singleton(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, function ($app)
+        {
+            $environment = new \PayPalCheckoutSdk\Core\SandboxEnvironment(
                 config( 'services.paypal.client_id' ),     // ClientID
                 config( 'services.paypal.client_secret' )      // ClientSecret
-            )
-        );
-        
-        $this->app->instance(\Paypal\Rest\ApiContext::class, $apiContext);
+            );
 
-        $environment = new \PayPalCheckoutSdk\Core\SandboxEnvironment(
-            config( 'services.paypal.client_id' ),     // ClientID
-            config( 'services.paypal.client_secret' )      // ClientSecret
-        );
-        $client = new \PayPalCheckoutSdk\Core\PayPalHttpClient($environment);
-
-        $this->app->instance(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, $client);
+            return new \PayPalCheckoutSdk\Core\PayPalHttpClient($environment);
+        });
 
     }
 
@@ -59,6 +63,6 @@ class AppServiceProvider extends ServiceProvider
         \App\Ordine::observe(\App\Observers\OrdineObserver::class);
 
         \App\Transazione::observe(\App\Observers\TransazioneObserver::class);
-        \App\Models\TransazionePayPal::observe(\App\Observers\TransazioneObserver::class);
+        \App\TransazionePayPal::observe(\App\Observers\TransazioneObserver::class);
     }
 }

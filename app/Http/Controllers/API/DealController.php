@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Deal;
-use App\Models\Tariffa;
+use App\Deal;
+use App\Tariffa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -106,7 +106,7 @@ class DealController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function show($deal)
@@ -124,7 +124,7 @@ class DealController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Deal $deal)
@@ -150,7 +150,7 @@ class DealController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function destroy(Deal $deal)

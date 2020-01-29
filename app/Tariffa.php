@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +25,7 @@ class Tariffa extends Model
 
     public function variante()
     {
-        return $this->belongsTo('App\Models\VarianteTariffa', 'variante_tariffa_id');
+        return $this->belongsTo('App\VarianteTariffa', 'variante_tariffa_id');
     }
 
     public function getSlugAttribute()

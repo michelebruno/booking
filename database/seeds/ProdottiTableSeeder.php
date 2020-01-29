@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Deal;
-use App\Models\Servizio;
-use App\Models\Tariffa;
-use App\Models\VarianteTariffa;
+use App\Deal;
+use App\Servizio;
+use App\Tariffa;
+use App\VarianteTariffa;
 use Illuminate\Database\Seeder;
 
 class ProdottiTableSeeder extends Seeder

@@ -37,7 +37,7 @@ $factory->define(User::class, function (Faker $faker) {
 
 });
 
-$factory->define(App\Models\UserMeta::class, function (Faker $faker)
+$factory->define(App\UserMeta::class, function (Faker $faker)
 {
     return [
         'chiave' => $faker->randomElement(['indirizzo', 'pec', 'wow']),

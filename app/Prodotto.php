@@ -2,10 +2,11 @@
  
 namespace App;
 
-use App\Models\VarianteTariffa;
+use App\VarianteTariffa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+
 
 class Prodotto extends Model
 {
@@ -26,6 +27,16 @@ class Prodotto extends Model
         return 'codice';
     }
 
+    /* 
+     *  
+     * * MUTATORS *
+     * 
+     */
+    /**
+     * 
+     * @abstract
+     * @return array
+     */
     public function getLinksAttribute()
     {
         return [];
@@ -39,20 +50,20 @@ class Prodotto extends Model
 
     public function tariffe()
     {
-        return $this->hasMany('App\Models\Tariffa', 'prodotto_id');
+        return $this->hasMany('App\Tariffa', 'prodotto_id');
     }
 
     public function getTariffeAttribute()
     {
         $tariffe = $this->tariffe()->get();
 
-        $a = [];
+        $attribute = [];
 
         foreach ($tariffe as $t ) {
-            $a[$t->slug] = $t;
+            $attribute[$t->slug] = $t;
         };
 
-        return $a;
+        return $attribute;
     }
 
     public function setTariffeAttribute($tariffe)
@@ -70,6 +81,12 @@ class Prodotto extends Model
         }
     }
 
+    /**
+     * getSmartAttribute
+     * @todo Scegliere come compilarlo.
+     * @todo Aggiungere agli append.
+     * @return void
+     */
     public function getSmartAttribute()
     {
         # code...
@@ -86,6 +103,13 @@ class Prodotto extends Model
     {
         return $this->trashed();
     }
+
+    /* 
+     *
+     * SCOPES
+     * 
+     */
+
     public function scopeCodice($query, $codice)
     {
         return $query->where('codice', $codice)->firstOrFail();

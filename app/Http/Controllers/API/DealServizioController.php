@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Deal;
-use App\Models\Servizio;
+use App\Deal;
+use App\Servizio;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -64,7 +64,7 @@ class DealServizioController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function show(Deal $deal, Servizio $servizio)
@@ -76,7 +76,7 @@ class DealServizioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Deal $deal, Servizio $servizio)
@@ -93,7 +93,7 @@ class DealServizioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Deal $deal, Servizio $servizio)

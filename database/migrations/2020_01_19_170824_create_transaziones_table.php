@@ -16,7 +16,7 @@ class CreateTransazionesTable extends Migration
         Schema::create('transazioni', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('gateway');
-            $table->string('transazione_id'); // TODO Bisognerebbe aggiungere una pk gateway / transazione
+            $table->string('transazione_id');
             $table->string('stato')
                 ->nullable()
                 ->default(null);
@@ -29,7 +29,11 @@ class CreateTransazionesTable extends Migration
 
             $table->unique(['transazione_id', 'gateway']);
 
-            $table->foreign('ordine_id')->on('ordini')->references('id'); // TODO onDelete...
+            $table->foreign('ordine_id')
+                ->on('ordini')
+                ->references('id')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

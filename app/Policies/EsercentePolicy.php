@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Esercente;
+use App\Esercente;
 use App\User;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -26,7 +26,7 @@ class EsercentePolicy
      * Determine whether the user can view the esercente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return mixed
      */
     public function view(User $user, Esercente $esercente)
@@ -49,7 +49,7 @@ class EsercentePolicy
      * Determine whether the user can update the esercente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return mixed
      */
     public function update(User $user, Esercente $esercente)
@@ -61,7 +61,7 @@ class EsercentePolicy
      * Determine whether the user can delete the esercente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return mixed
      */
     public function delete(User $user, Esercente $esercente)
@@ -73,7 +73,7 @@ class EsercentePolicy
      * Determine whether the user can restore the esercente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return mixed
      */
     public function restore(User $user, Esercente $esercente)
@@ -85,7 +85,7 @@ class EsercentePolicy
      * Determine whether the user can permanently delete the esercente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return mixed
      */
     public function forceDelete(User $user, Esercente $esercente)

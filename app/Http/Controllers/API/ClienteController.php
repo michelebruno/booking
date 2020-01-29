@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cliente;
+use App\Cliente;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
@@ -37,7 +37,7 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
     public function show(Cliente $cliente)
@@ -51,7 +51,7 @@ class ClienteController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Cliente $cliente)
@@ -62,7 +62,7 @@ class ClienteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
     public function destroy(Cliente $cliente)

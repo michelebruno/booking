@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use App\Traits\HaIndirizzo;
 use App\User;
@@ -39,7 +39,7 @@ class Esercente extends User
 
     public function servizi()
     {
-        return $this->hasMany('App\Models\Servizio');
+        return $this->hasMany('App\Servizio');
     }
 
     public function getServiziAttribute()

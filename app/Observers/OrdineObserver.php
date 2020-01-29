@@ -20,7 +20,6 @@ class OrdineObserver
     {        
         Setting::progressivo('ordini' , date('Y') )->increment('valore');
 
-        $this->creaOrdinePayPal($ordine);
 
     }
 
@@ -32,7 +31,9 @@ class OrdineObserver
      */
     public function updated(Ordine $ordine)
     {
-        //
+        if (!$ordine->paypal_order_id) { // Crea l'ordine PayPal se non è ancora stato creato.
+            $this->creaOrdinePayPal($ordine);
+        }
     }
 
     /**
@@ -74,8 +75,9 @@ class OrdineObserver
      * @param  \App\Ordine  $ordine
      * @return void
      */
-    protected function creaOrdinePayPal(Ordine $ordine)
-    {        
+    protected function creaOrdinePayPal( Ordine $ordine )
+    {
+        $payPalHttpClient = app(PayPalHttpClient::class);
         $request = new OrdersCreateRequest;
 
         $request->prefer('return=representation');
@@ -124,7 +126,7 @@ class OrdineObserver
         ];
 
         try {
-            $response = app(PayPalHttpClient::class)->execute($request);
+            $response = $payPalHttpClient->execute($request);
             
             $ordine->paypal_order_id = $response->result->id;
 
@@ -139,8 +141,7 @@ class OrdineObserver
             $ordine->meta()->updateOrCreate([ 'chiave' => 'paypal_approve_url' ], [ 'valore' => $links->approve->href  ]);
 
         } catch (\PayPalHttp\HttpException $th) {
-            Log::error( $th->getMessage() );
-            Log::error($request->body );
+            Log::error( $th->getMessage() , [ 'request' => $request->body ]);
         }
     }
 }

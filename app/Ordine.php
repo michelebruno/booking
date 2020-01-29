@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Models\VoceOrdine;
+use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Model;
 
 class Ordine extends Model
@@ -30,12 +30,12 @@ class Ordine extends Model
 
     public function meta()
     {
-        return $this->hasMany(\App\Models\OrdineMeta::class );
+        return $this->hasMany(\App\OrdineMeta::class );
     }
 
     public function cliente()
     {
-        return $this->belongsTo('App\Models\Cliente');
+        return $this->belongsTo('App\Cliente');
     }
 
     public function transazioni()

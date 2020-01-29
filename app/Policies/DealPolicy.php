@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Deal;
+use App\Deal;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,7 +25,7 @@ class DealPolicy
      * Determine whether the user can view the deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return mixed
      */
     public function view(User $user, Deal $deal)
@@ -53,7 +53,7 @@ class DealPolicy
      * Determine whether the user can update the deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return mixed
      */
     public function update(User $user, Deal $deal)
@@ -65,7 +65,7 @@ class DealPolicy
      * Determine whether the user can delete the deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return mixed
      */
     public function delete(User $user, Deal $deal)
@@ -77,7 +77,7 @@ class DealPolicy
      * Determine whether the user can restore the deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return mixed
      */
     public function restore(User $user)
@@ -89,7 +89,7 @@ class DealPolicy
      * Determine whether the user can permanently delete the deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return mixed
      */
     public function forceDelete(User $user, Deal $deal)

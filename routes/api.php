@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Esercente;
+use App\Esercente;
 use App\User;
 
 /*

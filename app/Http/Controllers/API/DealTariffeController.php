@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Deal;
-use App\Models\Tariffa;
-use App\Models\TariffaDeal;
+use App\Deal;
+use App\Tariffa;
+use App\TariffaDeal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -44,7 +44,7 @@ class DealTariffeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function show(Deal $deal, TariffaDeal $tariffa)
@@ -61,7 +61,7 @@ class DealTariffeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Deal $deal, Tariffa $tariffa)
@@ -84,7 +84,7 @@ class DealTariffeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Deal  $deal
+     * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
     public function destroy(Deal $deal, TariffaDeal $tariffa)

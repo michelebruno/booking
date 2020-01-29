@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Cliente;
+use App\Cliente;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,7 +25,7 @@ class ClientePolicy
      * Determine whether the user can view the cliente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return mixed
      */
     public function view(User $user, Cliente $cliente)
@@ -48,7 +48,7 @@ class ClientePolicy
      * Determine whether the user can update the cliente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return mixed
      */
     public function update(User $user, Cliente $cliente)
@@ -60,7 +60,7 @@ class ClientePolicy
      * Determine whether the user can delete the cliente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return mixed
      */
     public function delete(User $user, Cliente $cliente)
@@ -72,7 +72,7 @@ class ClientePolicy
      * Determine whether the user can restore the cliente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return mixed
      */
     public function restore(User $user, Cliente $cliente)
@@ -84,7 +84,7 @@ class ClientePolicy
      * Determine whether the user can permanently delete the cliente.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Cliente  $cliente
      * @return mixed
      */
     public function forceDelete(User $user, Cliente $cliente)

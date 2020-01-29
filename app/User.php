@@ -64,7 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function meta()
     {
-        return $this->hasMany('App\Models\UserMeta', 'user_id', 'id' );
+        return $this->hasMany('App\UserMeta', 'user_id', 'id' );
     }
 
     public static function toCamelCase(array $array)

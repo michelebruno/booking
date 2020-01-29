@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\TariffaDeal;
+use App\TariffaDeal;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,7 +25,7 @@ class TariffaDealPolicy
      * Determine whether the user can view the tariffa deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\TariffaDeal  $tariffaDeal
+     * @param  \App\TariffaDeal  $tariffaDeal
      * @return mixed
      */
     public function view(User $user, TariffaDeal $tariffaDeal)
@@ -48,7 +48,7 @@ class TariffaDealPolicy
      * Determine whether the user can update the tariffa deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\TariffaDeal  $tariffaDeal
+     * @param  \App\TariffaDeal  $tariffaDeal
      * @return mixed
      */
     public function update(User $user, TariffaDeal $tariffaDeal)
@@ -60,7 +60,7 @@ class TariffaDealPolicy
      * Determine whether the user can delete the tariffa deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\TariffaDeal  $tariffaDeal
+     * @param  \App\TariffaDeal  $tariffaDeal
      * @return mixed
      */
     public function delete(User $user, TariffaDeal $tariffaDeal)
@@ -72,7 +72,7 @@ class TariffaDealPolicy
      * Determine whether the user can restore the tariffa deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\TariffaDeal  $tariffaDeal
+     * @param  \App\TariffaDeal  $tariffaDeal
      * @return mixed
      */
     public function restore(User $user, TariffaDeal $tariffaDeal)
@@ -84,7 +84,7 @@ class TariffaDealPolicy
      * Determine whether the user can permanently delete the tariffa deal.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\TariffaDeal  $tariffaDeal
+     * @param  \App\TariffaDeal  $tariffaDeal
      * @return mixed
      */
     public function forceDelete(User $user, TariffaDeal $tariffaDeal)

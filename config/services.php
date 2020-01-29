@@ -32,7 +32,7 @@ return [
 
     'paypal' => [
         'webhooks' => [
-            'all' => env('PAYPAL_ALL_EVENT_WEBHOOK')
+            'all' => "26R2292566757364T"
         ],
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET')

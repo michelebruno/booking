@@ -42,7 +42,7 @@ class TransazioneObserver
 
         $ordine = $transazione->ordine;
         
-        if ( $ordine->dovuto == 0 && $transazione->verificata && ! $ordine->stato === "pagato" ) { // ? e se è già stato esaurito?
+        if ( $ordine->dovuto == 0 && $transazione->verificata && $transazione->stato === "COMPLETED" && $ordine->stato !== "pagato" ) { // ? e se è già stato esaurito?
 
             $ordine->stato = 'pagato';
 

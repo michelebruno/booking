@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Servizio;
+use App\Servizio;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,7 +25,7 @@ class ServizioPolicy
      * Determine whether the user can view the servizio.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return mixed
      */
     public function view(User $user, Servizio $servizio)
@@ -48,7 +48,7 @@ class ServizioPolicy
      * Determine whether the user can update the servizio.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return mixed
      */
     public function update(User $user, Servizio $servizio)
@@ -60,7 +60,7 @@ class ServizioPolicy
      * Determine whether the user can delete the servizio.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return mixed
      */
     public function delete(User $user, Servizio $servizio)
@@ -72,7 +72,7 @@ class ServizioPolicy
      * Determine whether the user can restore the servizio.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return mixed
      */
     public function restore(User $user, Servizio $servizio)
@@ -84,7 +84,7 @@ class ServizioPolicy
      * Determine whether the user can permanently delete the servizio.
      *
      * @param  \App\User  $user
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return mixed
      */
     public function forceDelete(User $user, Servizio $servizio)

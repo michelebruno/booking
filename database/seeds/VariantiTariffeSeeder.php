@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\VarianteTariffa;
+use App\VarianteTariffa;
 use Illuminate\Database\Seeder;
 
 class VariantiTariffeSeeder extends Seeder

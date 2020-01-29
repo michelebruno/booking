@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use App\Prodotto;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ class VoceOrdine extends Model
 
     public function tariffa()
     {
-        return $this->belongsTo('App\Models\Tariffa');
+        return $this->belongsTo('App\Tariffa');
     }
 
     public function setTariffaIdAttribute($t)

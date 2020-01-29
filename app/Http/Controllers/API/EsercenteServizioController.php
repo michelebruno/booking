@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Esercente;
-use App\Models\Servizio;
-use App\Models\Tariffa;
+use App\Esercente;
+use App\Servizio;
+use App\Tariffa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -71,7 +71,7 @@ class EsercenteServizioController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @param  int  $servizio
      * @return \Illuminate\Http\Response
      */
@@ -88,7 +88,7 @@ class EsercenteServizioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Esercente $esercente, Servizio $servizio)
@@ -182,7 +182,7 @@ class EsercenteServizioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
     public function destroy(Esercente $esercente, Servizio $servizio)
@@ -200,7 +200,7 @@ class EsercenteServizioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
     public function restore(Esercente $esercente, $servizio)

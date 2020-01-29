@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Esercente;
+use App\Esercente;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -93,7 +93,7 @@ class UsersTableSeeder extends Seeder
         // factory(App\User::class, 10)
         //     ->create()
         //     ->each( function ($user) {
-        //         $user->meta()->save(factory(App\Models\UserMeta::class)->make());
+        //         $user->meta()->save(factory(App\UserMeta::class)->make());
         //     });
         
     }

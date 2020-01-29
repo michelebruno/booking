@@ -3,7 +3,7 @@
 namespace App\Listeners\Paypal;
 
 use App\Events\PayPal\PaymentCapture;
-use App\Models\TransazionePayPal;
+use App\TransazionePayPal;
 use App\Ordine;
 use Illuminate\Support\Facades\Log;
 
@@ -30,14 +30,15 @@ class PaymentCaptureListener
         if ( $transazione = TransazionePayPal::transazioneId( $event->transazione['id'] )->first() ) { // Verifico la transazione effettuata
             Log::info('La transazione esiste già ', [ "transazione" => $transazione , "event" => $event ]);
 
+            if ( $transazione->stato !== $event->transazione['status'] ) {
+                $transazione->stato = $event->transazione['status'];
+                $transazione->save();
+            }
+
             if ( $event->verified && ! $transazione->verificata ) {
                 $transazione->verified_by_event_id = $event->notifica["id"];
                 $transazione->save();
             } 
-            
-            if ( $transazione->stato ) {
-                # code...
-            }
             
         } else {
             Log::info( 'Creo nuova transazione: ' . $event->transazione['id'] );

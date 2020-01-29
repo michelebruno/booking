@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Esercente;
+use App\Esercente;
 use App\User;
 
 use Illuminate\Http\Request;
@@ -123,7 +123,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Esercente $esercente)
@@ -166,7 +166,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Esercente  $esercente
+     * @param  \App\Esercente  $esercente
      * @return \Illuminate\Http\Response
      */
     public function destroy( Esercente $esercente)

@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrdineRequest;
 use App\Http\Resources\OrdineCollection;
 use App\Http\Resources\OrdineResource;
-use App\Models\Cliente;
-use App\Models\Deal;
-use App\Models\Tariffa;
-use App\Models\VoceOrdine;
+use App\Cliente;
+use App\Deal;
+use App\Tariffa;
+use App\VoceOrdine;
 use App\Ordine;
 use App\Setting;
 use Illuminate\Http\Request;
@@ -98,9 +98,7 @@ class OrdineController extends Controller
 
         $ordine->saveOrFail();
 
-        event( new \App\Events\NuovoOrdine($ordine) );
-
-        return response(Ordine::find($ordine->id)->completo(), 201);
+        return response($ordine->fresh()->completo(), 201);
 
     }
 

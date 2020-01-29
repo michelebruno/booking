@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use App\Prodotto;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +28,7 @@ class Servizio extends Prodotto
 
     public function esercente()
     {
-        return $this->belongsTo('App\Models\Esercente');
+        return $this->belongsTo('App\Esercente');
     }
 
     public function setEsercente($value)
@@ -46,7 +46,7 @@ class Servizio extends Prodotto
 
     public function deals()
     {
-        return $this->belongsToMany('App\Models\Deal', 'prodotti_pivot', 'figlio', 'padre');
+        return $this->belongsToMany('App\Deal', 'prodotti_pivot', 'figlio', 'padre');
     }
 
 

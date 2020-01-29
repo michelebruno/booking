@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Servizio;
+use App\Servizio;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -70,7 +70,7 @@ class ServizioController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return \Illuminate\Http\Response
      */
     public function show(Servizio $servizio)
@@ -84,7 +84,7 @@ class ServizioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Servizio $servizio)
@@ -95,7 +95,7 @@ class ServizioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Servizio  $servizio
+     * @param  \App\Servizio  $servizio
      * @return \Illuminate\Http\Response
      */
     public function destroy(Servizio $servizio)

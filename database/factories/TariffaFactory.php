@@ -2,8 +2,8 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\Tariffa;
-use App\Models\VarianteTariffa;
+use App\Tariffa;
+use App\VarianteTariffa;
 use Faker\Generator as Faker;
 
 $factory->define(Tariffa::class, function (Faker $faker) {
