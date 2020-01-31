@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 const mix = require('laravel-mix');
 
 /*
@@ -14,7 +15,10 @@ const mix = require('laravel-mix');
 mix.disableNotifications()   
    .browserSync({
       files: ["public/**/*.css", "public/**/*.js", "public/*.js"],
-      proxy: 'localhost'
+      proxy: {
+         target: "https://localhost",
+      },
+      https: true
    })
    .react('resources/js/index.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
