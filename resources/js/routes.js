@@ -13,6 +13,7 @@ const Esercenti = React.lazy(() => import('./pages/Esercenti'));
 const EsercentiProfilo = React.lazy(() => import('./pages/EsercentiProfilo'));
 const EsercentiCrea = React.lazy(() => import('./pages/EsercentiCrea'));
 const Ordini = React.lazy(() => import('./pages/Ordini'));
+const OrdiniCrea = React.lazy(() => import('./pages/OrdiniCrea'));
 const OrdiniScheda = React.lazy(() => import('./pages/OrdiniScheda'));
 const Deals = React.lazy(() => import('./pages/Deals'));
 const DealsCrea = React.lazy(() => import('./pages/DealsCrea'));
@@ -55,6 +56,7 @@ const routes = [
   { path: '/esercenti/:esercente/servizi/:servizio', exact: true, component: ServiziScheda, route: PrivateRoute, roles: ['admin' , 'account_manager' ,'esercente' ], title: 'Scheda servizio' },
   { path: '/esercenti/:id', exact: true, component: EsercentiProfilo, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Profilo esercente' },  
   { path: '/esercenti', exact: true, component: Esercenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Esercenti' },
+  { path: '/ordini/crea', exact: true, component: OrdiniCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini/:ordine_id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Ordini' },
   { path: '/deals/crea', component: DealsCrea, route: PrivateRoute, roles: ['admin' , 'account_manager'], title: 'Scheda deal' },

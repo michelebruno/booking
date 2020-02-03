@@ -27,6 +27,11 @@ class Prodotto extends Model
         return 'codice';
     }
 
+    public function tariffe()
+    {
+        return $this->hasMany( 'App\Tariffa', 'prodotto_id' );
+    }
+
     /* 
      *  
      * * MUTATORS *
@@ -42,15 +47,10 @@ class Prodotto extends Model
         return [];
     }
 
-    public function setCodiceAttribute($value)
+    public function setCodiceAttribute( $value )
     {
-        $value = preg_replace('/\s+/', '-', $value);
-        return $this->attributes['codice'] = strtoupper($value);
-    }
-
-    public function tariffe()
-    {
-        return $this->hasMany('App\Tariffa', 'prodotto_id');
+        $value = preg_replace( '/\s+/', '-', $value );
+        return $this->attributes[ 'codice' ] = strtoupper( $value );
     }
 
     public function getTariffeAttribute()
@@ -72,11 +72,11 @@ class Prodotto extends Model
 
         $etichette = VarianteTariffa::all()->toArray();
 
-        foreach ($tariffe as $key => $value) { 
+        foreach ( $tariffe as $key => $value ) { 
 
-            $etichetta = VarianteTariffa::slug($key);
+            $etichetta = VarianteTariffa::slug( $key );
 
-            $this->tariffe()->updateOrCreate([ 'variante_tariffa_id' => $etichetta->id ], $value );
+            $this->tariffe()->updateOrCreate( [ 'variante_tariffa_id' => $etichetta->id ] , $value );
 
         }
     }
@@ -85,7 +85,7 @@ class Prodotto extends Model
      * getSmartAttribute
      * @todo Scegliere come compilarlo.
      * @todo Aggiungere agli append.
-     * @return void
+     * @return string
      */
     public function getSmartAttribute()
     {
@@ -106,7 +106,7 @@ class Prodotto extends Model
 
     /* 
      *
-     * SCOPES
+     * * SCOPES *
      * 
      */
 

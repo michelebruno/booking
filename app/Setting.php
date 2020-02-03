@@ -23,14 +23,19 @@ class Setting extends Model
         return $query->where('autoload', true );
     }
 
-    public function scopeProgressivo($query)
-    {
-        $args = func_get_args();
+    /**
+     * Ritrova il progressivo nel formato _progressivo_ . join( "_" , $args )
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Model|static 
+     */
+    public function scopeProgressivo($query, ...$args)
+    {        
+        $scope = join("_", $args);
 
-        unset($args[0]);
-        
-        $s = join("_", $args);
-        
-        return $query->firstOrCreate( [ 'chiave' => '_progressivo_' . $s ] , [ 'valore' => 1 , 'autoload' => false] );
+        /**
+         * TODO ->lockForUpdate()
+         */
+        return $query->firstOrCreate( [ 'chiave' => '_progressivo_' . $scope ] , [ 'valore' => 1 , 'autoload' => false] );
     }
 }

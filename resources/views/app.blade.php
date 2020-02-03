@@ -6,8 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Booking app</title> 
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="shortcut icon" href="{{ asset('storage/favicon.ico') }}" type="image/x-icon"/>
     <script src="https://kit.fontawesome.com/cb57072874.js" crossorigin="anonymous"></script>
-    <script src="https://www.sandbox.paypal.com/sdk/js?client-id=<?php echo config( 'services.paypal.client_id'); ?>&currency=USD" ></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=<?php echo config( 'services.paypal.client_id'); ?>&currency=EUR" ></script>
 </head>
 <body class="left-side-menu-dark">
     <div id="root"></div>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\VarianteTariffa;
 use App\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -14,23 +16,42 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
-        $settings = Setting::autoloaded()->get();
+        $settings = Cache::get('autoloaded_settings', function () {
+            return Cache::rememberForever('autoloaded_settings', function () {
+                    
+                $settings = Setting::autoloaded()->get();
+        
+                $array = [];
+        
+                foreach ($settings as $setting ) {
+                    $array[$setting->chiave] = $setting->valore;
+                }
 
-        $res = [];
+                return $array;
+            });
+        });
 
-        foreach ($settings as $setting ) {
-            $res[$setting->chiave] = $setting->valore;
-        }
 
-        $varianti = VarianteTariffa::all();
+        $varianti = Cache::get('varianti_tariffe', function () {
 
-        foreach ($varianti as $variante) {
-            $res['varianti_tariffe'][$variante->slug] = $variante;
-        }
+            return Cache::rememberForever('varianti_tariffe', function ()
+            {
+                $array = [];
+    
+                $varianti = VarianteTariffa::all();
+    
+                foreach ($varianti as $variante) {
+                    $array['varianti_tariffe'][$variante->slug] = $variante;
+                }
+                
+                return $array;
+            });
 
-        return response( $res );
+        });
+
+        return response( array_merge($settings , $varianti) );
     }
 
     /**
@@ -59,12 +80,39 @@ class SettingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Setting  $setting
+     * @param  setting
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Setting $setting)
+    public function update(Request $request, $setting)
     {
+        switch ($setting) {
+            case "favicon" : 
+                $request->validate([
+                    "favicon" => "required|file|mimetypes:image/x-icon"
+                ]);
+                
+                if ( $file = $request->file('favicon') ) {
+
+                    $path = $file->storeAs('public', 'favicon.ico' );
+
+                    Setting::updateOrCreate(["chiave" => "favicon" ], [ "valore" => "storage/favicon.jpg" ]);
+                    Cache::delete('autoloaded_settings');
+                    return $this->index($request);
+                        
+                } else {
+                    Log::error('Nessun file trovato', [ "request" => $request ]);
+                    abort(500, 'Non è stato mandato il file.');
+                }
+                break;
+
+            default:
+                Cache::forget('autoloaded_settings');
+                Setting::updateOrCreate( [ "chiave" => $setting ] , [ 'valore' => $request->input($setting) , 'autoload' => true ] );
+                return $this->index($request);
+                break;
+        }
     }
+    
 
     /**
      * Remove the specified resource from storage.

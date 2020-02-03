@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState , useEffect } from "react"
 import PropTypes from "prop-types" 
 import Button from "react-bootstrap/Button"
 import Form  from "react-bootstrap/Form"
@@ -9,15 +9,23 @@ import InputGroup  from "react-bootstrap/InputGroup"
 import Spinner  from "react-bootstrap/Spinner"
 import dot from "dot-object" 
 
-const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMutator, append, prepend , ...props} ) => {
+const EditableField = ( { label, noLabel, initialValue, method, name, onSuccess, textMutator, append, prepend , url, isImage, ...props} ) => {
     
     const [editing, setEditing] = useState(false)
     
     const [sending, setSending] = useState(false)
     
     const [value, setValue] = useState(initialValue)
+
+    const [file, setFile] = useState()
     
     const [errors, setErrors] = useState(false)
+
+    const source = axios.CancelToken.source()
+
+    useEffect(() => {
+        return source.cancel
+    }, [] )
     
     const dynamicProps = () => {
         
@@ -26,7 +34,7 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMut
         x.readOnly = x.disabled = x.plaintext = !editing
         
         if ( errors ) x.isInvalid = true
-        
+
         return x
     }
     
@@ -47,26 +55,52 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMut
         if ( ! editing ) return;
 
         setSending(true) ;
+    
+        let actual_method = method
 
-        let data = dot.str(name, value, {});
-        let headers = {} 
-   
+        let data;
+        let headers = { }
+
+        if ( props.type && props.type === "file" ) {
+
+            let formData = new FormData();
+
+            formData.append(name, file);
+
+            formData.append("_method", method)
+
+            data = formData 
+
+            actual_method = "POST"
+
+            headers = {
+                'Content-Type': 'multipart/form-data'
+            }
+
+        } else data = dot.str(name, value, {});
+
         axios({
-            method: props.method ? props.method : "patch",
-            url: props.url,
+            method : actual_method,
+            url,
             data,
-            headers
+            headers,
+            cancelToken : source.token
         })
-            .then( (res) => { 
+            .then( (res) => {
+
                 setSending("success") 
                 
-                setTimeout(() => {                    
+                if (res.data && res.data[name] ) {
+                    setValue(res.data[name])
+                }
+                
+                setTimeout( () => {                    
                     
                     setSending(false)
                     setEditing(false); 
 
                     if ( onSuccess ) onSuccess(res.data)
-                    else console.warn("No onSuccess function")
+                    else process.env == "local" && console.warn("No onSuccess function")
                 }, 3000)
                 
             })  
@@ -87,6 +121,7 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMut
 
 
     const displayValue = () => {
+        
         if ( ! props.children ) return( prepend + value + append );
 
         let options = [];
@@ -104,15 +139,26 @@ const EditableField = ( { label, noLabel, name, initialValue, onSuccess, textMut
         } 
 
     }
-    
+
     const Control = () => {
-        return <Form.Control { ...dynamicProps() } { ...props } value={value} onChange={ e => setValue( textMutator(e.target.value) )} onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e }} />
+
+        const onChange = ( e ) => {
+
+            if ( props.type && props.type === "file" ) {
+                setFile(e.target.files[0])
+            } 
+
+            setValue( textMutator(e.target.value) )
+
+        }
+        
+        return <Form.Control { ...props } value={ ( isImage ) ? undefined : value } onChange={ onChange } onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e } } { ...dynamicProps() }  />
     }
 
     return <FormGroup as={Row} controlId={name} >
         { ! noLabel && <Form.Label column xs={12} md="3" onDoubleClick={() => setEditing(true)} >{ label && label}</Form.Label> }
         <Col xs={12} md={noLabel ? 12 : 9} >                    
-            { editing && <InputGroup onDoubleClick={() => setEditing(true)}>
+            { editing && <InputGroup>
 
                 <InputGroup.Prepend>
                     { sending && <InputGroup.Text>
@@ -146,13 +192,15 @@ EditableField.propTypes = {
         PropTypes.number
     ]),
     children : PropTypes.node,
+    isFile : PropTypes.bool,
+    isImage : PropTypes.bool,
     initialValue : PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
     ]),
-    name : PropTypes.string.isRequired,
+    name : PropTypes.string,
     label : PropTypes.string,
-    method: PropTypes.oneOf(['post', 'put', 'patch']),    
+    method: PropTypes.oneOf(['POST', 'PUT', 'PATCH']),    
     noLabel : PropTypes.bool,
     onSuccess: PropTypes.func,
     prepend : PropTypes.oneOfType([
@@ -161,11 +209,13 @@ EditableField.propTypes = {
     ]),
     readOnly : PropTypes.bool,
     textMutator : PropTypes.func,
+    type : PropTypes.string,
     url: PropTypes.string.isRequired
 }
 
 EditableField.defaultProps = {
     textMutator : str => str,
+    method: "PUT",
     append : "",
     prepend: ""
 }
