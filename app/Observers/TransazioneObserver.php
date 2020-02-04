@@ -16,18 +16,25 @@ class TransazioneObserver
      */
     public function created(Transazione $transazione)
     {
-        $o = $transazione->ordine;
+        $ordine = $transazione->ordine;
+        Log::info('Ascolto Transazione, linea '. __LINE__);
 
-        $o->dovuto = $o->importo - $transazione->importo;
+        $ordine->dovuto = $ordine->importo - $transazione->importo;
         
-        if ( $o->dovuto == 0 && $transazione->verificata ) {
-            $o->stato = 'pagato';
-            $o->save();
+        if ( $ordine->dovuto == 0 && $transazione->verificata && $transazione->stato === "COMPLETED" ) { // TODO e se era in elaborazione?
 
-            event( new OrdinePagato($o) );
-        } elseif ( $o->dovuto == 0) {
-            $o->stato = 'elaborazione_pagamento';
-            $o->save();
+            $ordine->stato = 'PAGATO';
+
+            $ordine->save();
+
+            event( new OrdinePagato($ordine) );
+
+        } elseif ( $ordine->dovuto == 0) {
+
+            $ordine->stato = "ELABORAZIONE";
+
+            $ordine->save();
+            
         }
     }
 
@@ -39,14 +46,17 @@ class TransazioneObserver
      */
     public function updated(Transazione $transazione)
     {
-
         $ordine = $transazione->ordine;
-        
-        if ( $ordine->dovuto == 0 && $transazione->verificata && $transazione->stato === "COMPLETED" && $ordine->stato !== "pagato" ) { // ? e se è già stato esaurito?
 
-            $ordine->stato = 'pagato';
+        Log::info('Ascolto Transazione, linea '. __LINE__);
+
+        if ( $ordine->dovuto == 0 && $transazione->verificata && $transazione->stato === "COMPLETED" && $ordine->stato !== "PAGATO" ) { // ? e se è già stato esaurito?
+
+            $ordine->stato = "PAGATO";
 
             $ordine->saveOrFail();
+
+            Log::info('Ascolto Transazione, linea '. __LINE__);
 
             event( new OrdinePagato($ordine) );
         } 

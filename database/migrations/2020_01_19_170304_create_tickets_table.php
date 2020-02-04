@@ -14,8 +14,26 @@ class CreateTicketsTable extends Migration
     public function up()
     {
         Schema::create('tickets', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string("token")
+                ->primary();
+            $table->string("stato");
+            $table->unsignedBigInteger("voce_ordine_id");
+            $table->unsignedBigInteger("prodotto_id");
+            $table->unsignedBigInteger("variante_tariffa_id");
             $table->timestamps();
+
+            $table->foreign("voce_ordine_id")
+                ->on("ordini_voci")
+                ->references("id")
+                ->onDelete("cascade");
+
+            $table->foreign("prodotto_id")
+                ->on("prodotti")
+                ->references("id");
+
+            $table->foreign("variante_tariffa_id")
+                ->on("varianti_tariffa")
+                ->references("id");
         });
     }
 

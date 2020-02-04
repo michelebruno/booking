@@ -7,6 +7,13 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @property array $transazione;
+ * @property array $notifica;
+ * @property boolean $verified;
+ * @property Ordine $ordine;
+ * @property Ordine $ordine;
+ */
 class PaymentCapture
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;

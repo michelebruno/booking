@@ -31,7 +31,7 @@ class OrdineObserver
      */
     public function updated(Ordine $ordine)
     {
-        if (!$ordine->paypal_order_id) { // Crea l'ordine PayPal se non è ancora stato creato.
+        if ( $ordine->importo && !$ordine->paypal_order_id ) { // Crea l'ordine PayPal se non è ancora stato creato.
             $this->creaOrdinePayPal($ordine);
         }
     }
@@ -78,6 +78,7 @@ class OrdineObserver
     protected function creaOrdinePayPal( Ordine $ordine )
     {
         $payPalHttpClient = app(PayPalHttpClient::class);
+
         $request = new OrdersCreateRequest;
 
         $request->prefer('return=representation');
@@ -102,6 +103,9 @@ class OrdineObserver
 
         $request->body = [
             "intent" => "CAPTURE",
+            "payee" => [
+                "email_address" => "michelebruno@paypal.com"
+            ],
             "invoice_id" => $ordine->id,
             "purchase_units" => [
                 [

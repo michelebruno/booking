@@ -40,6 +40,7 @@ class PaypalController extends Controller
                     switch ($event_type) {
                         case 'PAYMENTS.PAYMENT.CREATED':
                         case 'PAYMENT.CAPTURE.PENDING':
+                        case 'PAYMENT.CAPTURE.COMPLETED':
                             event( new PaymentCapture( $request->input('resource') , true, $request->all()) );
                             return response( null , 201);
                             break;

@@ -2,9 +2,16 @@
 
 namespace App;
 
-use App\Prodotto;
 use Illuminate\Database\Eloquent\Model;
-
+/**
+ * 
+ * @property string $ordine_id 
+ * @property int $prodotto_id 
+ * @property string $codice 
+ * @property int $quantita 
+ * @property float{10,2} $costo_unitario
+ *  
+ */
 class VoceOrdine extends Model
 {
     protected $table = "ordini_voci";
@@ -25,6 +32,11 @@ class VoceOrdine extends Model
     public function tariffa()
     {
         return $this->belongsTo('App\Tariffa');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, "voce_ordine_id");
     }
 
     public function setTariffaIdAttribute($t)

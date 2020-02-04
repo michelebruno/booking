@@ -12,6 +12,8 @@ class SettingsSeeder extends Seeder
      */
     public function run()
     {
-        Setting::progressivo('ordini', date('Y') );
+        $progr_ordini = Setting::progressivo('ordini', date('Y') );
+        $progr_ordini->valore = 70;
+        $progr_ordini->save();
     }
 }

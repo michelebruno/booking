@@ -23,6 +23,10 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\OrdinePagato::class => [
             \App\Listeners\GeneraTickets::class
         ],
+        \App\Events\TicketsGenerati::class => [
+            \App\Listeners\OrdineInviaTickets::class,
+            \App\Listeners\OrdineEroga::class,
+        ],
         \App\Events\TransazioneCreata::class => [
             \App\Listeners\AggiornaOrdineDopoTransazione::class
         ]

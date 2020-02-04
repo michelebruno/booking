@@ -11,10 +11,7 @@ use App\Deal;
 use App\Tariffa;
 use App\VoceOrdine;
 use App\Ordine;
-use App\Setting;
 use Illuminate\Http\Request;
-use PayPal\Api\Order;
-use PayPal\Rest\ApiContext;
 
 class OrdineController extends Controller
 {
@@ -92,7 +89,7 @@ class OrdineController extends Controller
 
         $ordine->imposta = round( $ordine->voci()->sum( 'imposta' ) , 2 );
 
-        $ordine->stato = 'attende_pagamento';
+        $ordine->stato = 'APERTO';
 
         $ordine->data = date("Y-m-d");
 
