@@ -30,8 +30,6 @@ class GeneraTickets
     {
         $ordine = $event->ordine;
 
-        Log::info("Saranno generati i biglietti per l'ordine $event->ordine->id",[ "ordine" => $event->ordine]);
-
         try {
             foreach ($ordine->voci as $voce ) {
                 $tickets = [];

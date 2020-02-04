@@ -48,8 +48,6 @@ class PaymentCaptureListener
             } 
 
             $transazione->save();
-
-            Log::info('Ascolto PayPal, linea '. __LINE__);
             
         } else {
             Log::info( 'Creo nuova transazione: ' . $event->transazione['id'] );
@@ -59,9 +57,6 @@ class PaymentCaptureListener
                 // TODO resettare transazione
                 $transazione->delete();
             }
-
-            Log::info('Ascolto PayPal, linea '. __LINE__);
-
 
             $transazione = new TransazionePayPal();
             // TODO check ordine
@@ -80,11 +75,7 @@ class PaymentCaptureListener
 
             }
 
-            Log::info('Ascolto PayPal, linea '. __LINE__);
-
             $transazione->saveOrFail();
-
-            Log::info('Ascolto PayPal, linea '. __LINE__);
 
         }
     }

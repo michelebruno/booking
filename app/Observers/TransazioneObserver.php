@@ -17,7 +17,6 @@ class TransazioneObserver
     public function created(Transazione $transazione)
     {
         $ordine = $transazione->ordine;
-        Log::info('Ascolto Transazione, linea '. __LINE__);
 
         $ordine->dovuto = $ordine->importo - $transazione->importo;
         
@@ -48,15 +47,11 @@ class TransazioneObserver
     {
         $ordine = $transazione->ordine;
 
-        Log::info('Ascolto Transazione, linea '. __LINE__);
-
         if ( $ordine->dovuto == 0 && $transazione->verificata && $transazione->stato === "COMPLETED" && $ordine->stato !== "PAGATO" ) { // ? e se è già stato esaurito?
 
             $ordine->stato = "PAGATO";
 
             $ordine->saveOrFail();
-
-            Log::info('Ascolto Transazione, linea '. __LINE__);
 
             event( new OrdinePagato($ordine) );
         } 
