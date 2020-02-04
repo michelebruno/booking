@@ -8,18 +8,18 @@ import { PayPalButton } from 'react-paypal-button-v2'
 import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import PreLoaderWidget from '../components/Loader';
-import { prezziFormatter } from '../_services/helpers';
+import Helpers, { prezziFormatter } from '../_services/helpers';
 
 const OrdiniScheda = ( { match , location } ) => {
 
-    let i;
+    let initialState;
 
     if ( location && location.state && location.state.ordine ) {
-        i = location.state.ordine
-        i.willBeReloaded = true
+        initialState = location.state.ordine
+        initialState.willBeReloaded = true
     }
 
-    const [ordine, setOrdine] = useState(i);
+    const [ordine, setOrdine] = useState(initialState);
 
     const reloadApi = () => {
         let n = Object.assign({}, ordine, { willBeReloaded : true });
@@ -43,39 +43,14 @@ const OrdiniScheda = ( { match , location } ) => {
 
     if ( ! ordine ) return <PreLoaderWidget />
 
-    if ( ordine && ordine.stato ) {
-        switch (ordine.stato) {
-            case "pending":
-                i = {
-                    label : "In attesa di pagamento.",
-                    variant : "warning",
-                    colorClass : "text-warning"
-                }
-                break;
 
-            case "completo":
-                i = {
-                    label : "Completo",
-                    variant : "success",
-                    colorClass : "text-success"
-                }
-                break;
-        
-            default:
-                i = {
-                    label : ordine.stato,
-                    variant : ordine.stato,
-                    colorClass : ordine.stato
-                }
-                break;
-        }
-    }
+    const stato = Helpers.ordini.stato(ordine.stato)
 
     return(
         <React.Fragment>
             <div className="d-flex justify-content-between">
                 <div>
-                <h1 className="d-inline-block">Ordine { ordine.id } </h1> <Badge className="h3" variant={i.variant } pill={true} >{ i.label }</Badge> 
+                <h1 className="d-inline-block">Ordine { ordine.id } </h1> <Badge className="h3" variant={ stato.variant } pill={true} >{ stato.label }</Badge> 
 
                 </div>
                 <span className="d-table h-100 align-middle">
@@ -110,7 +85,7 @@ const OrdiniScheda = ( { match , location } ) => {
                         <Card.Body>
                             <h2>Riepilogo ordine</h2>
                             <div className="d-flex justify-content-between ">
-                                <strong>Stato</strong><span>{ i.label } <i className={"fa fa-circle " + i.colorClass } /></span>
+                                <strong>Stato</strong><span>{ stato.label } <i className={"fa fa-circle " + stato.colorClass } /></span>
                             </div>
                             <div className="d-flex justify-content-between">
                                 <strong>Data</strong><span>{ ordine.data }</span>
@@ -161,8 +136,17 @@ const OrdiniScheda = ( { match , location } ) => {
                                 columns={[
                                     { dataField: 'codice', text: 'Cod. prodotto'},
                                     { dataField: 'descrizione', text: 'Descrizione' },
-                                    { dataField: 'tickets.token', text: 'Tickets associati' },
-                                    { dataField: 'tickets.stato', text: 'Riscattati' },
+                                    {
+                                        dataField: 'tickets', 
+                                        text: 'Tickets associati', 
+                                        formatter: (cell) => {
+                                            if (!cell) {
+                                                return "";
+                                            }
+                                            return cell.map( ( v ) => v.token ).join(", ")
+                                        } 
+                                    },
+                                    { dataField: 'riscattati', text: 'Riscattati' , formatter : ( cell , row ) => cell.toString() + " / " + row.quantita },
                                     { dataField: 'tickets.scadenza', text: 'Scadenza' },
                                     { dataField: 'costo_unitario', text: 'Costo unitario', formatter: prezziFormatter },
                                     { dataField: 'quantita', text: 'Quantità' },

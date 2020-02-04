@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrdinePagato;
+use App\Events\TicketsGenerati;
 use App\Ticket;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -31,7 +32,9 @@ class GeneraTickets
         $ordine = $event->ordine;
 
         try {
+
             foreach ($ordine->voci as $voce ) {
+                
                 $tickets = [];
     
                 /**
@@ -52,9 +55,11 @@ class GeneraTickets
                 }
     
                 $voce->tickets()->saveMany($tickets);
+
             }
 
-            
+            event( new TicketsGenerati( $ordine ) );
+
             
         } catch (\Throwable $th) {
             Log::error( 'Errore nel generare i tickets.', [ "exception" => $th, "evento" => $event ] );

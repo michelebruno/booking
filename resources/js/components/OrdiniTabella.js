@@ -3,9 +3,9 @@ import React, { useState , useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
-import { prezziFormatter } from '../_services/helpers';
+import Helpers, { prezziFormatter } from '../_services/helpers';
 import PreLoaderWidget from './Loader';
-import { Button, Form } from 'react-bootstrap';
+import { Button  } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const OrdiniTabella = ( { url } ) => {
@@ -62,6 +62,14 @@ const OrdiniTabella = ( { url } ) => {
             keyField="id"
             data={ ordini }
             columns={[
+                {
+                    dataField : "stato",
+                    text : "",
+                    formatter : cell => {
+                        let stato = Helpers.ordini.stato(cell);
+                        return <i className={"fas fa-circle " + stato.colorClass } title={stato.label} />
+                    }
+                },
                 {
                     dataField: 'id',
                     text : "#"

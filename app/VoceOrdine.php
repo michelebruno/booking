@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+
 /**
  * 
  * @property string $ordine_id 
@@ -24,6 +26,10 @@ class VoceOrdine extends Model
         'created_at' , 'updated_at'
     ];
 
+    protected $appends = [
+        "riscattati"
+    ];
+
     public function prodotto()
     {
         return $this->belongsTo('App\Prodotto');
@@ -37,6 +43,41 @@ class VoceOrdine extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class, "voce_ordine_id");
+    }
+
+    public function getTicketsAttribute()
+    {
+        $tickets = $this->tickets()->get();
+
+        $array = [];
+
+        foreach ($tickets as $t ) {
+            $array[$t->token] = $t;
+        }
+
+        return $array;
+    }
+
+    public function getRiscattatiAttribute()
+    {
+        $cache_key = 'voci_ordini_' . $this->id . "_riscattati";
+
+        return Cache::get( $cache_key , function() use ( $cache_key )
+        {
+            $r = 0;
+
+            foreach ($this->tickets as $value) {
+
+                if ($value->stato !== "APERTO" ) {
+                    $r++;
+                }
+            }
+
+            Cache::rememberForever($cache_key, function () use ( $r ) {
+                return $r;
+            });
+            return $r;
+        });
     }
 
     public function setTariffaIdAttribute($t)

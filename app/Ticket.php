@@ -6,9 +6,14 @@ use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
+/**
+ * @property string $stato può essere:
+ *      - APERTO
+ *      - SCADUTO
+ *      - CHIUSO
+ */
 class Ticket extends Model
 {
-
     protected $table = "tickets";
 
     protected $primaryKey = 'token';

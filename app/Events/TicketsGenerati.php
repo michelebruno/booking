@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Ordine;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,18 +11,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @property Ordine $ordine
+ */
 class TicketsGenerati
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+
+    public $ordine;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Ordine $ordine )
     {
-        //
+        $this->ordine = $ordine;
     }
 
     /**

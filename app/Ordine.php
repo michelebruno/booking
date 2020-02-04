@@ -93,7 +93,7 @@ class Ordine extends Model
 
     public function completo()
     {
-        return $this->load(['cliente' , 'transazioni', 'voci']);
+        return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
     }
 
     public function statoElaborazionePagamento()

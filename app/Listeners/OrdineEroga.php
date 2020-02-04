@@ -26,6 +26,7 @@ class OrdineEroga
      */
     public function handle(TicketsGenerati $event)
     {
-        //
+        $event->ordine->stato = "EROGATO";
+        $event->ordine->save();
     }
 }
