@@ -23,6 +23,10 @@ class Ticket extends Model
     public $retryAfter = 3;
 
     public $incrementing = false;
+    
+    const APERTO = "APERTO";
+    const SCADUTO = "SCADUTO";
+    const CHIUSO = "CHIUSO";
 
     public static function boot()
     {

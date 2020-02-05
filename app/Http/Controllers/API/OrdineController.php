@@ -26,7 +26,22 @@ class OrdineController extends Controller
 
         $per_page = $request->query('per_page', 10);
 
-        return response( Ordine::orderBy('created_at', 'desc')->with([ 'cliente' , 'voci', 'transazioni' ])->paginate($per_page) );
+        $o_query = Ordine::orderBy('created_at', 'desc');
+
+        if ( $stato = $request->query('stato', false) ) {
+
+            switch ($stato) {
+                case 'PAGATI':
+                    $o_query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
+                    break;
+
+                case 'APERTO':
+                    $o_query->where("stato", Ordine::APERTO );
+                    break;
+            }
+        }
+
+        return response( $o_query->with([ 'cliente' , 'voci', 'transazioni' ])->paginate($per_page) );
 
     }
 

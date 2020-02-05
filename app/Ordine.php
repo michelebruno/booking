@@ -14,12 +14,21 @@ use Illuminate\Database\Eloquent\Model;
  *      - APERTO quando deve essere pagato dal cliente
  *      - ELABORAZIONE se il pagamento è in stato di verifica
  *      - PAGATO se è stato pagato ma non sono stati generati i ticket
- *      - EROGATO se i tickets stati generati e inviati
+ *      - ELABORATO se i tickets stati generati e inviati
  *      - CHIUSO se tutti i tickets sono stati usati
  *      - RIMBORSATO se è stato rimborsato // ? Anche solo parzialmente?
  */
 class Ordine extends Model
 {
+
+    const INIT = "INIT"; //  se è in fase di creazione
+    const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
+    const ELABORAZIONE = "ELABORAZIONE"; //  se il pagamento è in stato di verifica
+    const PAGATO = "PAGATO"; //  se è stato pagato ma non sono stati generati i ticket
+    const ELABORATO = "ELABORATO"; //  se i tickets stati generati e inviati
+    const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
+    const RIMBORSATO = "RIMBORSATO"; //  se è stato rimborsato 
+
     protected $table = "ordini";
 
     public $incrementing = false;
@@ -42,7 +51,7 @@ class Ordine extends Model
 
         static::addGlobalScope('non_INIT', function (Builder $builder)
         {
-            return $builder->where('stato', '<>', 'INIT');
+            return $builder->where('stato', '<>', self::INIT);
         });
     }
 

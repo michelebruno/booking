@@ -3,58 +3,76 @@ import React, { useState , useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
+import PropTypes from 'prop-types'
+
 import Helpers, { prezziFormatter } from '../_services/helpers';
 import PreLoaderWidget from './Loader';
 import { Button  } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const OrdiniTabella = ( { url } ) => {
+const OrdiniTabella = ( { url , defaultFilter } ) => {
 
-    const [api, setApi ] = useState()
+    const [ api, setApi ] = useState()
 
+    const [ filter, setFilter ] = useState( defaultFilter )
 
     const ordini = ( api && api.data ) ? api.data : null
 
-    const fetchAPI = ( data ) => { 
+    const fetchAPI = () => { 
+
         const source = axios.CancelToken.source()
 
         let fUrl = url + "?"
 
-        let q = []
+        let query = []
 
-        const x = Object.assign({}, data) 
-
-        for ( let d in x ) {
-            q.push( encodeURIComponent(d) + "=" + encodeURIComponent(data[d]) )
+        for ( let d in filter ) {
+            query.push( encodeURIComponent(d) + "=" + encodeURIComponent( filter[d] ) )
         }
 
-        if (q.length) {
-            fUrl += q.join("&");
+        if ( query.length ) {
+            fUrl += query.join("&");
         }
 
         axios.get( fUrl , { cancelToken : source.token })   
             .then( res => setApi( res.data ) )
             .catch( e => e )
 
-        
         return () => {
             source.cancel()
         };
     }
 
-    useEffect(() => {
+    useEffect( () => {
+
         if ( api && ! api.willBeReloaded ) return;
 
-        return fetchAPI()
-    }, [api] )
+        return fetchAPI(defaultFilter)
+
+    }, [ api ] )
+
+    useEffect(() => {
+
+        return fetchAPI(filter)
+        
+    }, [filter])
 
     if ( ! ordini ) return <PreLoaderWidget />
 
+    // eslint-disable-next-line react/prop-types
+    const FilterButton = ( { stato , children } ) => {
+        let className = "";
+        if ( filter && filter.stato && filter.stato === stato) {
+            className = "font-weight-bold"
+        }
+        return <Button variant="link" className={ className } onClick={ () => setFilter( { stato } ) } >{children}</Button>;
+    }
 
     return <>
         <div className="w-100 ">
             <small>
-                <Button variant="link" >Tutti</Button>
+                <FilterButton stato={ "PAGATI" }>Pagati</FilterButton> |
+                <FilterButton stato={ "APERTO" }>In attesa di pagamento</FilterButton> |
             </small>
         </div>
         <BootstrapTable 
@@ -66,8 +84,16 @@ const OrdiniTabella = ( { url } ) => {
                     dataField : "stato",
                     text : "",
                     formatter : cell => {
-                        let stato = Helpers.ordini.stato(cell);
-                        return <i className={"fas fa-circle " + stato.colorClass } title={stato.label} />
+
+                        const stato = Helpers.ordini.stato(cell);
+
+                        let className = "fas fa-circle ";
+
+                        if (stato.waiting) {
+                            className = "fas fa-spinner fa-spin "
+                        }
+
+                        return <i className={ className + stato.colorClass } title={stato.label} />
                     }
                 },
                 {
@@ -82,7 +108,7 @@ const OrdiniTabella = ( { url } ) => {
                     dataField : "voci",
                     text : "Prodotti",
                     formatter : ( cell ) => {
-                        if (cell.length == 0) return "-";
+                        if ( cell.length == 0 ) return "-";
                         return cell.map( v => { if ( v.descrizione && v.descrizione !== null ) return v.descrizione } )
                             .filter( v => { if ( v ) return true; })
                             .join(', ')
@@ -90,7 +116,7 @@ const OrdiniTabella = ( { url } ) => {
                 },
                 {
                     dataField : "data",
-                    text : "data"
+                    text : "Data"
                 },
                 {
                     dataField : "importo",
@@ -120,8 +146,13 @@ const OrdiniTabella = ( { url } ) => {
     </>
 }
 
+OrdiniTabella.propTypes = {
+    defaultFilter : PropTypes.object ,
+    url : PropTypes.string
+}
 
 OrdiniTabella.defaultProps = {
-    url : "/ordini"
+    url : "/ordini",
+    defaultFilter : { stato : "PAGATI" }
 }
 export default OrdiniTabella;

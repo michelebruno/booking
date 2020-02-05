@@ -21,44 +21,38 @@ class GeneraTickets implements ShouldQueue
     {
         $ordine = $event->ordine;
 
-        try {
+        foreach ($ordine->voci as $voce ) {
 
-            foreach ($ordine->voci as $voce ) {
+            $giafatti = $voce->tickets()->count();
 
-                $giafatti = $voce->tickets()->count();
+            if ( $giafatti == $voce->quantita ) {
+                break;
+            }
+            
+            $tickets = [];
 
-                if ( $giafatti == $voce->quantita ) {
-                    break;
-                }
-                
-                $tickets = [];
-    
-                /**
-                 * Genero i ticket per la voce corrente.
-                 */
-                for ($i=0; $i < ( $voce->quantita - $giafatti ); $i++) { 
-    
-                    $ticket = new Ticket();
-    
-                    $ticket->stato = "APERTO";
-    
-                    $ticket->prodotto_id = $voce->prodotto_id;
-    
-                    $ticket->variante_tariffa_id = $voce->tariffa->variante_tariffa_id;
-    
-                    $tickets[] = $ticket;
-    
-                }
-    
-                $voce->tickets()->saveMany($tickets);
+            /**
+             * Genero i ticket per la voce corrente.
+             */
+            for ($i=0; $i < ( $voce->quantita - $giafatti ); $i++) { 
+
+                $ticket = new Ticket();
+
+                $ticket->stato = Ticket::APERTO;
+
+                $ticket->prodotto_id = $voce->prodotto_id;
+
+                $ticket->variante_tariffa_id = $voce->tariffa->variante_tariffa_id;
+
+                $tickets[] = $ticket;
 
             }
 
-            event( new TicketsGenerati( $ordine ) );
+            $voce->tickets()->saveMany($tickets);
 
-        } catch (\Throwable $th) {
-            Log::error( 'Errore nel generare i tickets.', [ "exception" => $th, "evento" => $event ] );
         }
+
+        event( new TicketsGenerati( $ordine ) );
 
     }
 }
