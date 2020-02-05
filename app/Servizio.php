@@ -26,12 +26,26 @@ class Servizio extends Prodotto
         });
     }
 
-    public function esercente()
+    /**
+     * RELATIONSHIP
+     */
+
+    public function deals()
     {
-        return $this->belongsTo('App\Esercente');
+        return $this->belongsToMany('App\Deal', 'prodotti_pivot', 'figlio', 'padre');
     }
 
-    public function setEsercente($value)
+    public function esercente()
+    {
+        return $this->belongsTo('App\Esercente', 'esercente_id');
+    }
+
+    public function getEsercenteAttribute()
+    {
+        return $this->esercente()->withTrashed()->first();
+    }
+
+    public function setEsercenteAttribute($value)
     {
         if ( $value instanceof Esercente ) {
             return $this->attributes['esercente_id'] = $value->id;
@@ -43,12 +57,6 @@ class Servizio extends Prodotto
             return $this->attributes['esercente_id'] = $value;
         }
     }
-
-    public function deals()
-    {
-        return $this->belongsToMany('App\Deal', 'prodotti_pivot', 'figlio', 'padre');
-    }
-
 
     public function getCondensatoAttribute()
     {

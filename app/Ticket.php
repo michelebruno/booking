@@ -23,6 +23,10 @@ class Ticket extends Model
     public $retryAfter = 3;
 
     public $incrementing = false;
+
+    protected $guarded = [
+        "token"
+    ];
     
     const APERTO = "APERTO";
     const SCADUTO = "SCADUTO";

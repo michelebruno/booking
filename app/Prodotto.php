@@ -57,20 +57,15 @@ class Prodotto extends Model
     {
         $tariffe = $this->tariffe()->get();
 
-        $attribute = [];
-
-        foreach ($tariffe as $t ) {
-            $attribute[$t->slug] = $t;
-        };
-
-        return $attribute;
+        return $tariffe->mapWithKeys( function ( $tariffa )
+        {
+            return [ $tariffa->slug => $tariffa ]; 
+        });
     }
 
-    public function setTariffeAttribute($tariffe)
+    public function setTariffeAttribute( $tariffe )
     {
         if (! $tariffe ) return;
-
-        $etichette = VarianteTariffa::all()->toArray();
 
         foreach ( $tariffe as $key => $value ) { 
 

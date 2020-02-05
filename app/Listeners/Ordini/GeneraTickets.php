@@ -23,7 +23,7 @@ class GeneraTickets implements ShouldQueue
 
         foreach ($ordine->voci as $voce ) {
 
-            $giafatti = $voce->tickets()->count();
+            $giafatti = $voce->tickets->count();
 
             if ( $giafatti == $voce->quantita ) {
                 break;

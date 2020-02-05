@@ -47,7 +47,7 @@ class DealController extends Controller
 
         if ( $query ) { 
             $response = $query->get(); 
-        } else $response = Deal::all()->load('servizi');
+        } else $response = Deal::all()->load(['servizi']);
 
         if ( $schema = $request->query( 'schema', false ) ) {
 

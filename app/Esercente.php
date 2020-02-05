@@ -42,11 +42,6 @@ class Esercente extends User
         return $this->hasMany('App\Servizio');
     }
 
-    public function getServiziAttribute()
-    {
-        return $this->servizi()->get();
-    }
-
     public function toArray()
     {
         $array = parent::toArray();

@@ -18,7 +18,7 @@ class DealTariffeController extends Controller
      */
     public function index(Deal $deal)
     {
-        return response( $deal->tariffe() );
+        return response( $deal->tariffe );
     }
 
     /**

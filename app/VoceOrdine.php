@@ -84,6 +84,7 @@ class VoceOrdine extends Model
     {
         $tariffa = Tariffa::findOrFail($t);
 
+        // ? o meglio $this->tariffa()->associate($tariffa); 
         $this->attributes['tariffa_id'] = $tariffa->id;
 
         $prodotto = $tariffa->prodotto; 
@@ -99,11 +100,13 @@ class VoceOrdine extends Model
         $this->iva = $prodotto->iva;
     }
 
-    public function setQuantitaAttribute($qta)
-    {
-        $this->attributes['quantita'] = $qta;
+    // TODO dovrebbe essere self::creating() ?
 
-        $this->importo = $this->costo_unitario * $qta;
+    public function setQuantitaAttribute($quantita)
+    {
+        $this->attributes['quantita'] = $quantita;
+
+        $this->importo = $this->costo_unitario * $quantita;
 
         $this->imponibile = round( $this->importo / ( 1 + $this->iva / 100 ) , 2 );
 

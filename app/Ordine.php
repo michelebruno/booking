@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * 
  * 
- * @property string stato
+ * @property  string  stato
  *      - INIT se è in fase di creazione
  *      - APERTO quando deve essere pagato dal cliente
  *      - ELABORAZIONE se il pagamento è in stato di verifica
@@ -88,16 +88,12 @@ class Ordine extends Model
     }
 
     public function getMetaAttribute()
-    { 
-        $meta = [];
-
-        $array = $this->meta()->get();
-
-        foreach ( $array as $m ) {
-            $meta[$m->chiave] = $m->valore;
-        }
-
-        return $meta;
+    {
+        $meta = $this->meta()->get();
+        
+        return $meta->mapWithKeys(function ($item) {
+            return [ $item['chiave'] => $item["valore"] ];
+        });
     }
 
     public function completo()
@@ -110,6 +106,7 @@ class Ordine extends Model
         $this->stato = "Pagamento in elaborazione";
     }
 
+    // TODO self::creating()
     public static function id()
     {
 

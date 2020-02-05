@@ -17,7 +17,7 @@ trait HaIndirizzo
             if ( $value && is_string($value) && strlen($value) ) {
                 $this->meta()->updateOrCreate([ 'chiave' => $chiave ] , [ 'user_id' => $this->id , 'valore' => $value ]);
             } elseif ( Arr::exists( $this->meta, $chiave ) ) {
-                $this->meta()->where('chiave', $chiave)->delete();
+                $this->meta->where('chiave', $chiave)->delete();
             }
         }
     }

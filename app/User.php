@@ -33,7 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'abilitato' , '_links'
+        'abilitato' , '_links', 'meta'
     ];
 
     /**
@@ -97,31 +97,18 @@ class User extends Authenticatable implements MustVerifyEmail
         return Arr::except($array, $except);
     }
 
-    public function toArray()
-    {
-        $array = parent::toArray();
-
-        $array['meta'] = $this->meta;
-        
-        return $array;
-    }
-
     public function getMetaAttribute()
     { 
-        $meta = [];
-
-        $array = $this->meta()->get();
-
-        foreach ( $array as $m ) {
-            $meta[$m->chiave] = $m->valore;
-        }
-
-        return $meta;
+        $meta = $this->meta()->get();
+        
+        return $meta->mapWithKeys(function ($item) {
+            return [ $item['chiave'] => $item["valore"] ];
+        });
     }
 
     public function getLinksAttribute()
     {
-        return;
+        return [];
     }
     public function getAbilitatoAttribute()
     {
