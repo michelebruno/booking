@@ -37,8 +37,6 @@ class PaymentCaptureListener
 
         if ( $transazione && $transazione->importo == $event->transazione["amount"]["value"] ) { // Verifico la transazione effettuata
 
-            Log::info('La transazione esiste già ', [ "transazione" => $transazione , "event" => $event ]);
-
             if ( $transazione->stato !== $event->transazione['status'] ) {
                 $transazione->stato = $event->transazione['status'];
             }
@@ -50,7 +48,6 @@ class PaymentCaptureListener
             $transazione->save();
             
         } else {
-            Log::info( 'Creo nuova transazione: ' . $event->transazione['id'] );
 
             if ( $transazione ) {
                 Log::alert("L'importo della transazione non era congruo.");

@@ -9,6 +9,7 @@ const ordiniStato = ( stato ) => {
             i = ({
                 raw: stato,
                 label : "In attesa di pagamento.",
+                description : "",
                 variant : "warning",
                 colorClass : "text-warning"
             });
@@ -18,6 +19,7 @@ const ordiniStato = ( stato ) => {
             i = ({
                 raw: stato,
                 label : "Pagamento in elaborazione",
+                description : "",
                 variant : "success",
                 colorClass : "text-success"
             });
@@ -26,16 +28,18 @@ const ordiniStato = ( stato ) => {
         case "PAGATO":
             i = ({
                 raw: stato,
-                label : "Pagato.",
+                label : "Pagato",
+                description : "A breve verranno generati i tickets.",
                 variant : "success",
                 colorClass : "text-success"
             });
             break;
 
-        case "EROGATO":
+        case "ELABORATO":
             i = ({
                 raw: stato,
-                label : "Erogato.",
+                label : "Elaborato",
+                description : "",
                 variant : "success",
                 colorClass : "text-success"
             });
@@ -45,6 +49,7 @@ const ordiniStato = ( stato ) => {
             i = ({
                 raw: stato,
                 label : "Chiuso",
+                description : "",
                 variant : "primary",
                 colorClass : "text-success"
             });
@@ -55,6 +60,7 @@ const ordiniStato = ( stato ) => {
             i = ({
                 raw: stato,
                 label : "Rimborsato",
+                description : "",
                 variant : "success",
                 colorClass : "text-success"
             });
@@ -65,6 +71,7 @@ const ordiniStato = ( stato ) => {
             i = ({
                 raw: stato,
                 label : stato,
+                description : "",
                 variant : stato,
                 colorClass : stato
             });

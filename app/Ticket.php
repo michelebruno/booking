@@ -20,6 +20,8 @@ class Ticket extends Model
 
     public $keyType = "string";
 
+    public $retryAfter = 3;
+
     public $incrementing = false;
 
     public static function boot()
@@ -56,7 +58,7 @@ class Ticket extends Model
      * @param int $lenght La lunghezza del token.
      * @return string Un token unico di 10 lettere maiuscole.
      */
-    public static function generaToken(int $lenght = 10)
+    public static function generaToken(int $lenght = 5)
     {
 
         $token = self::_token();
@@ -71,9 +73,15 @@ class Ticket extends Model
     protected static function _token(int $lenght = 10)
     {
         $alfabenumerici = [ "A", "B", "C", "D", "E", "F", "G", "H", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "Z", "2", "3", "4", "5", "6", "7", "8", "9" ];
+        
+        $set = Arr::random( $alfabenumerici, $lenght );
 
-        $token = Arr::random( $alfabenumerici, $lenght );
+        $token = "";
 
-        return implode("", $token);
+        for ($i=0; $i < $lenght; $i++) { 
+            $token .= Arr::random($set, 1)[0];
+        }
+
+        return $token;
     }
 }

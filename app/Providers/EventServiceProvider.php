@@ -21,14 +21,11 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Paypal\PaymentCaptureListener::class
         ],
         \App\Events\OrdinePagato::class => [
-            \App\Listeners\GeneraTickets::class
+            \App\Listeners\Ordini\GeneraTickets::class
         ],
         \App\Events\TicketsGenerati::class => [
-            \App\Listeners\OrdineInviaTickets::class,
-            \App\Listeners\OrdineEroga::class,
-        ],
-        \App\Events\TransazioneCreata::class => [
-            \App\Listeners\AggiornaOrdineDopoTransazione::class
+            \App\Listeners\Ordini\InviaTickets::class,
+            \App\Listeners\Ordini\ImpostaErogato::class,
         ]
     ];
 

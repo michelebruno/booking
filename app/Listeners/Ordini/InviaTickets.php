@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Ordini;
 
 use App\Events\TicketsGenerati;
+use App\Mail\Ordini\RiepilogoMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Mail;
 
-class OrdineInviaTickets
+class InviaTickets implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -26,6 +28,6 @@ class OrdineInviaTickets
      */
     public function handle(TicketsGenerati $event)
     {
-        //
+        Mail::to( $event->ordine->cliente->email )->send( new RiepilogoMail( $event->ordine ) );
     }
 }

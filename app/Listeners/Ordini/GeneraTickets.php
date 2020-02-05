@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Ordini;
 
 use App\Events\OrdinePagato;
 use App\Events\TicketsGenerati;
@@ -9,18 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class GeneraTickets
+class GeneraTickets implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -34,13 +24,19 @@ class GeneraTickets
         try {
 
             foreach ($ordine->voci as $voce ) {
+
+                $giafatti = $voce->tickets()->count();
+
+                if ( $giafatti == $voce->quantita ) {
+                    break;
+                }
                 
                 $tickets = [];
     
                 /**
                  * Genero i ticket per la voce corrente.
                  */
-                for ($i=0; $i < $voce->quantita; $i++) { 
+                for ($i=0; $i < ( $voce->quantita - $giafatti ); $i++) { 
     
                     $ticket = new Ticket();
     
@@ -60,11 +56,9 @@ class GeneraTickets
 
             event( new TicketsGenerati( $ordine ) );
 
-            
         } catch (\Throwable $th) {
             Log::error( 'Errore nel generare i tickets.', [ "exception" => $th, "evento" => $event ] );
         }
-
 
     }
 }

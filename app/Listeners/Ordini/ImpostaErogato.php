@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Ordini;
 
-use App\Events\TransazioneCreata;
+use App\Events\TicketsGenerati;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class AggiornaOrdineDopoTransazione
+class ImpostaErogato
 {
     /**
      * Create the event listener.
@@ -21,11 +21,12 @@ class AggiornaOrdineDopoTransazione
     /**
      * Handle the event.
      *
-     * @param  TransazioneCreata  $event
+     * @param  TicketsGenerati  $event
      * @return void
      */
-    public function handle(TransazioneCreata $event)
+    public function handle(TicketsGenerati $event)
     {
-        //
+        $event->ordine->stato = "ELABORATO";
+        $event->ordine->save();
     }
 }

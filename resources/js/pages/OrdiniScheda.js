@@ -10,7 +10,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import PreLoaderWidget from '../components/Loader';
 import Helpers, { prezziFormatter } from '../_services/helpers';
 
-const OrdiniScheda = ( { match , location } ) => {
+const OrdiniScheda = ( { match , location, history } ) => {
 
     let initialState;
 
@@ -21,12 +21,20 @@ const OrdiniScheda = ( { match , location } ) => {
 
     const [ordine, setOrdine] = useState(initialState);
 
+
+    // eslint-disable-next-line no-unused-vars
     const reloadApi = () => {
         let n = Object.assign({}, ordine, { willBeReloaded : true });
+
         setOrdine(n)
+
+        replaceHistory();
     }
 
     useEffect(() => {
+
+        replaceHistory();
+
         if ( ordine && ! ordine.willBeReloaded ) return;
 
         const s = axios.CancelToken.source();
@@ -34,12 +42,26 @@ const OrdiniScheda = ( { match , location } ) => {
         const url = ordine ? ordine._links.self : '/ordini/' + match.params.ordine_id
 
         axios.get( url , { cancelToken : s.token } )
-            .then( res => setOrdine(res.data) )
+            .then( res => {
+                setOrdine(res.data);
+            } )
             .catch( e => e )
         return () => {
             s.cancel()
         };
     }, [ordine])
+
+    
+    const replaceHistory = () => {
+
+        if ( history.location ) {
+
+            const state = Object.assign({}, { ...history.location.state }, { ordine });
+
+            history.replace({ ...history.location , state })
+
+        }
+    }
 
     if ( ! ordine ) return <PreLoaderWidget />
 
@@ -149,7 +171,6 @@ const OrdiniScheda = ( { match , location } ) => {
                                     { dataField: 'riscattati', text: 'Riscattati' , formatter : ( cell , row ) => cell.toString() + " / " + row.quantita },
                                     { dataField: 'tickets.scadenza', text: 'Scadenza' },
                                     { dataField: 'costo_unitario', text: 'Costo unitario', formatter: prezziFormatter },
-                                    { dataField: 'quantita', text: 'Quantità' },
                                     { dataField: 'importo', text: 'Totale', formatter: prezziFormatter}
                                 ]}
                                 data={ordine.voci}
@@ -175,6 +196,7 @@ const OrdiniScheda = ( { match , location } ) => {
                                 data={ ordine.transazioni }
                                 bordered={false}
                                 hover
+                                noDataIndication="Nessuna transazione effettuata finora."
                             />
                         </Card.Body>
                     </Card>
