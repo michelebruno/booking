@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Log;
 
 class GeneraTickets implements ShouldQueue
 {
+
+    /**
+     * 
+     */
+    public $tries = 3;
+    
     /**
      * Handle the event.
      *

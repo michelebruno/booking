@@ -45,19 +45,6 @@ class VoceOrdine extends Model
         return $this->hasMany(Ticket::class, "voce_ordine_id");
     }
 
-    public function getTicketsAttribute()
-    {
-        $tickets = $this->tickets()->get();
-
-        $array = [];
-
-        foreach ($tickets as $t ) {
-            $array[$t->token] = $t;
-        }
-
-        return $array;
-    }
-
     public function getRiscattatiAttribute()
     {
         $cache_key = 'voci_ordini_' . $this->id . "_riscattati";

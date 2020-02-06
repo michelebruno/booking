@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Mail;
 class InviaTickets implements ShouldQueue
 {
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 5;
+    
+    /**
      * Create the event listener.
      *
      * @return void

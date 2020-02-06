@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * 
  * 
- * @property Ordine $ordine L'ordine che è stato appena pagato.
+ * @property Ordine $ordine L'ordine che è stato appena pagato e verificato.
  */
 class OrdinePagato
 {

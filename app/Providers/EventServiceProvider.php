@@ -25,7 +25,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         \App\Events\TicketsGenerati::class => [
             \App\Listeners\Ordini\InviaTickets::class,
-            \App\Listeners\Ordini\ImpostaErogato::class,
+            \App\Listeners\Ordini\ImpostaElaborato::class,
         ]
     ];
 

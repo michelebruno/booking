@@ -3,10 +3,11 @@
 namespace App\Listeners\Ordini;
 
 use App\Events\TicketsGenerati;
+use App\Ordine;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ImpostaErogato
+class ImpostaElaborato
 {
     /**
      * Create the event listener.
@@ -26,7 +27,7 @@ class ImpostaErogato
      */
     public function handle(TicketsGenerati $event)
     {
-        $event->ordine->stato = "ELABORATO";
+        $event->ordine->stato = Ordine::ELABORATO;
         $event->ordine->save();
     }
 }
