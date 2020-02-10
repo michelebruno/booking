@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('telescope:prune --hours=96')->daily();
-        $schedule->job(\App\Jobs\Ordini\Elabora::class)->twiceDaily( 10, 22);
+        $schedule->job(new \App\Jobs\Ordini\Elabora)->everyFifteenMinutes();
     }
 
     /**

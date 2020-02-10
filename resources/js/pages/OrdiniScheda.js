@@ -176,7 +176,8 @@ const OrdiniScheda = ( { match , location, history } ) => {
                                 data={ordine.voci}
                                 bordered={false}
                                 hover
-                                responsive
+                                wrapperClasses="table-responsive"
+
                             />
                         </Card.Body>
                     </Card>

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class TransazionePayPal extends \App\Transazione
 {
+
+    const COMPLETO = "COMPLETED";
+    
     protected $attributes = [
         'gateway' => 'PayPal'
     ];

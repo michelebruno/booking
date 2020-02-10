@@ -15,18 +15,48 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('email')->unique();
-            $table->string('username')->unique()->nullable();
-            $table->string('nome')->nullable()->default(null);
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable()->default(null);
-            $table->string('api_token', 80)->unique()->nullable()->default(null);
-            $table->string('cf', 16)->unique()->nullable()->default(null);
-            $table->string('piva', 11)->unique()->nullable()->default(null);
-            $table->string('ruolo', 20); 
+            
+            $table->string('email')
+                ->unique();
+                
+            $table->string('username')
+                ->unique()
+                ->nullable();
+                
+            $table->string('nome')
+                ->nullable()
+                ->default(null);
+                
+            $table->timestamp('email_verified_at')
+                ->nullable();
+                
+            $table->string('password')
+                ->nullable()
+                ->default(null);
+                
+            $table->string('api_token', 80)
+                ->unique()
+                ->nullable()
+                ->default(null);
+                
+            $table->string('cf', 16)
+                ->unique()
+                ->nullable()
+                ->default(null);
+                
+            $table->string('piva', 11)
+                ->unique()
+                ->nullable()
+                ->default(null);
+                
+            $table->string('ruolo', 20);
+             
             $table->rememberToken();
+            
             $table->timestamps();
+            
             $table->softDeletes();
+            
         }); 
 
     }

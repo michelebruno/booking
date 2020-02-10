@@ -14,7 +14,13 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
     const [ api, setApi ] = useState()
 
-    const [ filter, setFilter ] = useState( defaultFilter )
+    const [ filter, _setFilter ] = useState( defaultFilter )
+
+    const setFilter = ( addFilter ) => {
+        
+        let n = Object.assign({}, filter, addFilter )
+        _setFilter(n);
+    }
 
     const ordini = ( api && api.data ) ? api.data : null
 
@@ -47,7 +53,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
         if ( api && ! api.willBeReloaded ) return;
 
-        return fetchAPI(defaultFilter)
+        return fetchAPI(filter)
 
     }, [ api ] )
 
@@ -77,6 +83,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
         </div>
         <BootstrapTable 
             remote
+            wrapperClasses="table-responsive"
             keyField="id"
             data={ ordini }
             columns={[
@@ -89,10 +96,12 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
                         let className = "fas fa-circle ";
 
+                        // eslint-disable-next-line react/prop-types
                         if (stato.waiting) {
                             className = "fas fa-spinner fa-spin "
                         }
 
+                        // eslint-disable-next-line react/prop-types
                         return <i className={ className + stato.colorClass } title={stato.label} />
                     }
                 },
@@ -138,7 +147,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             pagination={ paginationFactory( { page : api.current_page , sizePerPage : parseInt( api.per_page ) , totalSize : api.total }) }
             onTableChange={ ( a , b ) =>{
                 if ( a == "pagination" ) {
-                    fetchAPI({ page : b.page , per_page : b.sizePerPage});
+                    setFilter( { page : b.page , per_page : b.sizePerPage} )
                 }
             }}
             bordered={false}

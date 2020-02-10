@@ -4,6 +4,7 @@ namespace App\Jobs\Ordini;
 
 use App\Events\OrdinePagato;
 use App\Ordine;
+use App\TransazionePayPal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -36,7 +37,7 @@ class Elabora implements ShouldQueue
 
         $elaboro = $ordini->reject( function ($ordine) {
             return ! $ordine->transazioni->every( function ( $transazione ) {
-                return $transazione->verified_by_event_id;
+                return $transazione->verified_by_event_id && $transazione->stato == TransazionePayPal::COMPLETO;
             });
         })->map(function ($ordine) {
             event( new OrdinePagato($ordine) );
