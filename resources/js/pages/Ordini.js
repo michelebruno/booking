@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 
-import { Card, Button } from 'react-bootstrap'; 
+import { Card } from 'react-bootstrap';
+import Button from '@material-ui/core/Button'
+import AddIcon from '@material-ui/icons/Add';
+
 import OrdiniTabella from '../components/OrdiniTabella'
 import { Link } from 'react-router-dom';
 
@@ -12,13 +15,11 @@ import { Link } from 'react-router-dom';
 const Ordini = ( props ) => {
 
     const TopbarButtons = () => {
-        return <Button as={Link} to="/ordini/crea" >
-            <i className="fas fa-plus mr-1" />Nuovo
-        </Button>
+        return <Button variant="contained" color="primary" startIcon={ <AddIcon /> } component={Link} to="/ordini/crea">Nuovo</Button>
     }
 
     useEffect( () => {
-        props.setTopbarButtons(TopbarButtons)
+        props.setTopbarButtons( TopbarButtons )
         return props.unsetTopbarButtons
     }, [] )
 
@@ -26,7 +27,6 @@ const Ordini = ( props ) => {
         <React.Fragment>
             <Card>
                 <Card.Body>
-                    <h1>Ordini</h1>
                     <OrdiniTabella />
                 </Card.Body>
             </Card>

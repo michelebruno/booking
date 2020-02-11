@@ -5,10 +5,18 @@ import { connect } from 'react-redux'
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions'
 
 import { PayPalButton } from 'react-paypal-button-v2'
-import { Row , Col , Card, Button, ButtonGroup, Badge } from 'react-bootstrap';
-import BootstrapTable from 'react-bootstrap-table-next';
+import {  Button, ButtonGroup, Badge } from 'react-bootstrap';
 import PreLoaderWidget from '../components/Loader';
 import Helpers, { prezziFormatter } from '../_services/helpers';
+
+import Grid from '@material-ui/core/Grid';
+
+import Card from '@material-ui/core/Card';
+
+import CardContent from '@material-ui/core/CardContent';
+import OrdiniVociTabella from '../components/OrdiniVociTabella';
+import OrdiniTransazioniTabella from '../components/OrdiniTransazioniTabella';
+
 
 const OrdiniScheda = ( { match , location, history } ) => {
 
@@ -21,50 +29,29 @@ const OrdiniScheda = ( { match , location, history } ) => {
 
     const [ordine, setOrdine] = useState(initialState);
 
+    useEffect( () => {
 
-    // eslint-disable-next-line no-unused-vars
-    const reloadApi = () => {
-        let n = Object.assign({}, ordine, { willBeReloaded : true });
-
-        setOrdine(n)
-
-        replaceHistory();
-    }
-
-    useEffect(() => {
-
-        replaceHistory();
+        if ( history.location ) {
+            const state = Object.assign({}, { ...history.location.state }, { ordine });
+            history.replace({ ...history.location , state })
+        }
 
         if ( ordine && ! ordine.willBeReloaded ) return;
 
-        const s = axios.CancelToken.source();
+        const source = axios.CancelToken.source();
 
-        const url = ordine ? ordine._links.self : '/ordini/' + match.params.ordine_id
+        const url = ordine && ordine._links ? ordine._links.self : '/ordini/' + match.params.ordine_id
 
-        axios.get( url , { cancelToken : s.token } )
+        axios.get( url , { cancelToken : source.token } )
             .then( res => {
                 setOrdine(res.data);
             } )
             .catch( e => e )
-        return () => {
-            s.cancel()
-        };
-    }, [ordine])
 
-    
-    const replaceHistory = () => {
-
-        if ( history.location ) {
-
-            const state = Object.assign({}, { ...history.location.state }, { ordine });
-
-            history.replace({ ...history.location , state })
-
-        }
-    }
+        return source.cancel
+    }, [ ordine ] )
 
     if ( ! ordine ) return <PreLoaderWidget />
-
 
     const stato = Helpers.ordini.stato(ordine.stato)
 
@@ -72,9 +59,9 @@ const OrdiniScheda = ( { match , location, history } ) => {
         <React.Fragment>
             <div className="d-flex justify-content-between">
                 <div>
-                <h1 className="d-inline-block">Ordine { ordine.id } </h1> <Badge className="h3" variant={ stato.variant } pill={true} >{ stato.label }</Badge> 
-
+                    <h1 className="d-inline-block">Ordine { ordine.id } </h1> <Badge className="h3" variant={ stato.variant } pill={true} >{ stato.label }</Badge> 
                 </div>
+
                 <span className="d-table h-100 align-middle">
                     <ButtonGroup aria-label="Azioni rapide" className="align-middle">
                         <Button>Emetti ricevuta</Button>
@@ -82,10 +69,10 @@ const OrdiniScheda = ( { match , location, history } ) => {
                     </ButtonGroup>
                 </span>
             </div>
-            <Row>
-                <Col lg="4" /* Dati cliente */ >
-                    <Card>
-                        <Card.Body>
+            <Grid container spacing={2}>
+                <Grid item lg={4} /* Dati cliente */ >
+                    <Card >
+                        { ordine.cliente && <CardContent >
                             <div className="d-table"><span className="h2">Cliente </span><Badge pill variant="dark" className="align-middle">Privato</Badge></div>
                             <div className="d-flex justify-content-between ">
                                 <strong>Nome:</strong><span>{ ordine.cliente.username } </span>
@@ -99,12 +86,13 @@ const OrdiniScheda = ( { match , location, history } ) => {
                             <div className="d-flex justify-content-between">
                                 <strong>P. Iva:</strong><span>{ ordine.cliente.piva }</span>
                             </div>
-                        </Card.Body>
+                        </CardContent>}
+                        { ! ordine.cliente && <PreLoaderWidget />}
                     </Card>
-                </Col>
-                <Col lg="3" /* Riepilogo ordine */  >
-                    <Card>
-                        <Card.Body>
+                </Grid>
+                <Grid item lg={4} /* Riepilogo ordine */  >
+                    <Card >
+                        <CardContent>
                             <h2>Riepilogo ordine</h2>
                             <div className="d-flex justify-content-between ">
                                 <strong>Stato</strong><span>{ stato.label } <i className={"fa fa-circle " + stato.colorClass } /></span>
@@ -124,12 +112,12 @@ const OrdiniScheda = ( { match , location, history } ) => {
                             <div className="d-flex justify-content-between h4">
                                 <strong>Totale</strong><span>{ prezziFormatter(ordine.importo) }</span>
                             </div>
-                        </Card.Body>
+                        </CardContent>
                     </Card>
-                </Col>
-                { ordine.dovuto > 0 && <Col>
-                    <Card>
-                        <Card.Body>
+                </Grid>
+                { ordine.dovuto > 0 && <Grid item>
+                    <Card >
+                        <CardContent>
                             { ordine.meta && ordine.meta.paypal_approve_url && <PayPalButton 
                                 amount={ ordine.dovuto }
                                 createOrder={ () => {
@@ -145,64 +133,25 @@ const OrdiniScheda = ( { match , location, history } ) => {
                                         .catch( console.error )
                                 }}
                             />}
-                        </Card.Body>
+                        </CardContent>
                     </Card>
-                </Col>}
+                </Grid>}
                 <div className="w-100" />
-                <Col md="12">
-                    <Card>
-                        <Card.Body>
-                            <h3>Articoli</h3>
-                            <BootstrapTable
-                                keyField="id"
-                                columns={[
-                                    { dataField: 'codice', text: 'Cod. prodotto'},
-                                    { dataField: 'descrizione', text: 'Descrizione' },
-                                    {
-                                        dataField: 'tickets', 
-                                        text: 'Tickets associati', 
-                                        formatter: (cell) => {
-                                            if (!cell) {
-                                                return "";
-                                            }
-                                            return cell.map( ( v ) => v.token ).join(", ")
-                                        } 
-                                    },
-                                    { dataField: 'riscattati', text: 'Riscattati' , formatter : ( cell , row ) => cell.toString() + " / " + row.quantita },
-                                    { dataField: 'tickets.scadenza', text: 'Scadenza' },
-                                    { dataField: 'costo_unitario', text: 'Costo unitario', formatter: prezziFormatter },
-                                    { dataField: 'importo', text: 'Totale', formatter: prezziFormatter}
-                                ]}
-                                data={ordine.voci}
-                                bordered={false}
-                                hover
-                                wrapperClasses="table-responsive"
-
-                            />
-                        </Card.Body>
+                <Grid item md={12}>
+                    <Card >
+                        <CardContent>
+                            { ordine.voci ? <OrdiniVociTabella voci={ordine.voci} /> : <PreLoaderWidget />} 
+                        </CardContent>
                     </Card>
-                </Col>
-                <Col md="12" /* Transazioni */ >
-                    <Card>
-                        <Card.Body>
-                            <h3>Transazioni</h3>
-                            <BootstrapTable
-                                keyField="id"
-                                columns={[
-                                    { dataField: 'gateway', text: 'Gateway'}, 
-                                    { dataField: 'importo', text: 'Importo', formatter: prezziFormatter},
-                                    { dataField: 'transazione_id', text: 'ID transizione'},
-                                    { dataField: 'stato', text: "Stato"}
-                                ]}
-                                data={ ordine.transazioni }
-                                bordered={false}
-                                hover
-                                noDataIndication="Nessuna transazione effettuata finora."
-                            />
-                        </Card.Body>
+                </Grid>
+                <Grid item md={12} /* Transazioni */ >
+                    <Card  >
+                        <CardContent>
+                            { ordine.transazioni && <OrdiniTransazioniTabella transazioni={ ordine.transazioni } /> }
+                        </CardContent>
                     </Card>
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </React.Fragment>
     )
 }

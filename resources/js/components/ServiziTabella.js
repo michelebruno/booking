@@ -18,6 +18,7 @@ const ServiziTabella = ( { readOnly , url , ... props } ) => {
     const servizi = api.servizi || [];
 
     useEffect(() => {
+        
         if ( api.willBeReloaded || api.fetchedFrom !== fetchUrl ) {
 
             const source = axios.CancelToken.source()

@@ -1,15 +1,16 @@
 import React , {useState, useEffect} from "react"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import Overlay from "react-bootstrap/Overlay"
-import Popover from "react-bootstrap/Popover"
 import Form from "react-bootstrap/Form"
+
+import Popover from '@material-ui/core/Popover'
 import Button from "react-bootstrap/Button"
 import PropTypes from "prop-types"
 import { connect } from "react-redux"
+import { Typography } from "@material-ui/core"
 
 
-const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onClose , onSuccess , iva , ivaInclusa } ) => {
+const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess , anchorElement, iva , ivaInclusa } ) => {
 
     if ( ! varianti ) return null;
     
@@ -56,45 +57,56 @@ const NuovaTariffaPopover = ( { reference , show , url , tariffe, varianti , onC
             })
     }
 
+    const open = Boolean(anchorElement)
+
+    const id = open ? 'simple-popover' : undefined;
+
+    return <Popover
+        id={id}
+        open={ open }
+        anchorEl={ anchorElement }
+        onClose={onClose}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+        }}
+        >
+        
+        { variante ? <Form onSubmit={ e => { e.preventDefault() ; handleSubmit() }} >
+                <Form.Group controlId="variante" as={Row}>
+                    <Form.Label column >Variante</Form.Label>
+                    <Col >
+                        <Form.Control as="select" value={ variante } onChange={ e => { setVariante( e.target.value ) } } required>
+                            { disponibili.map( ( v ) => { return <option value={ v.id } key={ v.id } >{ v.nome }</option> })}
+                        </Form.Control>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group controlId="prezzo" as={Row}>
+                    <Form.Label column >{ ivaInclusa ? "Importo" : "Imponibile" }</Form.Label>
+                    <Col >
+                        <Form.Control type="number" min="0" value={prezzo} onChange={ e => setPrezzo(e.target.value) } required/>
+                    </Col>
+                </Form.Group>
+
+                <Form.Text className="text-danger">{ error }</Form.Text>
+
+                <div className="text-right">
+                    <Button type="submit" variant="success" size="sm"><i className="fas fa-check mr-1" /> <span>Salva</span></Button>
+                </div>
+            </Form> : <Typography>Hai già impostato tutte le varianti di prezzo per questo servizio. </Typography>
+        }
+    </Popover>
     
-    return <Overlay target={reference.current} show={ show } placement="auto">
-        { ( props ) => <Popover id="nuovatariffa" { ...props } >
-            <Popover.Title className="bg-dark text-light d-flex justify-content-between"><span>Aggiungi tariffa</span><i className="fas fa-times align-self-center p-1 pl-3" onClick={ onClose } /> </Popover.Title>
-            <Popover.Content className="p-3">
-                { variante ? <Form onSubmit={ e => { e.preventDefault() ; handleSubmit() }} >
-
-                    <Form.Group controlId="variante" as={Row}>
-                        <Form.Label column >Variante</Form.Label>
-                        <Col >
-                            <Form.Control as="select" value={ variante } onChange={ e => { setVariante( e.target.value ) } } required>
-                                { disponibili.map( ( v ) => { return <option value={ v.id } key={ v.id } >{ v.nome }</option> })}
-                            </Form.Control>
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Group controlId="prezzo" as={Row}>
-                        <Form.Label column >{ ivaInclusa ? "Importo" : "Imponibile" }</Form.Label>
-                        <Col >
-                            <Form.Control type="number" min="0" value={prezzo} onChange={ e => setPrezzo(e.target.value) } required/>
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Text className="text-danger">{ error }</Form.Text>
-
-                    <div className="text-right">
-                        <Button type="submit" variant="success" size="sm"><i className="fas fa-check mr-1" /> <span>Salva</span></Button>
-                    </div>
-                </Form> : "Hai già impostato tutte le varianti di prezzo per questo servizio." }
-
-            </Popover.Content>
-        </Popover>}
-    </Overlay>
 }
 
 NuovaTariffaPopover.propTypes = {
     onClose : PropTypes.func.isRequired,
     onSuccess : PropTypes.func,
-    show : PropTypes.bool.isRequired,
     url : PropTypes.string.isRequired,
     iva : PropTypes.number,
     ivaInclusa: PropTypes.bool,

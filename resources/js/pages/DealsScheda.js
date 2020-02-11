@@ -2,7 +2,7 @@
 import React , { useState , useEffect } from 'react'
 import { connect } from 'react-redux'
 
-import { Card, Row, Col, Badge, Button } from 'react-bootstrap'
+import { Card, Row, Col, Badge } from 'react-bootstrap'
 
 import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
 
@@ -11,6 +11,10 @@ import ProdottiCollegati from '../components/ProdottiCollegati'
 import TariffeTabella from '../components/TariffeTabella'
 import EditableField from '../components/EditableField'
 import PreLoaderWidget from '../components/Loader';
+import Button from '@material-ui/core/Button';
+
+import DeleteIcon from '@material-ui/icons/Delete'
+import RestoreIcon from '@material-ui/icons/Restore'
 
 
 const DealsScheda = ( { varianti,  location , history, ...props } ) => {
@@ -22,21 +26,20 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
     const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
 
     const reloadDeal = () => {
-        let n = Object.assign({}, deal, {willBeReloaded: true})
+        let n = Object.assign( {}, deal, { willBeReloaded: true } )
         return setDeal(n)
     }
-
         
     const DeleteDealButton = props => {
         const [show, setShow] = useState(false)
 
         return <div className={props.className}>
         
-            <Button size="sm" variant="danger" className="ml-1" onClick={ () => setShow(true) }>
-                <i className="fas fa-trash" />{ props.children }
+            <Button size="small" color="primary" variant="contained" className="ml-1" onClick={ () => setShow(true) } startIcon={<DeleteIcon /> } >
+                { props.children }
             </Button>
 
-            <AxiosConfirmModal url={ deal._links.self } show={show} method="delete" onHide={() => { setShow(false); reloadDeal()}} title="Conferma" >
+            <AxiosConfirmModal url={ deal._links.self } show={show} method="delete" onHide={() => { setShow(false); reloadDeal()}}  title="Conferma" >
                 Sei sicuro di cancellare questo deal?
 
                 ATTENZIONE! I ticket associati a questi deal non saranno più riscattabili dai clienti. Se non vuoi che sia più vendibile impostalo come privato.
@@ -49,30 +52,29 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         const [show, setShow] = useState(false)
 
         return <div className={props.className}>
-        
-            <Button size="sm" variant="primary" className="ml-1" onClick={ () => setShow(true) }>
-                <i className="fas fa-trash-restore mr-1" /> Ripristina deal
+
+            <Button size="small" color="danger" variant="contained" className="ml-1" onClick={ () => setShow(true) } startIcon={<RestoreIcon /> } >
+                { props.children || "Ripristina deal"}
             </Button>
 
-            <AxiosConfirmModal url={ deal._links.restore } show={show} method="patch" onHide={() => { setShow(false); reloadDeal() }} title="Conferma" >
+            <AxiosConfirmModal url={ deal._links.restore } show={show} method="patch" onHide={ () => { setShow(false); reloadDeal() }} title="Conferma" >
                 Sei sicuro di voler ripristinare questo deal?
             </AxiosConfirmModal>
         </div>
     }
+
     const TastiDeal = ( ) => {
         if ( ! deal || ! deal._links ) return null;
 
         return deal.cestinato ? <RestoreDealButton></RestoreDealButton> : <DeleteDealButton><span className="ml-2 d-none d-md-inline">Elimina deal</span></DeleteDealButton>
-
     }
 
-    useEffect(() => {
+    useEffect( () => {
         props.setTopbarButtons( TastiDeal )
         return () => {
             props.unsetTopbarButtons()
         };
     }, [deal] )
-
 
     let varianti_disponibili = Object.assign({}, varianti)
 
@@ -82,10 +84,13 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
             pos !== -1 && delete varianti_disponibili[keys[pos]]
         })
     }
-    useEffect(() => {
+
+    useEffect( () => {
+
         if ( ! deal || deal.willBeReloaded ) {
 
             const source = axios.CancelToken.source()
+            
             let url = ( ( deal && deal._links ) && deal._links.self ) || location.pathname
 
             axios.get( url , { cancelToken : source.token })
@@ -99,9 +104,9 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
             return () => {
                 source.cancel()
             };
-
         }
-    }, [deal])
+
+    }, [deal] )
 
     if ( ! deal || ! deal.id ) return <PreLoaderWidget />
 
@@ -111,10 +116,9 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         editableFieldProps.readOnly = true
     }
     
-    
     return(
         <React.Fragment>
-            {deal && deal.id && <>
+            { deal && deal.id && <>
             <Row>
                 <Col xs="12" md="6">
                     <Card>
@@ -146,7 +150,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
                 <Col xs="12" md="6">
                     <Card>
                         <Card.Body>
-                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={iva} onSuccess={ d => setDeal(d) } editable={ !deal.cestinato } /> 
+                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ d => setDeal(d) } editable={ !deal.cestinato } reloadResource={reloadDeal} /> 
                         </Card.Body>
                     </Card>
                 </Col>

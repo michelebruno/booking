@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * 
  * 
- * @property  string  stato
+ * @property  string  $stato
  *      - INIT se è in fase di creazione
  *      - APERTO quando deve essere pagato dal cliente
  *      - ELABORAZIONE se il pagamento è in stato di verifica
@@ -23,10 +23,10 @@ class Ordine extends Model
 
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
+    const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
     const ELABORAZIONE = "ELABORAZIONE"; //  se il pagamento è in stato di verifica
     const PAGATO = "PAGATO"; //  se è stato pagato ma non sono stati generati i ticket
     const ELABORATO = "ELABORATO"; //  se i tickets stati generati e inviati
-    const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
     const RIMBORSATO = "RIMBORSATO"; //  se è stato rimborsato 
 
     protected $table = "ordini";

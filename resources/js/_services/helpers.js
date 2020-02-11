@@ -1,4 +1,10 @@
-export const prezziFormatter = new Intl.NumberFormat('en-US', { style : 'currency' , currency: 'EUR' } ).format;
+export const prezziFormatter = ( n ) => {
+    if ( isNaN(n) ) {
+        console.warn("Il valore da formattare non è un numero", n);
+        return n
+    } 
+    return new Intl.NumberFormat('en-US', { style : 'currency' , currency: 'EUR' } ).format(n);
+}
 
 const ordiniStato = ( stato ) => {
 
@@ -73,7 +79,7 @@ const ordiniStato = ( stato ) => {
             break;
     
         default:
-            console.log(stato)
+            stato && console.log(stato)
             i = ({
                 raw: stato,
                 label : stato,

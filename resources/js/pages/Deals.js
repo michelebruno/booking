@@ -7,21 +7,43 @@ import AxiosConfirmModal from '../components/AxiosConfirmModal'
 import { prezziFormatter } from '../_services/helpers'
 import PreLoaderWidget from '../components/Loader'
 
+import MUIDataTable from 'mui-datatables'
+import localization from '../_services/localization'
+
 const Deals = ( ) => {
 
-    const [ deals , setDeals ] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [api, setApi] = useState()
+    const [ deals , setDeals ] = useState()
+
+    const [ filter, _setFilter ] = useState()
+
+    const setFilter = ( addFilter ) => {
+        let n = Object.assign({}, filter, addFilter )
+        _setFilter(n);
+    }
 
     const loadDeals = ( ) => {
 
         const source = axios.CancelToken.source()
 
-        axios.get("/deals", { cancelToken : source.token })
+        let fUrl = "/deals" 
+
+        let query = []
+
+        for ( let d in filter ) {
+            query.push( encodeURIComponent(d) + "=" + encodeURIComponent( filter[d] ) )
+        }
+
+        if ( query.length ) {
+            fUrl += "?"  + query.join("&");
+        }
+
+        axios.get(fUrl, { cancelToken : source.token })
             .then( res => {
-                setDeals(res.data)
-                setLoading(false)
+                setApi(res.data)
             })
             .catch( error => axios.isCancel(error) || console.error( error ))
+        
         return () => {
             source.cancel()
         };
@@ -33,24 +55,15 @@ const Deals = ( ) => {
 
     }, [] )
 
-    /* Formattatori */
+    useEffect(() => {
 
-    const formattaStato = ( cell ) => {
-        let color;
-
-        switch (cell) {
-            case 'abilitato':
-                color = 'text-success'
-                break;
-
-            default:
-                break;
+        if ( ! api || ! api.data ) {
+            return;
         }
 
-        return(
-            <i title={cell} className={ "fa fa-circle " + color } ></i>
-        )
-    }
+        setDeals(api.data)
+
+    }, [api] )
     
     const DeleteServizioButton = props => {
         const [show, setShow] = useState(false)
@@ -86,56 +99,71 @@ const Deals = ( ) => {
         <React.Fragment>
             <Card>
                 <Card.Body> 
-                    <h1>Deals</h1>
-                    { process.env.NODE_ENV === "development" && <p>Azioni di filtraggio varie...</p>}
-                    { loading && <PreLoaderWidget />}
-                    <BootstrapTable 
-                        keyField="id"
-                        noDataIndication="Non ci sono prodotti collegati."
+                    { deals && <MUIDataTable
+                        title="Deals" 
                         data={deals}
+                        options={{
+                            // BLOCCO di DEFAULT per il serverside
+                            serverSide : true,
+                            onChangePage : page => {
+                                setFilter( { page : page + 1 } );
+                            },
+                            onChangeRowsPerPage : per_page => setFilter( { per_page : per_page , page : 1 } ),
+                            elevation : 0, // il box-shadow
+                            page : api.current_page - 1,
+                            count : api.total,
+
+                            print : false,
+                            selectableRows: 'none',
+                            textLabels: { ...localization.it.MUIDatatableLabels }
+                        }}
                         columns={[
                             {
-                                text: 'Cod.',
-                                dataField: 'codice'
+                                label: 'Cod.',
+                                name: 'codice'
                             },
                             {
-                                text: 'Titolo',
-                                dataField: 'titolo'
+                                label: 'Titolo',
+                                name: 'titolo'
                             },
                             {
-                                text: 'Importo',
-                                dataField: 'tariffe.intero.importo',
-                                formatter : ( cell ) => cell ? prezziFormatter(cell) : "-"
+                                label: 'Importo',
+                                name: 'tariffe.intero.importo',
+                                options: {
+                                    customBodyRender : ( cell ) => cell ? prezziFormatter(cell) : "-"
+                                }
                             },
                             {
-                                text: 'Disponibiiltà',
-                                dataField: 'disponibili'
+                                label: 'Disponibiiltà',
+                                name: 'disponibili'
                             },
                             {
-                                text : "",
-                                dataField: "azioni",
-                                // eslint-disable-next-line react/display-name
-                                formatter : ( cell, row ) =>{
-                                    const Buttons = ( ) => {
-
-                                        let url = row._links.self
-                                        let state = { deal : row }
-
-                                        
-                                        return <>
-                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1 d-md-inline-block" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit"/></Button>
-                                            { row.cestinato ? <RestoreServizioButton url={url} /> : <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" /> }
-                                        </>
-
+                                label : " ",
+                                name: "azioni",
+                                options : {
+                                    // eslint-disable-next-line react/display-name
+                                    customBodyRender : ( _cell, { rowIndex } ) =>{
+                                        const Buttons = ( ) => {
+    
+                                            const row = api.data[rowIndex]
+    
+                                            let url = row._links.self
+                                            let state = { deal : row }
+    
+                                            
+                                            return <>
+                                                <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1 d-md-inline-block" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit"/></Button>
+                                                { row.cestinato ? <RestoreServizioButton url={url} /> : <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" /> }
+                                            </>
+    
+                                        }
+    
+                                        return <Buttons />
                                     }
-
-                                    return <Buttons />
                                 }
                             }
                         ]}
-                        hover
-                        bordered={ false }
-                        />
+                        />}
                 </Card.Body>
             </Card>
         </React.Fragment> 

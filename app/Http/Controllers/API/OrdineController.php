@@ -35,7 +35,7 @@ class OrdineController extends Controller
                     $o_query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
                     break;
 
-                case 'APERTO':
+                case 'APERTI':
                     $o_query->where("stato", Ordine::APERTO );
                     break;
             }

@@ -21,6 +21,8 @@ class DealController extends Controller
     {
 
         $response = null; 
+
+        $per_page = (int) $request->query('per_page', 10);
         $query = false;
 
         if ( $s = $request->query('s', false ) ) {
@@ -46,8 +48,8 @@ class DealController extends Controller
         } 
 
         if ( $query ) { 
-            $response = $query->get(); 
-        } else $response = Deal::all()->load(['servizi']);
+            $response = $query->paginate($per_page); 
+        } else $response = Deal::with(['servizi'])->paginate($per_page);
 
         if ( $schema = $request->query( 'schema', false ) ) {
 
