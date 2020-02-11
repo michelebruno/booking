@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * 
- * @property string $ordine_id 
- * @property int $prodotto_id 
- * @property string $codice 
- * @property int $quantita 
- * @property float{10,2} $costo_unitario
+ * @property  string  $ordine_id 
+ * @property  int  $prodotto_id 
+ * @property  string  $codice 
+ * @property  int  $quantita 
+ * @property  float{10,2}  $costo_unitario
+ * @property  \App\Prodotto  $prodotto
+ * @property  \App\Tariffa  $tariffa
+ * @property  \App\Tickets[]  $tickets
  *  
  */
 class VoceOrdine extends Model
@@ -29,6 +32,11 @@ class VoceOrdine extends Model
     protected $appends = [
         "riscattati"
     ];
+
+    public function riduciDisponibili( int $quantità, bool $salva = true )
+    {
+        return $this->prodotto->riduciDisponibili( $quantità , $salva );
+    }
 
     public function prodotto()
     {

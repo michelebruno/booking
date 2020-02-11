@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import React , { useState , useEffect } from 'react'
 import { Card , Button } from 'react-bootstrap'  
-import BootstrapTable from 'react-bootstrap-table-next'
 import { Link } from 'react-router-dom'
 import AxiosConfirmModal from '../components/AxiosConfirmModal'
 import { prezziFormatter } from '../_services/helpers'
-import PreLoaderWidget from '../components/Loader'
 
 import MUIDataTable from 'mui-datatables'
 import localization from '../_services/localization'

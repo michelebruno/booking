@@ -32,6 +32,20 @@ class Prodotto extends Model
         return $this->hasMany( 'App\Tariffa', 'prodotto_id' );
     }
 
+    /**
+     * 
+     * @param  int  $quantità La quantità di cui ridurre la disponibiltà del prodotto.
+     */
+    public function riduciDisponibili(int $quantità, bool $salva = true )
+    {
+        // TODO controllare che ce ne siano abbastanza...
+        $this->disponibili -= $quantità;
+
+        if ($salva) {
+            $this->save();
+        }
+    }
+
     /* 
      *  
      * * MUTATORS *

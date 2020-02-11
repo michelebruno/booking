@@ -17,10 +17,13 @@ use Illuminate\Database\Eloquent\Model;
  *      - ELABORATO se i tickets stati generati e inviati
  *      - CHIUSO se tutti i tickets sono stati usati
  *      - RIMBORSATO se è stato rimborsato // ? Anche solo parzialmente?
+ * 
+ * @property  \App\Cliente  $cliente
+ * @property  \App\VoceOrdine[]  $voci
+ * @property  \App\Transazione[]  $transazioni
  */
 class Ordine extends Model
 {
-
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
     const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
