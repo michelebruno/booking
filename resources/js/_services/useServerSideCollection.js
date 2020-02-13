@@ -25,7 +25,9 @@ export function serverSideOptions( onChangeFilter , columns , customData ) {
         },
     
         elevation : 0, // il box-shadow
-    
+
+        print : false,
+
         textLabels : { ... labels },
 
     }
@@ -45,8 +47,12 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
 
 
     const setFilter = ( addFilter ) => {
-        let n = Object.assign( {}, filter, addFilter )
-        _setFilter(n);
+        if (typeof addFilter === "function") {
+            _setFilter(addFilter)
+            return;
+        }
+
+        _setFilter( prevFilter => Object.assign( {}, prevFilter, addFilter ) );
     }
 
     const loadApi = () => {
@@ -74,23 +80,24 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
         return source.cancel
     }
 
-    useEffect(() => {
+    useEffect( () => {
         
         return loadApi()
 
     }, [ filter ])
 
     const datatableOptions = ( ...args ) => {
-        return collection && {
+        return collection ? {
             page : collection.current_page - 1,
             count : collection.total,
-            elevation : 0,
             ...serverSideOptions( setFilter , ...args ),
+        } : {
+            elevation : 0,
         }
     }
 
     const reload = () => _setFilter( f => f)
 
-    return [ collection , filter,  setFilter , datatableOptions , reload ]
+    return [ collection , datatableOptions , { filter , setFilter , reload , setCollection } ]
 
 }

@@ -13,9 +13,15 @@ class ClienteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response( Cliente::all() );
+        // $this->authorize('viewAny', Cliente::class);
+
+        $per_page = $request->query("per_page" , 10);
+
+        $query = Cliente::with([]);
+        
+        return response( $query->paginate($per_page) );
     }
 
     /**

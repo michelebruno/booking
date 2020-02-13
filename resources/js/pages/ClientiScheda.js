@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 import React , { useState , useEffect } from 'react'
 import PropTypes from 'prop-types'
-import PreLoaderWidget from '../components/Loader'
+
 import { Card, Col } from 'react-bootstrap'
 import { Row } from 'react-bootstrap'
-import BootstrapTable from 'react-bootstrap-table-next'
-import AxiosConfirmModal from '../components/AxiosConfirmModal'
-import { prezziFormatter } from '../_services/helpers'
+import MUIDataTable from 'mui-datatables'
 
+import PreLoaderWidget from '../components/Loader'
+import AxiosConfirmModal from '../components/AxiosConfirmModal'
 
 const ClientiScheda = ( { match } ) => {
 
@@ -48,23 +48,21 @@ const ClientiScheda = ( { match } ) => {
                 <Card>
                     <Card.Body>
                         <h2>Ordini</h2>
-                        { cliente.ordini && <BootstrapTable
-                            keyField="id"
+                        { cliente.ordini && <MUIDataTable
                             data={cliente.ordini}
                             columns={[
                                 {
-                                    dataField : "id",
-                                    text : "Id"
+                                    name : "id",
+                                    label : "Id"
                                 },
                                 {
-                                    dataField : "importo",
-                                    text : "Importo",
-                                    formatter : prezziFormatter
+                                    name : "importo",
+                                    label : "Importo",
                                 }
                             ]}
-                            condensed={true}
-                            bordered={false}
-                            hover
+                            options={{
+                                elevation : 0
+                            }}
                             />}
                         
                     </Card.Body>

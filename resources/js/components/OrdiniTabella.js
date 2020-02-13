@@ -1,19 +1,20 @@
 /* eslint-disable react/prop-types */
 import React, { useState , useEffect } from 'react'
+import { Link } from 'react-router-dom';
 
-import Helpers, { prezziFormatter } from '../_services/helpers';
-import PreLoaderWidget from './Loader';
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility'
-import { Link } from 'react-router-dom';
 import MUIDataTable from 'mui-datatables';
+
+import PreLoaderWidget from './Loader';
 import useServerSideCollection from '../_services/useServerSideCollection';
+import Helpers, { prezziFormatter } from '../_services/helpers';
 
 const OrdiniTabella = ( { url , defaultFilter } ) => {
 
     const [ ordini, setOrdini ] = useState()  
 
-    const [ collection , filter, setFilter , serverSideOptions  ] = useServerSideCollection( url , defaultFilter )
+    const [ collection, serverSideOptions, { filter }  ] = useServerSideCollection( url , defaultFilter )
 
     useEffect( () => {
 
@@ -41,7 +42,6 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
         {
             name : "stato",
             label : " ",
-            _filterName : "stato",
             options : {
                 sort : false, 
                 filterList : filter.stato || "Pagati",
@@ -121,7 +121,6 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
     ]
 
     return <MUIDataTable
-        onChangeFilter={setFilter}
         data={ordini}
         columns={colonne}
         options={{

@@ -1,18 +1,20 @@
 /* eslint-disable react/prop-types */
-import React , { useState, useEffect } from 'react';
-
-import Loader from '../components/Loader';
-
-import { Row , Col , Card, Button  } from 'react-bootstrap';
+import React , { useEffect } from 'react';
 import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
-import BootstrapTable from 'react-bootstrap-table-next';
-import PreLoaderWidget from '../components/Loader';
+
+import { Row , Col , Card, Button  } from 'react-bootstrap';
+import MUIDataTable from 'mui-datatables';
+
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
+import PreLoaderWidget from '../components/Loader';
+import useServerSideCollection from '../_services/useServerSideCollection';
 
 const Esercenti = ( props ) => {
 
-    const [api, setApi] = useState({ status: "loading", data: null})
+    const [ collection, serverSideOptions ] = useServerSideCollection( "/esercenti" )
+
+    const esercenti = collection && collection.data
 
     useEffect(() => {
         props.setTopbarButtons( () => {
@@ -21,36 +23,29 @@ const Esercenti = ( props ) => {
         return () => {
             props.unsetTopbarButtons()
         };
-    })
-
-    useEffect(() => {
-
-        const source = axios.CancelToken.source()
-
-        axios.get("/esercenti", { cancelToken: source.token })
-            .then( res => {
-                setApi({ status : "success" , data: res.data })
-            })
-            .catch( error => {
-                if ( axios.isCancel(error) )  return;
-            })
-
-        return () => source.cancel();
-
     }, [])
 
     const columns = [
         {
-            dataField: 'username',
-            text: "Username",
-            // eslint-disable-next-line react/display-name
-            formatter : (cell, row) => <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
+            name: 'username',
+            label: "Username",
+            
+            options : {
+                customBodyRender : ( cell , { rowIndex } ) => {
+                    const row = esercenti[rowIndex]
+                    return <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
+                }
+            }
+
         },
         {
-            dataField: 'stato',
-            text: '',
-            formatter: ( cell , row ) => {
-                { row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>}
+            name: 'stato',
+            label: ' ',
+            options : {
+                customBodyRender : ( cell , { rowIndex } ) => {
+                    const row = esercenti[rowIndex]
+                    return row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
+                }
             }
         }
     ]
@@ -58,7 +53,7 @@ const Esercenti = ( props ) => {
     return(
         <React.Fragment>
             { /* preloader */}
-            {props.loading && <div className="px-5"><Loader /></div>}
+            {props.loading && <div className="px-5"><PreLoaderWidget /></div>}
             <Row>
                 <Col className="mb-2" xs="12" lg="3">
                     <div className="d-flex w-100 justify-content-between ">
@@ -83,13 +78,12 @@ const Esercenti = ( props ) => {
                 <Col lg="9">
                     <Card>
                         <Card.Body>
-                            { api.status == "loading" && <PreLoaderWidget />}         
-                            { api.data && <BootstrapTable
-                                keyField="id"
-                                data={api.data}
+                            { esercenti && <MUIDataTable 
+                                data={esercenti}
                                 columns={columns}
-                                bordered={ false }
-                                hover
+                                options={{
+                                    ...serverSideOptions(columns)
+                                }}
                                 /> }
                         </Card.Body>
                     </Card>

@@ -1,46 +1,39 @@
-import React, { useState , useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { Card } from 'react-bootstrap'
 
-import BootstrapTable from "react-bootstrap-table-next"
 import { Link } from 'react-router-dom'
+
+import { Card } from 'react-bootstrap'
+import MUIDataTable from 'mui-datatables'
+
+import useServerSideCollection from '../_services/useServerSideCollection'
 
 const Clienti = () => {
 
-    const [api, setApi] = useState()
+    const [ collection, serverSideOptions ] = useServerSideCollection( "/clienti", ) 
+    const clienti =  collection && collection.data
 
-
-    useEffect( () => {
-        if ( api && ! api.willBeReloaded ) return;
-        const source = axios.CancelToken.source()
-        axios.get('/clienti', { cancelToken : source.token })
-            .then( res => setApi( { clienti : res.data } ) )
-            .catch( () => true )
-        return () => {
-            source.cancel()
-        };
-    }, [api])    
-    
-    if ( !api ) return "Loading";
-
-
+    let columns 
     return <Card>
         <Card.Body>
-            { api && api.clienti && <BootstrapTable 
-                keyField="id"
-                data={api.clienti}
-                columns={[
+            { clienti && clienti && <MUIDataTable 
+                data={ clienti }
+                columns={ columns = [
                     {
-                        dataField: "email",
-                        text : "Email",
-                        formatter: ( cell , row ) => {
-                            return <Link to={ row._links.self }>{ cell }</Link>
+                        name: "email",
+                        label : "Email",
+                        options :{ 
+                            customBodyRender : ( cell , { rowIndex } ) => {
+                                console.log(columns)
+                                const row = clienti[rowIndex]
+                                return <Link to={ row._links.self }>{ cell }</Link>
+                            },
                         }
                     }
-                ]}
-                condensed
-                bordered={false}
-                hover
+                ] }
+                options={{
+                    ...serverSideOptions( columns )
+                }}
                 />}
         </Card.Body>
     </Card>

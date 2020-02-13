@@ -1,33 +1,32 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import BootstrapTable from 'react-bootstrap-table-next'
+
 import { Card } from 'react-bootstrap'
+import MUIDataTable from 'mui-datatables'
 
 import FormFiltraggio from '../components/FormFiltraggio'
 
-const Tickets = props => {
+const Tickets = () => {
     return(
         <React.Fragment>
             <Card>
                 <Card.Body>
                     <h1>Ticket</h1>
                     <FormFiltraggio />
-                    <BootstrapTable
+                    <MUIDataTable
                         keyField="token"
                         columns={[
-                            { dataField: 'token', text: 'Token'},
-                            { dataField: 'ordine', text: 'Ordine'},
-                            { dataField: 'stato', text: 'Stato'}, 
-                            { dataField: 'acqi', text: 'Acquistato'},
-                            { dataField: 'scadenza', text: 'Scadenza'},
-                            { dataField: 'fornitore', text: 'Assegnatario'},
+                            { name: 'token', label: 'Token'},
+                            { name: 'ordine', label: 'Ordine'},
+                            { name: 'stato', label: 'Stato'}, 
+                            { name: 'acqi', label: 'Acquistato'},
+                            { name: 'scadenza', label: 'Scadenza'},
+                            { name: 'fornitore', label: 'Assegnatario'},
                         ]}
                         data={[
                             { token: 'TERX54', ordine: '2657', stato: 'Convalidato', fornitore: 'Ciccio Pasticcio', scadenza: '20-11-2019', acqi: '20-08-2019'  },
                             { token: 'GDFG654', ordine: '2657', stato: 'Libero', scadenza: '20-11-2019', acqi: '20-08-2019'  }
                         ]}
-                        bordered={false}
-                        hover
                     />
                 </Card.Body>
             </Card>

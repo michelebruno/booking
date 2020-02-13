@@ -1,67 +1,69 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react"
-
+import React, { useState , useEffect } from "react"
 import { connect } from "react-redux"
+import { Link } from "react-router-dom"
 
 import Card from "react-bootstrap/Card"
 import Button from "react-bootstrap/Button"
 import ButtonToolbar from "react-bootstrap/ButtonToolbar"
 import Modal  from "react-bootstrap/Modal"
-import Alert from "react-bootstrap/Alert"
 
-import BootstrapTable from "react-bootstrap-table-next"
-import { Link } from "react-router-dom"
-import paginationFactory from "react-bootstrap-table2-paginator"
+import MUIDataTable from "mui-datatables"
+
+import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
+import useServerSideCollection from '../_services/useServerSideCollection'
 import UtenteForm from "../components/UtenteForm"
 import PreLoaderWidget from "../components/Loader"
 
-import { setTopbarButtons , unsetTopbarButtons } from "../_actions"
-
 const Utenti = ( props ) => {
 
-    const [api, setApi] = useState({status: "loading", data: null})
+    const [ collection, serverSideOptions, { reload } ] = useServerSideCollection( "/users" )
+
+    const utenti = collection && collection.data
+
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const columns = [ 
         {
-            dataField: 'email',
-            text : 'Email'
+            name: 'email',
+            label : 'Email'
         },
         {
-            dataField: 'username',
-            text: 'Username',
-            formatter: ( cell , row ) => {
-                return row.denominazione ? row.denominazione : cell
-            }
+            name: 'username',
+            label: 'Username',
         },
         {
-            dataField: 'ruolo',
-            text: 'Tipo',
+            name: 'ruolo',
+            label: 'Tipo',
             classes : "d-none d-lg-table-cell",
             headerClasses : "d-none d-lg-table-cell"
         },
         {
-            dataField: 'meta',
-            text: '',
-            // eslint-disable-next-line react/display-name
-            formatter: ( _cell , row ) => {
-                let url = ""
+            name: 'meta',
+            label: ' ',
+            options : {
+                customBodyRenderer : ( _cell , { rowIndex } ) => {
+                    
+                    const row = utenti[rowIndex]
 
-                switch (row.ruolo) {
-                    case "cliente":
-                        url += "/clienti/"
-                        break;
+                    let url = ""
     
-                    case "esercente":
-                        url += "/esercenti/"
-                        break;
-                
-                    default:
-                        url += "/utenti/"
-                        break;
+                    switch (row.ruolo) {
+                        case "cliente":
+                            url += "/clienti/"
+                            break;
+        
+                        case "esercente":
+                            url += "/esercenti/"
+                            break;
+                    
+                        default:
+                            url += "/utenti/"
+                            break;
+                    }
+                    return <React.Fragment><Button size="sm" as={Link} to={{pathname: url+row.id, state: { utente : row}}} ><i className="fas fa-edit" /></Button></React.Fragment>
                 }
-                return <React.Fragment><Button size="sm" as={Link} to={{pathname: url+row.id, state: { utente : row}}} ><i className="fas fa-edit" /></Button></React.Fragment>
-            }
+            } 
         }
     ]
 
@@ -69,28 +71,8 @@ const Utenti = ( props ) => {
         <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
     </ButtonToolbar>)
 
-    React.useEffect(() => {
-
-        const source = axios.CancelToken.source()
-
-        axios.get('/users' , { cancelToken: source.token } )
-            .then( ( response ) => { 
-                setApi({ status: "loaded" , data: response.data })
-            })
-            .catch( error => {
-                if ( axios.isCancel(error) )  return;
-                if ( error.response ) setApi({status: "error" , response: error.response, message: error.response.data.message })
-                else {
-                    console.warn("c'è un errore sconosciuto:")
-                    console.error(error)
-                }
-            })
- 
-        return () => {
-            source.cancel();
-            props.unsetTopbarButtons()
-        }
-
+    useEffect(() => {
+        return props.unsetTopbarButtons
     }, [])
 
     return(
@@ -104,27 +86,20 @@ const Utenti = ( props ) => {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <UtenteForm onSuccess={ d => { let n = Object.assign({} , api , { data : _.concat(api.data, d) } ) ; setApi(n)} } />
+                            <UtenteForm onSuccess={ reload } />
                         </Modal.Body> 
                     </Modal>
                 </p>
 
-                {api.status === "loaded" && api.data && 
-                    <BootstrapTable
+                { typeof utenti == "undefined" ? <PreLoaderWidget /> : 
+                    <MUIDataTable
                         columns={columns}
-                        keyField="id"
-                        data={api.data}
-                        // rowEvents={rowEvents}
-                        pagination={ paginationFactory() }
-                        hover
-                        bordered={false}
-                        wrapperClasses="table-responsive"
+                        data={utenti}
+                        options={{
+                            ...serverSideOptions(columns),
+                        }}
                     />
-                    }
-                { api.status === "loading" && <div className="p-5"><PreLoaderWidget /></div>}
-                { api.status === "error" && <Alert variant="danger">
-                    { api.message }
-                </Alert> }
+                } 
             </Card.Body>
         </Card>
     )

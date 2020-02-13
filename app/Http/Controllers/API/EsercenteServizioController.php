@@ -17,10 +17,12 @@ class EsercenteServizioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request, Esercente $esercente )
+    public function index( Request $request, $esercente )
     {
-        $this->authorize('view', $esercente);
+        $esercente = Esercente::withTrashed()->findOrFail($esercente);
 
+        $this->authorize('view', $esercente);
+        
         $per_page = $request->query('per_page' , 10 );
 
         $query = Servizio::fornitore($esercente->id)->with('deals');

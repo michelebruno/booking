@@ -1,18 +1,18 @@
 /* eslint-disable react/display-name */
 import React , { useState } from "react"
+import { Link } from "react-router-dom"
 import PropTypes from 'prop-types'
 
 import Button from 'react-bootstrap/Button';
-import { Link } from "react-router-dom"
+import MUIDataTable from "mui-datatables";
 
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
-import MUIDataTable from "mui-datatables";
 import Helpers from "../_services/helpers";
 import useServerSideCollection from "../_services/useServerSideCollection";
 
-const ServiziTabella = ( {  title, esercente, readOnly , url  } ) => {
+const ServiziTabella = ( {  title, esercente, editable, readOnly , url  } ) => {
     
-    const [ collection , , setFilter , serverSideOptions , reloadApi ] = useServerSideCollection( url )
+    const [ collection, serverSideOptions , { reload : reloadApi } ] = useServerSideCollection( url )
 
     const servizi = collection && collection.data
 
@@ -123,14 +123,16 @@ const ServiziTabella = ( {  title, esercente, readOnly , url  } ) => {
             data={ servizi }
             columns={ columns }
             options={{
-                ...serverSideOptions( setFilter , columns ), 
-                print : false
+                ...serverSideOptions( columns ), 
+                print : false,
+                selectableRows : editable ? "multiple" : "none"
             }}
             />
         </>)
 }
 ServiziTabella.propTypes = {
     className : PropTypes.string,
+    editable : PropTypes.bool,
     esercente : PropTypes.object.isRequired,
     readOnly : PropTypes.bool,
     servizi : PropTypes.array,

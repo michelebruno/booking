@@ -6,12 +6,13 @@ import Button from "react-bootstrap/Button"
 import AxiosConfirmModal from "./AxiosConfirmModal"
 
 import AsyncSelect from 'react-select/async'
-import MUIDataTable from "mui-datatables"
-import Helpers from "../_services/helpers"
 import { Tooltip, IconButton, Popover } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add'
+import MUIDataTable from "mui-datatables"
 
 import ProdottiAsyncSelect from "./ProdottiAsyncSelect"
+import Helpers from "../_services/helpers"
+import localization from "../_services/localization"
 
 const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) => {
 
@@ -168,6 +169,9 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                 }
             ]}
             options={{
+                textLabels: {
+                    ...localization.it.MUIDatatableLabels
+                },
                 elevation : 0
             }}
             />

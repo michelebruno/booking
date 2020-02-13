@@ -1,16 +1,17 @@
 /* eslint-disable react/prop-types */
 import React , { useState  } from 'react'
-import { Card , Button } from 'react-bootstrap'  
 import { Link } from 'react-router-dom'
+
+import { Card , Button } from 'react-bootstrap'  
+import MUIDataTable from 'mui-datatables'
+
 import AxiosConfirmModal from '../components/AxiosConfirmModal'
 import { prezziFormatter } from '../_services/helpers'
-
-import MUIDataTable from 'mui-datatables'
 import useServerSideCollection from '../_services/useServerSideCollection'
 
 const Deals = ( ) => {
 
-    const [ collection ,  , setFilter , serverSideOptions , reloadApi ] = useServerSideCollection( "/deals" )
+    const [ collection, serverSideOptions , { reload : reloadApi} ] = useServerSideCollection( "/deals" )
 
     const deals = collection && collection.data
 
@@ -23,7 +24,7 @@ const Deals = ( ) => {
                 <i className="fas fa-trash" />
             </Button>
 
-            <AxiosConfirmModal url={ props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
+            <AxiosConfirmModal url={ props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi() }} title="Conferma" >
                 Sei sicuro di cancellare questo servizio?
             </AxiosConfirmModal>
         </div>
@@ -68,7 +69,8 @@ const Deals = ( ) => {
             label : " ",
             name: "azioni",
             options : {
-                // eslint-disable-next-line react/display-name
+                download : false ,
+                print : false ,
                 customBodyRender : ( _cell, { rowIndex } ) =>{
                     const Buttons = ( ) => {
 
@@ -99,7 +101,7 @@ const Deals = ( ) => {
                         title="Deals" 
                         data={deals}
                         options={{
-                            ...serverSideOptions(setFilter, colonne),
+                            ...serverSideOptions(colonne),
                             elevation : 0, // il box-shadow
 
                             print : false,

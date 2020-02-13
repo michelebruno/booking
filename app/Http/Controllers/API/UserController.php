@@ -18,11 +18,15 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
         $this->authorize('viewAny', User::class);
 
-        return response( new UserResource( User::all()->whereIn('ruolo', ['admin', 'account_manager']) ) );
+        $per_page = $request->query("per_page", 10);
+
+        $query = User::whereIn('ruolo', ['admin', 'account_manager']);
+
+        return response( $query->paginate($per_page) );
 
     }
 

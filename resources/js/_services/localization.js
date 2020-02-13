@@ -3,7 +3,7 @@ const MUIDatatableLabels = {
     body: {
         noMatch: "Nessun risultato.",
         toolTip: "Ordina",
-        columnHeaderTooltip: column => `Ordina per ${column.label}`
+        columnHeaderTooltip: column => `Ordina per ${ column.label.toLowerCase(  )}`
     },
     pagination: {
         next: "Pagina successiva",
@@ -14,23 +14,23 @@ const MUIDatatableLabels = {
     toolbar: {
         search: "Cerca",
         downloadCsv: "Scarica CSV",
-        print: "Print",
+        print: "Stampa",
         viewColumns: "Colonne",
         filterTable: "Filtra risultati",
     },
     filter: {
         all: "Tutti",
-        title: "FILTERS",
-        reset: "RESET",
+        title: "Filtri",
+        reset: "Azzera",
     },
     viewColumns: {
         title: "Mostra colonne",
         titleAria: "Mostra/Nascondi colonne",
     },
     selectedRows: {
-        text: "row(s) selected",
-        delete: "Delete",
-        deleteAria: "Delete Selected Rows",
+        text: "righe selezionate",
+        delete: "Elimina",
+        deleteAria: "Elimina righe selezionate",
     },
 }
 

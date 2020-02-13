@@ -17,11 +17,15 @@ class EsercenteController extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Esercente::class);
+
+        $per_page = $request->query("per_page" , 10);
+
+        $query = Esercente::withTrashed();
         
-        return response( Esercente::withTrashed()->get() );
+        return response( $query->paginate($per_page) );
     }
     
     /**

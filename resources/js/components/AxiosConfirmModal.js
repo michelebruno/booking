@@ -60,7 +60,7 @@ const AxiosConfirmModal = ( { title, show , onHide , onSuccess , url, method , d
 AxiosConfirmModal.propTypes = {
     children : PropTypes.node,
     data : PropTypes.object,
-    method: PropTypes.oneOf(['get', 'post', 'delete', 'put']),
+    method: PropTypes.oneOf(['get', 'post', 'delete', 'put', 'patch']),
     onHide : PropTypes.func.isRequired,
     onSuccess: PropTypes.func,
     show: PropTypes.bool.isRequired,
