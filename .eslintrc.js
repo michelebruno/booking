@@ -12,7 +12,8 @@ module.exports = {
         "Atomics": "readonly",
         "axios": "readonly",
         "SharedArrayBuffer": "readonly",
-        "process" : "readonly"
+        "process" : "readonly",
+        "uppercase" : "readonly",
     },
     "parser" : "babel-eslint",
     "parserOptions": {

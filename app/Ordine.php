@@ -18,9 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  *      - CHIUSO se tutti i tickets sono stati usati
  *      - RIMBORSATO se è stato rimborsato // ? Anche solo parzialmente?
  * 
- * @property  \App\Cliente  $cliente
- * @property  \App\VoceOrdine[]  $voci
- * @property  \App\Transazione[]  $transazioni
  */
 class Ordine extends Model
 {
@@ -99,23 +96,23 @@ class Ordine extends Model
         });
     }
 
+    /**
+     * @deprecated  Use loadAll instead.
+     */
     public function completo()
     {
         return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
     }
 
-    public function statoElaborazionePagamento()
-    {
-        $this->stato = "Pagamento in elaborazione";
+    public function loadAll()
+    {        
+        return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
     }
 
-    // TODO self::creating()
-    public static function id()
-    {
+    public function scopeWithAll( $query )
+    {        
+        return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
 
-        $y = date('Y');
-        
-        return $y . "-" . sprintf('%08d', Setting::progressivo( 'ordini' , $y )->valore );
     }
 
 }

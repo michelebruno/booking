@@ -231,7 +231,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                         <Card.Body>
                             <div className="d-flex justify-content-between">
 
-                                <h2>Servizi</h2>
+                                <h2></h2>
                                 
                                 <span>
                                     { ! props.isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button>}
@@ -251,7 +251,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            { esercente.servizi && <ServiziTabella servizi={ esercente.servizi } url={ esercente._links.servizi } />}
+                            { esercente.servizi && <ServiziTabella title="Servizi" servizi={ esercente.servizi } url={ esercente._links.servizi } esercente={esercente} />}
                         </Card.Body>
                     </Card>
                 </Col>

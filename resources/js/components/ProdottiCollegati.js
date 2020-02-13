@@ -1,22 +1,58 @@
-import React , { useState } from "react"
+/* eslint-disable react/prop-types */
+import React , { useState , useEffect } from "react"
 
 import { Link } from "react-router-dom"
-import BootstrapTable from 'react-bootstrap-table-next'
 import Button from "react-bootstrap/Button"
 import AxiosConfirmModal from "./AxiosConfirmModal"
 
 import AsyncSelect from 'react-select/async'
+import MUIDataTable from "mui-datatables"
+import Helpers from "../_services/helpers"
+import { Tooltip, IconButton, Popover } from "@material-ui/core"
+import AddIcon from '@material-ui/icons/Add'
 
-const ProdottiCollegati = ( { servizio , deal , onSuccess, editable } ) => {
+import ProdottiAsyncSelect from "./ProdottiAsyncSelect"
+
+const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) => {
 
     const self = deal || servizio
 
-    const prodotti = deal ? deal.servizi : ( servizio ? servizio.deals : [] )
+    const [data, setData] = useState()
  
-    const [selectedDealToAdd, setSelectedDealToAdd] = useState("")
-    const [showAddAxios, setShowAddAxios] = useState(false)
+    const [ selectedDealToAdd , setSelectedDealToAdd ] = useState("")
 
-    return typeof prodotti !== 'undefined' && <div className="prodotti-collegati" >
+    const [ showAddAxios , setShowAddAxios ] = useState(false)
+
+    const isDeal = Boolean(deal)
+
+    const isServizio = Boolean(servizio)
+
+    const [ prodotti, setProdotti ] = useState()
+
+    useEffect(() => {
+
+        if ( ! prodotti ) {
+
+            if ( deal && deal.servizi ) {
+                setProdotti( deal.servizi )
+            } else if ( servizio && servizio.deals ) {
+                setProdotti( servizio.deals )
+            }
+
+            return;
+        }
+
+        console.log("Mappo")
+        const x = prodotti.map( prodotto => {
+            prodotto.tariffe.intero.importo = Helpers.prezzi.formatter(prodotto.tariffe.intero.importo )
+            prodotto.tariffe.intero.imponibile = Helpers.prezzi.formatter(prodotto.tariffe.intero.imponibile )
+            return prodotto
+        })
+        setData( x ) 
+    }, [ servizio , deal , prodotti ])
+ 
+
+    return typeof prodotti !== "undefined" && typeof data !== "undefined" ? <div className="prodotti-collegati" >
         
         { selectedDealToAdd && <AxiosConfirmModal 
             onSuccess={ d =>{ 
@@ -55,69 +91,88 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable } ) => {
             />
 
         </div>}
-        <BootstrapTable 
-            keyField="id"
-            noDataIndication="Non ci sono prodotti collegati."
-            data={prodotti}
-            columns={[
-                {
-                    text: 'Cod.',
-                    dataField: 'codice'
-                },
-                {
-                    text: 'Titolo',
-                    dataField: 'titolo'
-                },
-                {
-                    text: 'Esercente',
-                    dataField: 'esercente.nome',
-                    hidden: !deal
-                },
-                {
-                    text: 'Imponibile',
-                    dataField: 'tariffe.intero.imponibile',
-                    formatter : cell => cell ? "€ " + cell : ""
-                },
-                {
-                    text: 'Disponibiiltà',
-                    dataField: 'disponibili'
-                },
-                {
-                    text : "",
-                    dataField: "azioni",
-                    // eslint-disable-next-line react/display-name
-                    formatter : ( _cell, row ) =>{
-                        const Buttons = ( ) => {
-                            const [showModal, setShowModal] = useState(false)
 
-                            let url ;
-                            let state
-
-                            if ( deal && deal._links ) {
-                                url = deal._links.servizi + "/" + row.codice
-                                state = { servizio : row }
-                            } else if ( servizio && row._links ) {
-                                url = row._links.servizi + "/" + servizio.codice + "?from=servizio"
-                                state = { deal : row }
-                            }
+        <MUIDataTable 
+            title={title}
+            data={data}
+            columns={ [
+                {
+                    label: 'Cod.',
+                    name: 'codice'
+                },
+                {
+                    label: 'Titolo',
+                    name: 'titolo'
+                },
+                {
+                    label: 'Esercente',
+                    name: 'esercente.nome',
+                    options : {
+                        display :  isDeal,
+                        viewColumns :  isDeal,
+                    }
+                },
+                {
+                    label: 'Imponibile',
+                    name: 'tariffe.intero.imponibile',
+                    options : {
+                        display : ! isDeal
+                    }
+                },
+                {
+                    label: 'Importo',
+                    name: 'tariffe.intero.importo',
+                    options : {
+                        display : isDeal
+                    }
+                },
+                {
+                    label: 'Disponibiiltà',
+                    name: 'disponibili'
+                },
+                {
+                    label : " ",
+                    name: "azioni",
+                    options : {
+                        customBodyRender :  ( _cell, { rowIndex } ) =>{
                             
-                            return <>
-                                { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L&#39azione non è reversibile.</AxiosConfirmModal> }
-                                <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
-                                { editable && <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>}
-                            </>
+                            const row = prodotti[rowIndex]
 
+                            if ( ! row ) return;
+                            
+                            const Buttons = ( ) => {
+                                const [ showModal, setShowModal ] = useState(false)
+            
+                                let url ;
+                                let state
+            
+                                if ( isDeal && deal._links ) {
+                                    url = deal._links.servizi + "/" + row.codice
+                                    state = { servizio : row }
+                                } else if ( isServizio && row._links ) {
+                                    url = row._links.servizi + "/" + servizio.codice + "?from=servizio"
+                                    state = { deal : row }
+                                }
+                                
+                                return <>
+                                    { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L&#39azione non è reversibile.</AxiosConfirmModal> }
+                                    <Button as={ Link } to={ { pathname: row._links.self , state } } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
+                                    { editable && <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>}
+                                </>
+            
+                            }
+            
+                            return <Buttons />
                         }
-
-                        return <Buttons />
                     }
                 }
             ]}
-            hover
-            bordered={ false }
+            options={{
+                elevation : 0
+            }}
             />
 
-    </div> || ""
+    </div> : "No prodotti"
 }
 ProdottiCollegati.defaultProps = {
     editable: true

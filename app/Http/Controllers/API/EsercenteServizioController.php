@@ -21,11 +21,16 @@ class EsercenteServizioController extends Controller
     {
         $this->authorize('view', $esercente);
 
-        if ( $request->query('only_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->onlyTrashed()->get() );
+        $per_page = $request->query('per_page' , 10 );
 
-        if ( $request->query('with_trashed' , false ) ) return response( Servizio::fornitore($esercente->id)->withTrashed()->get() );
+        $query = Servizio::fornitore($esercente->id)->with('deals');
+
+        if ( $request->query('only_trashed' , false ) )
+            $query->onlyTrashed();
+        elseif ( $request->query('with_trashed' , false ) ) 
+            $query->withTrashed();
         
-        return response( Servizio::with('deals')->fornitore($esercente->id)->get() ) ; 
+        return response( $query->paginate( $per_page ) ); 
     }
     
 

@@ -5,7 +5,7 @@ import PreLoaderWidget from '../components/Loader'
 import { connect } from "react-redux"
 
 import EditableField from '../components/EditableField';
-import upperCase from 'upper-case';
+import uppercase from 'upper-case';
 import ProdottiCollegati from '../components/ProdottiCollegati'
 import TariffeTabella from '../components/TariffeTabella'
 
@@ -14,11 +14,15 @@ const ServiziScheda = ( { location , ...props} ) => {
     let initialServizio = false;
 
     if ( location && location.state && location.state.servizio ) {
+
         initialServizio = location.state.servizio
+
         initialServizio.willBeReloaded = true
     }
 
-    const [servizio, setServizio] = useState(initialServizio)
+    console.log(initialServizio)
+
+    const [ servizio, setServizio ] = useState(initialServizio)
 
     useEffect( () => {
 
@@ -26,11 +30,15 @@ const ServiziScheda = ( { location , ...props} ) => {
 
             const source = axios.CancelToken.source()
 
-            let url = ( servizio && servizio._links && servizio._links.self ) || location.pathname
+            const url = ( servizio && servizio._links && servizio._links.self ) || location.pathname
+
             axios.get(url, { cancelToken : source.token } )
                 .then( res => setServizio(res.data) )
                 .catch( error =>{
                     if ( axios.isCancel(error) ) return;
+                    if ( error.response ) {
+                        // TODO errore 404
+                    }
                 })
 
             return () => {
@@ -42,17 +50,21 @@ const ServiziScheda = ( { location , ...props} ) => {
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
 
     let disponibiliVariant = "success" 
+
     if ( disponibili < 10 ) disponibiliVariant = "danger"
 
-
+    
     let editableFieldProps = servizio && servizio._links && { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
   
-    if ( ( location && location.state && typeof location.state.esercente !== 'undefined' && location.state.esercente.id == props.currentUser.id ) || ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) ) {
+    if ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) {
         editableFieldProps.readOnly = true
     }
     
-    if ( servizio ) return(
-        <React.Fragment>
+    if ( ! servizio ) {
+        return <PreLoaderWidget />
+    }
+
+    return <>
             <Row>
                 <Col xs="12" xl="6" >
                     <Card>
@@ -66,15 +78,15 @@ const ServiziScheda = ( { location , ...props} ) => {
                                     { stato == "bozza" && <Badge variant="light" >Bozza</Badge>}
                                     </div>   
                                 <div className="h3">
-                                    <Badge variant={disponibiliVariant} className="h4 p-1 text-white align-items-center" >
+                                    <Badge variant={ disponibiliVariant } className="h4 p-1 text-white align-items-center" >
                                         Disponibili: { disponibili } 
                                     </Badge>
                                 </div  > 
                             </div>
 
                             <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
-                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps} textMutator={ str => upperCase(str) } />
-                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps} textMutator={ str => upperCase(str) } />
+                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps} textMutator={ str => uppercase(str) } />
+                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps} textMutator={ str => uppercase(str) } />
                             <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
                             <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
                                 <option value="pubblico">Pubblico</option>
@@ -90,7 +102,7 @@ const ServiziScheda = ( { location , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            { servizio._links && tariffe && <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} />}
+                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -98,13 +110,10 @@ const ServiziScheda = ( { location , ...props} ) => {
             </Row>
             <Card>
                 <Card.Body>
-                    <h2>Deas e esperienze collegate</h2>
-                    <ProdottiCollegati servizio={ servizio } onSuccess={ setServizio } />
+                    <ProdottiCollegati servizio={ servizio } onSuccess={ setServizio } title="Deas ed esperienze collegate" />
                 </Card.Body>
             </Card>
-        </React.Fragment>
-    )
-    else return <PreLoaderWidget />
+        </>
 }
 
 export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(ServiziScheda);

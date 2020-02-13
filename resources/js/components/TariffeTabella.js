@@ -9,14 +9,14 @@ import AddIcon from '@material-ui/icons/Add';
 import { IconButton } from "@material-ui/core";
 
 import Tooltip from "@material-ui/core/Tooltip";
-import { prezziFormatter } from "../_services/helpers";
+import Helpers from "../_services/helpers";
 import localization from "../_services/localization";
 
 const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable , reloadResource } ) => {
     
     const [tooltipAnchorEl, setTooltipAnchorEl] = useState()
 
-    const [data, setData] = useState()
+    const [data, setData] = useState(Object.values(tariffe))
     
     const deleteRows = ( rowsIndexes ) => {
         const promises = rowsIndexes.data.map( i => {
@@ -30,23 +30,9 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
             })
     }
 
-    useEffect(() => {
-        
-        const d = Object.values( tariffe ).map( t => {
-            let tariffa = t
-            tariffa.imponibile = typeof t.imponibile !== 'undefined' ? prezziFormatter(t.imponibile) : " - "
-            tariffa.importo = typeof t.importo !== 'undefined' ? prezziFormatter(t.importo) : " - "
-
-            return tariffa
-        })
-
-        setData(d)
-
-    }, [])
-
 
     return <>
-        {typeof tariffe !== 'undefined' && <MUIDataTable
+        { typeof data !== "undefined" && <MUIDataTable
             title="Tariffario"
             options={{
                 elevation : 0 ,
@@ -76,14 +62,16 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
                     name: 'imponibile',
                     label: 'Imponibile',
                     options : {
-                        display : ivaInclusa
+                        display : ivaInclusa,
+                        customBodyRender : v => Helpers.prezzi.formatter(v)
                     }
                 },
                 { 
                     name: 'importo',
                     label: 'Importo',
                     options : {
-                        display : !ivaInclusa
+                        display : !ivaInclusa,
+                        customBodyRender : v => Helpers.prezzi.formatter(v)
                     }
                 }
             ]}
@@ -97,7 +85,7 @@ TariffeTabella.propTypes = {
     ivaInclusa : PropTypes.bool,
     onSuccess : PropTypes.func,
     reloadResource : PropTypes.func,
-    tariffe : PropTypes.object,
+    tariffe : PropTypes.object.isRequired,
     url : PropTypes.string
 }
 

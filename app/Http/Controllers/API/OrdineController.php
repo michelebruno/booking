@@ -28,17 +28,17 @@ class OrdineController extends Controller
 
         $o_query = Ordine::orderBy('created_at', 'desc');
 
-        if ( $stato = $request->query('stato', false) ) {
+        switch ( strtoupper( $request->query('stato', false ) ) ) {
+            case 'PAGATI':
+                $o_query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
+                break;
 
-            switch ($stato) {
-                case 'PAGATI':
-                    $o_query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
-                    break;
-
-                case 'APERTI':
-                    $o_query->where("stato", Ordine::APERTO );
-                    break;
-            }
+            case 'APERTI':
+                $o_query->where("stato", Ordine::APERTO );
+                break;
+            default: 
+                abort(400, "Devi impostare un filtro.");
+                break;
         }
 
         return response( $o_query->with([ 'cliente' , 'voci', 'transazioni' ])->paginate($per_page) );
@@ -88,8 +88,6 @@ class OrdineController extends Controller
 
         $ordine = new Ordine();
 
-        $ordine->id = Ordine::id();
-
         $ordine->cliente()->associate($cliente);
 
         $ordine->save();
@@ -104,7 +102,7 @@ class OrdineController extends Controller
 
         $ordine->imposta = round( $ordine->voci()->sum( 'imposta' ) , 2 );
 
-        $ordine->stato = 'APERTO';
+        $ordine->stato = Ordine::APERTO;
 
         $ordine->data = date("Y-m-d");
 

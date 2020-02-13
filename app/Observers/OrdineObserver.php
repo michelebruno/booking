@@ -10,6 +10,20 @@ use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 
 class OrdineObserver
 {
+    
+    /**
+     * Handle the ordine "created" event.
+     *
+     * @param  \App\Ordine  $ordine
+     * @return void
+     */
+    public function creating(Ordine $ordine)
+    {        
+        $y = date('Y');
+        
+        return $ordine->id = $y . "-" . sprintf('%08d', Setting::progressivo( 'ordini' , $y )->valore );
+    }
+
     /**
      * Handle the ordine "created" event.
      *
@@ -19,8 +33,6 @@ class OrdineObserver
     public function created(Ordine $ordine)
     {        
         Setting::progressivo('ordini' , date('Y') )->increment('valore');
-
-
     }
 
     /**

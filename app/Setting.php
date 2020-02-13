@@ -18,9 +18,17 @@ class Setting extends Model
 
     public $incrementing = false;
     
-    public function scopeAutoloaded($query)
+
+    /**
+     * 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $true
+     * @return \Illuminate\Database\Eloquent\Model|static 
+     */
+    public function scopeAutoloaded($query, bool $true = true)
     {
-        return $query->where('autoload', true );
+        return $query->where('autoload', $true );
     }
 
     /**

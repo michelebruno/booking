@@ -17,6 +17,21 @@ const OrdiniTransazioniTabella = ( { transazioni } ) => {
         })
     });
 
+    const colonne = [
+        {
+            name: 'gateway', label: 'Gateway'
+        }, 
+        {
+            name: 'importo', label: 'Importo'
+        },
+        { 
+            name: 'transazione_id', label: 'ID transizione'
+        },
+        {
+            name: 'stato', label: "Stato"
+        }
+    ]
+
     return <MUIDataTable
         title="Transazioni"
         options={ {
@@ -33,20 +48,7 @@ const OrdiniTransazioniTabella = ( { transazioni } ) => {
             },
             textLabels : { ... localization.it.MUIDatatableLabels }  
         }}
-        columns={[
-            {
-                name: 'gateway', label: 'Gateway'
-            }, 
-            { 
-                name: 'importo', label: 'Importo'
-            },
-            { 
-                name: 'transazione_id', label: 'ID transizione'
-            },
-            {
-                name: 'stato', label: "Stato"
-            }
-        ]}
+        columns={ colonne }
         data={ data }
     />
 }

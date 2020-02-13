@@ -19,16 +19,45 @@ import RestoreIcon from '@material-ui/icons/Restore'
 
 const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
-    let initialDeal = { willBeReloaded : true }
+    let initialDeal 
+
+    if (location && location.stata && location.state.deal) {
+        initialDeal = location.state.deal
+        initialDeal.willBeReloaded = true
+    }
 
     const [deal, setDeal] = useState(initialDeal)
 
     const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
 
     const reloadDeal = () => {
-        let n = Object.assign( {}, deal, { willBeReloaded: true } )
-        return setDeal(n)
+        setDeal( d => {
+            d.willBeReloaded = true
+            return d
+        })
     }
+
+    useEffect( () => {
+
+        if ( ! deal || deal.willBeReloaded ) {
+
+            const source = axios.CancelToken.source()
+            
+            let url = ( ( deal && deal._links ) && deal._links.self ) || location.pathname
+
+            axios.get( url , { cancelToken : source.token })
+                .then( res => setDeal(res.data))
+                .catch( error => {
+                    if ( axios.isCancel(error) ) return;
+                    return error
+                } )
+
+            return () => {
+                source.cancel()
+            };
+        }
+
+    }, [deal] )
         
     const DeleteDealButton = props => {
         const [show, setShow] = useState(false)
@@ -85,28 +114,6 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         })
     }
 
-    useEffect( () => {
-
-        if ( ! deal || deal.willBeReloaded ) {
-
-            const source = axios.CancelToken.source()
-            
-            let url = ( ( deal && deal._links ) && deal._links.self ) || location.pathname
-
-            axios.get( url , { cancelToken : source.token })
-                .then( res => setDeal(res.data))
-                .catch( error => {
-                    if ( axios.isCancel(error) ) return;
-                    console.error(error)
-                    return error
-                } )
-
-            return () => {
-                source.cancel()
-            };
-        }
-
-    }, [deal] )
 
     if ( ! deal || ! deal.id ) return <PreLoaderWidget />
 
@@ -116,8 +123,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         editableFieldProps.readOnly = true
     }
     
-    return(
-        <React.Fragment>
+    return <>
             { deal && deal.id && <>
             <Row>
                 <Col xs="12" md="6">
@@ -134,7 +140,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
                             <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
                             <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps}  textMutator={ str => str.toUpperCase() } />
-                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps } onSuccess={ d => { setDeal(d); history.replace(d._links.self) }} textMutator={ str => upperCase(str) } />
+                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps } onSuccess={ d => { setDeal(d); history.replace(d._links.self) }} textMutator={ str => uppercase(str) } />
                             <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
                             <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
                                 <option value="pubblico">Pubblico</option>
@@ -150,7 +156,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
                 <Col xs="12" md="6">
                     <Card>
                         <Card.Body>
-                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ d => setDeal(d) } editable={ !deal.cestinato } reloadResource={reloadDeal} /> 
+                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ setDeal } editable={ !deal.cestinato } reloadResource={reloadDeal} /> 
                         </Card.Body>
                     </Card>
                 </Col>
@@ -158,11 +164,10 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
             <Card>
                 <Card.Body>
                     <h2>Servizi collegati</h2>
-                    { typeof deal.servizi !== 'undefined' && <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={!deal.cestinato} />}
+                    <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={ !deal.cestinato} /> 
                 </Card.Body>
             </Card></>}
-        </React.Fragment>
-    )
+        </>
 }
 
 export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } } , { setTopbarButtons, unsetTopbarButtons } )( DealsScheda );
