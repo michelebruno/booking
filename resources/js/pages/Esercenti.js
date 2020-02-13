@@ -82,7 +82,8 @@ const Esercenti = ( props ) => {
                                 data={esercenti}
                                 columns={columns}
                                 options={{
-                                    ...serverSideOptions(columns)
+                                    ...serverSideOptions(columns),
+                                    selectableRows : "none"
                                 }}
                                 /> }
                         </Card.Body>

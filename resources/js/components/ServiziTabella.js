@@ -10,11 +10,13 @@ import AxiosConfirmModal from '../components/AxiosConfirmModal';
 import Helpers from "../_services/helpers";
 import useServerSideCollection from "../_services/useServerSideCollection";
 
-const ServiziTabella = ( {  title, esercente, editable, readOnly , url  } ) => {
+const ServiziTabella = ( {  title, esercente, editable, url  , ...props } ) => {
     
     const [ collection, serverSideOptions , { reload : reloadApi } ] = useServerSideCollection( url )
 
     const servizi = collection && collection.data
+
+    const readOnly = typeof props.readOnly === "undefined" ? ! editable : props.readOnly
 
     const DeleteServizioButton = props => {
 
@@ -29,6 +31,7 @@ const ServiziTabella = ( {  title, esercente, editable, readOnly , url  } ) => {
             <AxiosConfirmModal url={ props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
                 Sei sicuro di cancellare questo servizio?
             </AxiosConfirmModal>
+
         </div>
     }
     
@@ -59,76 +62,74 @@ const ServiziTabella = ( {  title, esercente, editable, readOnly , url  } ) => {
         </>
     }
 
-    const columns = [
-        {
-            name: 'stato',
-            label : " ",
-            options : {
-                download : false,
-                customBodyRender :  ( _cell , row ) => {
-                    if ( row.cestinato ) return <i className="fas fa-circle text-dark fa-lg" title="Cestinato" />
-    
-                    switch (row.stato) {
-                        case "pubblico":
-                            return <i className="fas fa-circle text-success fa-lg" title="Pubblico" />
-                            // eslint-disable-next-line no-unreachable
-                            break;
-                    
-                        case "privato":
-                            return <i className="fas fa-circle text-secondary fa-lg" title="Privato" />
-                            // eslint-disable-next-line no-unreachable
-                            break;
+    let columns
+    return <MUIDataTable 
+        title={title}
+        data={ servizi }
+        columns={ columns = [
+            {
+                name: 'stato',
+                label : " ",
+                options : {
+                    download : false,
+                    customBodyRender :  ( _cell , row ) => {
+                        if ( row.cestinato ) return <i className="fas fa-circle text-dark fa-lg" title="Cestinato" />
+        
+                        switch (row.stato) {
+                            case "pubblico":
+                                return <i className="fas fa-circle text-success fa-lg" title="Pubblico" />
+                                // eslint-disable-next-line no-unreachable
+                                break;
+                        
+                            case "privato":
+                                return <i className="fas fa-circle text-secondary fa-lg" title="Privato" />
+                                // eslint-disable-next-line no-unreachable
+                                break;
+                        }
                     }
+                } 
+            },
+            {
+                name : 'codice',
+                label : 'Cod.'
+            },
+            {
+                name : 'titolo',
+                label : 'Titolo'
+            },
+            {
+                name : 'tariffe.intero.imponibile',
+                label : 'Imponibile (prezzo intero)',
+                options : {
+                    customBodyRender : v => Helpers.prezzi.formatter(v)
                 }
-            } 
-        },
-        {
-            name : 'codice',
-            label : 'Cod.'
-        },
-        {
-            name : 'titolo',
-            label : 'Titolo'
-        },
-        {
-            name : 'tariffe.intero.imponibile',
-            label : 'Imponibile (prezzo intero)',
-            options : {
-                customBodyRender : v => Helpers.prezzi.formatter(v)
+            },
+            {
+                name : 'iva',
+                label : 'IVA',
+                options : {
+                    customBodyRender : iva => iva + "%"
+                }
+            },
+            {
+                name : 'disponibili',
+                label : 'Disponibilità',
+            },
+            {
+                name : 'modifica',
+                label : ' ',
+                options : {
+                    customBodyRender : actionButtons
+                }
             }
-        },
-        {
-            name : 'iva',
-            label : 'IVA',
-            options : {
-                customBodyRender : iva => iva + "%"
-            }
-        },
-        {
-            name : 'disponibili',
-            label : 'Disponibilità',
-        },
-        {
-            name : 'modifica',
-            label : ' ',
-            options : {
-                customBodyRender : actionButtons
-            }
-        }
-    ]
-    return (
-    <> 
-        <MUIDataTable 
-            title={title}
-            data={ servizi }
-            columns={ columns }
-            options={{
-                ...serverSideOptions( columns ), 
-                print : false,
-                selectableRows : editable ? "multiple" : "none"
-            }}
-            />
-        </>)
+        ] }
+        options={{
+            ...serverSideOptions( columns ), 
+            print : false,
+            selectableRows : editable ? "multiple" : "none"
+        }}
+        />
+      
 }
 ServiziTabella.propTypes = {
     className : PropTypes.string,

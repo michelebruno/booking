@@ -73,7 +73,7 @@ class EsercenteServizioController extends Controller
         // TODO impostare 
         $servizio->tariffe = $request->input('tariffe');
 
-        return response($servizio->load('deals') , 201);
+        return response($servizio->load([ 'deals' , 'esercente']) , 201);
     }
 
     /**
@@ -89,7 +89,7 @@ class EsercenteServizioController extends Controller
 
         $this->authorize('view' , $servizio) ;
 
-        return response( $servizio->load('deals') );
+        return response( $servizio->load([ 'deals' , 'esercente']) );
     }
 
     /**

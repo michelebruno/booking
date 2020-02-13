@@ -28,6 +28,10 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
     const [deal, setDeal] = useState(initialDeal)
 
+    const isAdmin = [ 'admin' , 'account_manager' ].indexOf(props.currentUser.ruolo) !== -1
+
+    const editable =  isAdmin
+
     const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
 
     const reloadDeal = () => {
@@ -99,7 +103,8 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
     }
 
     useEffect( () => {
-        props.setTopbarButtons( TastiDeal )
+        
+        isAdmin && props.setTopbarButtons( TastiDeal )
         return () => {
             props.unsetTopbarButtons()
         };
@@ -123,51 +128,52 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         editableFieldProps.readOnly = true
     }
     
-    return <>
-            { deal && deal.id && <>
-            <Row>
-                <Col xs="12" md="6">
-                    <Card>
-                        <Card.Body>
+    return deal && deal.id && <>
+        <Row>
+            <Col xs="12" md="6">
+                <Card>
+                    <Card.Body>
 
-                            <div>
-                                <span className="h1 text-red">{titolo}</span>   
-                                <span className="h3">
-                                    { !deal.cestinato && <Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }</Badge>}
-                                    { deal.cestinato && <Badge variant="dark" className="h3 ml-2 p-1 text-white" >Cestinato</Badge>}
-                                </span> 
-                            </div>
+                        <div>
+                            <span className="h1 text-red">{titolo}</span>   
+                            <span className="h3">
+                                { !deal.cestinato && <Badge variant="success" className="h3 ml-2 p-1 text-white" >Disponibilità: { disponibili }</Badge>}
+                                { deal.cestinato && <Badge variant="dark" className="h3 ml-2 p-1 text-white" >Cestinato</Badge>}
+                            </span> 
+                        </div>
 
-                            <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
-                            <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps}  textMutator={ str => str.toUpperCase() } />
-                            <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps } onSuccess={ d => { setDeal(d); history.replace(d._links.self) }} textMutator={ str => uppercase(str) } />
-                            <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
-                            <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
-                                <option value="pubblico">Pubblico</option>
-                                <option value="privato">Privato</option>
-                                <option value="bozza">Bozza</option>
-                            </EditableField>
+                        <EditableField name="titolo" label="Titolo" initialValue={titolo} { ...editableFieldProps} />
+                        <EditableField name="codice" label="Codice" initialValue={codice} { ...editableFieldProps}  textMutator={ str => str.toUpperCase() } />
+                        <EditableField name="iva" label="IVA" initialValue={iva} append="%" type="number" step="1" max="100" min="0" { ...editableFieldProps } onSuccess={ d => { setDeal(d); history.replace(d._links.self) }} textMutator={ str => uppercase(str) } />
+                        <EditableField as="textarea" name="descrizione" label="Descrizione" initialValue={descrizione} { ...editableFieldProps }  />
+                        <EditableField as="select" name="stato" label="Stato" initialValue={ stato } { ...editableFieldProps }  >
+                            <option value="pubblico">Pubblico</option>
+                            <option value="privato">Privato</option>
+                            <option value="bozza">Bozza</option>
+                        </EditableField>
 
-                            <EditableField type="number" name="disponibili" label="Disponibili" initialValue={disponibili} { ...editableFieldProps}  />
+                        <EditableField type="number" name="disponibili" label="Disponibili" initialValue={disponibili} { ...editableFieldProps}  />
 
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col xs="12" md="6">
-                    <Card>
-                        <Card.Body>
-                            <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ setDeal } editable={ !deal.cestinato } reloadResource={reloadDeal} /> 
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-            <Card>
-                <Card.Body>
-                    <h2>Servizi collegati</h2>
-                    <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={ !deal.cestinato} /> 
-                </Card.Body>
-            </Card></>}
-        </>
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col xs="12" md="6">
+                <Card>
+                    <Card.Body>
+                        <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ setDeal } editable={ ! deal.cestinato && props.currentUser.ruolo !== "esercente" } reloadResource={reloadDeal} /> 
+                    </Card.Body>
+                </Card>
+            </Col>
+        </Row>
+        { props.currentUser.ruolo !== "esercente" && <Card>
+            <Card.Body>
+                <h2>Servizi collegati</h2>
+                <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={ !deal.cestinato} /> 
+            </Card.Body>
+        </Card>}
+    </>
 }
 
-export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } } , { setTopbarButtons, unsetTopbarButtons } )( DealsScheda );
+export default connect( state => { 
+    return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } 
+} , { setTopbarButtons, unsetTopbarButtons } )( DealsScheda );

@@ -37,12 +37,7 @@ class Servizio extends Prodotto
 
     public function esercente()
     {
-        return $this->belongsTo('App\Esercente', 'esercente_id');
-    }
-
-    public function getEsercenteAttribute()
-    {
-        return $this->esercente()->withTrashed()->first();
+        return $this->belongsTo('App\Esercente', 'esercente_id')->withTrashed();
     }
 
     public function setEsercenteAttribute($value)

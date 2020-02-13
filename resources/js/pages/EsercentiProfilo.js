@@ -23,7 +23,7 @@ import ServiziTabella from '../components/ServiziTabella';
 const TabellaConvalide = React.lazy( () => import( '../components/TabellaConvalide' ) );
 const ServizioForm = React.lazy( () => import( '../components/ServizioForm' ) );
 
-const EsercentiProfilo = ( { location , match , ...props } ) => {
+const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
 
     const [ tabAttivitàAperta, setTabAttivitàAperta ] = useState("convalide");
 
@@ -57,7 +57,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                             <i className="fas fa-edit" /><span > Modifica</span> 
                         </Button>
                     }
-                    { ! props.isCurrentUser && <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> }
+                    { ! isCurrentUser && <Form.Check type="switch" className="d-inline-block mx-3" name="abilitato" id="abilitato" label={ esercente.abilitato ?  "Abilitato" : "Disabilitato" } onChange={ deleteProfile } checked={ esercente.abilitato } /> }
                 </Form>
                 
                  
@@ -133,7 +133,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
             <div className="d-flex justify-content-between">
 
                 <h1>{ esercente.nome } { ! esercente.abilitato && <Badge variant="primary" pill >Disabilitato</Badge>} </h1>
-                { props.isCurrentUser && <span className="d-md-none align-self-center">
+                { isCurrentUser && <span className="d-md-none align-self-center">
                     <Button as={Link} to={ { pathname : '/account/modifica' , state: { esercente } } } color="primary" size="sm" >
                         <i className="mdi"></i>
                         Modifica profilo
@@ -141,7 +141,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                 </span> }
             </div>
                 <div className="w-100" />
-                { ! props.isCurrentUser && <span className="d-md-none m-2">
+                { ! isCurrentUser && <span className="d-md-none m-2">
                     <TastiProfiloEsercente />
                 </span>}
             
@@ -200,12 +200,12 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                         </Card.Body>
                     </Card>
                 </Col>
-                { ! props.isCurrentUser && esercente.note && <Col xs="6" lg="4" xl="3">
+                { ! isCurrentUser && esercente.note && <Col xs="6" lg="4" xl="3">
                     <Card>
                         <Card.Body>
                             <Card.Title>
                                 <h4 className="d-inline-block">Note</h4>
-                                <small className="text-muted"> Non visibile all'esercente</small>
+                                <small className="text-muted"> Non visibile all&apos;esercente</small>
                             </Card.Title>
                             <Card.Text>
                                 <EditableField name="note" noLabel initialValue={ esercente.note } url={esercente._links.self + "/note" } method="patch" as="textarea" />
@@ -234,7 +234,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                                 <h2></h2>
                                 
                                 <span>
-                                    { ! props.isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button>}
+                                    { ! isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button>}
                                 </span>
 
                                 { servizioModal !== false && <Modal show={true} onHide={ () => setServizioModal(false)} >
@@ -251,7 +251,7 @@ const EsercentiProfilo = ( { location , match , ...props } ) => {
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            { esercente.servizi && <ServiziTabella title="Servizi" servizi={ esercente.servizi } url={ esercente._links.servizi } esercente={esercente} />}
+                            { esercente.servizi && <ServiziTabella title="Servizi" servizi={ esercente.servizi } url={ esercente._links.servizi } esercente={esercente} editable={ ! isCurrentUser } />}
                         </Card.Body>
                     </Card>
                 </Col>

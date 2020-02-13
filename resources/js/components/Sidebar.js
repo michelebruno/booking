@@ -18,7 +18,7 @@ const SideNavContent = ( { user } ) => {
                         <span>Dashboard </span>
                     </Link>
                  </li>
-                <li>
+                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/deals" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-shopping-cart "></i>
                         <span>Prodotti</span>
@@ -33,13 +33,13 @@ const SideNavContent = ( { user } ) => {
                             <Link to="/deals/crea" className="side-nav-link-ref">Crea deal</Link>
                         </li>
                     </ul>
-                </li>
-                <li>
+                </li>}
+                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
                     <Link to="/ordini" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-shopping "></i>
                         <span>Ordini</span>
                     </Link>
-                </li>{/*
+                </li>}{/*
                 <li>
                     <Link to="/tickets" className="waves-effect side-nav-link-ref" >
                         <i className="fas fa-ticket-alt "></i>

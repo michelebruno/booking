@@ -1,15 +1,18 @@
 /* eslint-disable react/prop-types */
 import React , { useState , useEffect } from "react"
-
 import { Link } from "react-router-dom"
-import Button from "react-bootstrap/Button"
-import AxiosConfirmModal from "./AxiosConfirmModal"
 
+import MUIDataTable from "mui-datatables"
 import AsyncSelect from 'react-select/async'
 import { Tooltip, IconButton, Popover } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add'
-import MUIDataTable from "mui-datatables"
+import LinkOffIcon from '@material-ui/icons/LinkOff'
+import EditIcon from '@material-ui/icons/Edit'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import Button from "@material-ui/core/Button"
 
+
+import AxiosConfirmModal from "./AxiosConfirmModal"
 import ProdottiAsyncSelect from "./ProdottiAsyncSelect"
 import Helpers from "../_services/helpers"
 import localization from "../_services/localization"
@@ -24,9 +27,9 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
 
     const [ showAddAxios , setShowAddAxios ] = useState(false)
 
-    const isDeal = Boolean(deal)
+    const fromDeal = Boolean(deal)
 
-    const isServizio = Boolean(servizio)
+    const fromServizio = Boolean(servizio)
 
     const [ prodotti, setProdotti ] = useState()
 
@@ -43,7 +46,6 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
             return;
         }
 
-        console.log("Mappo")
         const x = prodotti.map( prodotto => {
             prodotto.tariffe.intero.importo = Helpers.prezzi.formatter(prodotto.tariffe.intero.importo )
             prodotto.tariffe.intero.imponibile = Helpers.prezzi.formatter(prodotto.tariffe.intero.imponibile )
@@ -109,22 +111,22 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                     label: 'Esercente',
                     name: 'esercente.nome',
                     options : {
-                        display :  isDeal,
-                        viewColumns :  isDeal,
+                        display : fromDeal,
+                        viewColumns : fromDeal,
                     }
                 },
                 {
                     label: 'Imponibile',
                     name: 'tariffe.intero.imponibile',
                     options : {
-                        display : ! isDeal
+                        display : ! fromDeal
                     }
                 },
                 {
                     label: 'Importo',
                     name: 'tariffe.intero.importo',
                     options : {
-                        display : isDeal
+                        display : fromDeal
                     }
                 },
                 {
@@ -134,7 +136,8 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                 {
                     label : " ",
                     name: "azioni",
-                    options : {
+                    options : { 
+                        download : false,
                         customBodyRender :  ( _cell, { rowIndex } ) =>{
                             
                             const row = prodotti[rowIndex]
@@ -147,18 +150,22 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                                 let url ;
                                 let state
             
-                                if ( isDeal && deal._links ) {
+                                if ( fromDeal && deal._links ) {
                                     url = deal._links.servizi + "/" + row.codice
                                     state = { servizio : row }
-                                } else if ( isServizio && row._links ) {
+                                } else if ( fromServizio && row._links ) {
                                     url = row._links.servizi + "/" + servizio.codice + "?from=servizio"
                                     state = { deal : row }
                                 }
                                 
                                 return <>
-                                    { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L&#39azione non è reversibile.</AxiosConfirmModal> }
-                                    <Button as={ Link } to={ { pathname: row._links.self , state } } variant="primary" className="mr-1" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit" /></Button>
-                                    { editable && <Button onClick={ () => setShowModal(true)} variant="danger" className="mr-1" title="Scollega" ><i className="fas fa-unlink" /></Button>}
+                                    { <AxiosConfirmModal method="delete" show={showModal} url={ url } title="Sicuro di voler scollegare questi prodotti?" onSuccess={ onSuccess } onHide={ () => setShowModal(false)} >L&#39;azione non è reversibile.</AxiosConfirmModal> }
+
+                                    <IconButton component={ Link } to={ { pathname: row._links.self , state } } variant="contained" color="primary" className="mr-1" title="Accedi alla pagina del prodotto" >
+                                        { editable ? <EditIcon /> : <VisibilityIcon /> }
+                                    </IconButton>
+
+                                    { editable && <IconButton onClick={ () => setShowModal(true) } variant="" className="mr-1" title="Scollega" ><LinkOffIcon /></IconButton>}
                                 </>
             
                             }
@@ -169,9 +176,11 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                 }
             ]}
             options={{
+                print : false,
                 textLabels: {
                     ...localization.it.MUIDatatableLabels
                 },
+                selectableRows : editable ? "multiple" : "none",
                 elevation : 0
             }}
             />

@@ -110,6 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [];
     }
+
     public function getAbilitatoAttribute()
     {
         return $this->attributes['abilitato'] = ! $this->trashed();
@@ -118,6 +119,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function _getPrefixedIndirizzo($prefix)
     {
         $indirizzo = [];
+        
         $meta = $this->meta;
         
         if ( Arr::exists( $this->meta , $prefix . 'via' ) ) {

@@ -24,7 +24,6 @@ const Clienti = () => {
                         label : "Email",
                         options :{ 
                             customBodyRender : ( cell , { rowIndex } ) => {
-                                console.log(columns)
                                 const row = clienti[rowIndex]
                                 return <Link to={ row._links.self }>{ cell }</Link>
                             },
@@ -32,7 +31,8 @@ const Clienti = () => {
                     }
                 ] }
                 options={{
-                    ...serverSideOptions( columns )
+                    ...serverSideOptions( columns ),
+                    selectableRows : "none"
                 }}
                 />}
         </Card.Body>

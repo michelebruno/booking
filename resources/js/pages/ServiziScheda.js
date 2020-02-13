@@ -20,9 +20,9 @@ const ServiziScheda = ( { location , ...props} ) => {
         initialServizio.willBeReloaded = true
     }
 
-    console.log(initialServizio)
-
     const [ servizio, setServizio ] = useState(initialServizio)
+
+    const editable = typeof servizio.esercente !== 'undefined' ? ( servizio.esercente.id == props.currentUser.id  ? false : true ) : undefined ; 
 
     useEffect( () => {
 
@@ -53,18 +53,10 @@ const ServiziScheda = ( { location , ...props} ) => {
 
     if ( disponibili < 10 ) disponibiliVariant = "danger"
 
-    
-    let editableFieldProps = servizio && servizio._links && { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) }
-  
-    if ( typeof servizio.esercente !== 'undefined' && servizio.esercente.id == props.currentUser.id ) {
-        editableFieldProps.readOnly = true
-    }
-    
-    if ( ! servizio ) {
-        return <PreLoaderWidget />
-    }
 
-    return <>
+    let editableFieldProps = (servizio && servizio._links) && { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) , readOnly : ! editable }
+
+    return typeof editable === "undefined" ? <PreLoaderWidget /> : <>
             <Row>
                 <Col xs="12" xl="6" >
                     <Card>
@@ -102,7 +94,7 @@ const ServiziScheda = ( { location , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} />
+                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} editable={editable} />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -110,7 +102,7 @@ const ServiziScheda = ( { location , ...props} ) => {
             </Row>
             <Card>
                 <Card.Body>
-                    <ProdottiCollegati servizio={ servizio } onSuccess={ setServizio } title="Deas ed esperienze collegate" />
+                    <ProdottiCollegati servizio={ servizio } onSuccess={ setServizio } title="Deas ed esperienze collegate" editable={editable} />
                 </Card.Body>
             </Card>
         </>

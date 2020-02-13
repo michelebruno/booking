@@ -1,4 +1,4 @@
-import React , { useState, useEffect } from "react"
+import React , { useState } from "react"
 import PropTypes from 'prop-types'
 
 import NuovaTariffaPopover from "./NuovaTariffaPopover"
@@ -41,13 +41,15 @@ const TariffeTabella = ( { tariffe, url , onSuccess , ivaInclusa , iva, editable
                 pagination : false,
                 selectableRows : editable ? 'multiple' : 'none',
                 isRowSelectable : i => data[i].slug !== "intero",
-                customToolbar : () => <>
+                customToolbar : () => editable ? <>
 
-                    <Tooltip title="Aggiungi una tariffa" ><IconButton onClick={ ( e ) => setTooltipAnchorEl(e.currentTarget) } ><AddIcon /></IconButton></Tooltip>
+                    <Tooltip title="Aggiungi una tariffa" >
+                        <IconButton onClick={ ( e ) => setTooltipAnchorEl(e.currentTarget) } ><AddIcon /></IconButton>
+                    </Tooltip>
 
                     { url && iva && <NuovaTariffaPopover url={url} anchorElement={ tooltipAnchorEl } onClose={ ( ) => setTooltipAnchorEl(null) } onSuccess={ onSuccess } ivaInclusa={ivaInclusa} tariffe={tariffe} />}
 
-                </>,
+                </> : undefined,
                 onRowsDelete : deleteRows,
                 textLabels : { ... localization.it.MUIDatatableLabels }
 
