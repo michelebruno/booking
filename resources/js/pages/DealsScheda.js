@@ -30,8 +30,6 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
 
     const isAdmin = [ 'admin' , 'account_manager' ].indexOf(props.currentUser.ruolo) !== -1
 
-    const editable =  isAdmin
-
     const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
 
     const reloadDeal = () => {

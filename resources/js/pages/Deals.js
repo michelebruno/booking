@@ -11,7 +11,7 @@ import useServerSideCollection from '../_services/useServerSideCollection'
 
 const Deals = ( ) => {
 
-    const [ collection, serverSideOptions , { reload : reloadApi} ] = useServerSideCollection( "/deals" )
+    const [ collection, serverSideOptions , { reload : reloadApi , getSordDirectionByName } ] = useServerSideCollection( "/deals" )
 
     const deals = collection && collection.data
 
@@ -45,54 +45,8 @@ const Deals = ( ) => {
         </div>
     }
 
-    const colonne = [
-        {
-            label: 'Cod.',
-            name: 'codice'
-        },
-        {
-            label: 'Titolo',
-            name: 'titolo'
-        },
-        {
-            label: 'Importo',
-            name: 'tariffe.intero.importo',
-            options: {
-                customBodyRender : ( cell ) => cell ? prezziFormatter(cell) : "-"
-            }
-        },
-        {
-            label: 'Disponibiiltà',
-            name: 'disponibili'
-        },
-        {
-            label : " ",
-            name: "azioni",
-            options : {
-                download : false ,
-                print : false ,
-                customBodyRender : ( _cell, { rowIndex } ) =>{
-                    const Buttons = ( ) => {
-
-                        const row = deals[rowIndex]
-
-                        let url = row._links.self
-                        let state = { deal : row }
-
-                        
-                        return <>
-                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1 d-md-inline-block" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit"/></Button>
-                            { row.cestinato ? <RestoreServizioButton url={url} /> : <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" /> }
-                        </>
-
-                    }
-
-                    return <Buttons />
-                }
-            }
-        }
-    ]
-
+    let colonne
+    
     return(
         <React.Fragment>
             <Card>
@@ -100,14 +54,76 @@ const Deals = ( ) => {
                     { deals && <MUIDataTable
                         title="Deals" 
                         data={deals}
+                        columns={ colonne = [
+                            {
+                                label: 'Cod.',
+                                name: 'codice',
+                                options : {
+                                    filter : false,
+                                    sortDirection : getSordDirectionByName("codice")
+                                }
+                            },
+                            {
+                                label: 'Titolo',
+                                name: 'titolo',
+                                options : {
+                                    filter : false,
+                                    sortDirection : getSordDirectionByName("titolo")
+                                }
+                            },
+                            {
+                                label: 'Importo',
+                                name: 'tariffe.intero.importo',
+                                options: {
+                                    customBodyRender : ( cell ) => cell ? prezziFormatter(cell) : "-",
+                                    sort : false,
+                                }
+                            },
+                            {
+                                label: 'Imponibile',
+                                name: 'tariffe.intero.imponibile',
+                                options: {
+                                    customBodyRender : ( cell ) => cell ? prezziFormatter(cell) : "-",
+                                    sort : false,
+                                    display : false,
+                                }
+                            },
+                            {
+                                label: 'Disponibiiltà',
+                                name: 'disponibili', 
+                                options: {
+                                    sortDirection : getSordDirectionByName("disponibili")
+                                }
+                            },
+                            {
+                                label : " ",
+                                name: "azioni",
+                                options : {
+                                    download : false ,
+                                    print : false ,
+                                    filter : false,
+                                    customBodyRender : ( _cell, { rowIndex } ) =>{
+                                        const row = deals[rowIndex]
+                    
+                                        let url = row._links.self
+                                        let state = { deal : row }
+                    
+                                        return <>
+                                            <Button as={ Link } to={ { pathname: row._links.self , state: state} } variant="primary" className="mr-1 d-md-inline-block" title="Accedi alla pagina del prodotto" ><i className="fas fa-edit"/></Button>
+                                            { row.cestinato ? <RestoreServizioButton url={url} /> : <DeleteServizioButton url={ row._links.self } className="d-none d-md-inline-block" /> }
+                                        </>
+                    
+                                    }
+                                }
+                            }
+                        ] }
                         options={{
                             ...serverSideOptions(colonne),
                             elevation : 0, // il box-shadow
-
+                            filter : false,
                             print : false,
                             selectableRows: 'none',
                         }}
-                        columns={ colonne }
                         />}
                 </Card.Body>
             </Card>

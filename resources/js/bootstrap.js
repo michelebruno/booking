@@ -17,7 +17,6 @@ let axios = require('axios');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 axios.defaults.baseURL = "/api/v1"
 axios.defaults.responseType = "json"
-axios.defaults.timeout = 3000
 
 window.axios = axios
 window.axios.noInterceptors = axios

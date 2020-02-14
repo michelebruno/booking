@@ -17,7 +17,7 @@ import PreLoaderWidget from "../components/Loader"
 
 const Utenti = ( props ) => {
 
-    const [ collection, serverSideOptions, { reload } ] = useServerSideCollection( "/users" )
+    const [ collection, serverSideOptions, { reload , getSordDirectionByName } ] = useServerSideCollection( "/users" )
 
     const utenti = collection && collection.data
 
@@ -26,22 +26,33 @@ const Utenti = ( props ) => {
     const columns = [ 
         {
             name: 'email',
-            label : 'Email'
+            label : 'Email',
+            options : {
+                sortDirection : getSordDirectionByName('email')
+            }
         },
         {
             name: 'username',
             label: 'Username',
+            options : {
+                sortDirection : getSordDirectionByName('username')
+            },
         },
         {
             name: 'ruolo',
             label: 'Tipo',
-            classes : "d-none d-lg-table-cell",
-            headerClasses : "d-none d-lg-table-cell"
+            options : {
+                sortDirection : getSordDirectionByName('ruolo')
+            },
         },
         {
             name: 'meta',
             label: ' ',
             options : {
+                sort : false,
+                filter : false ,
+                download : false, 
+                print : false,
                 customBodyRenderer : ( _cell , { rowIndex } ) => {
                     
                     const row = utenti[rowIndex]

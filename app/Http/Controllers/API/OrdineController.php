@@ -22,26 +22,35 @@ class OrdineController extends Controller
      */
     public function index( Request $request )
     {
-        $request->validate(['per_page' => 'int']);
+        $request->validate([
+            'per_page' => 'int',
+            'order' => 'in:asc,desc',
+            'order_by' => 'in:created_at,updated_at,id,importo,imponibile,email'
+        ]);
 
         $per_page = $request->query('per_page', 10);
 
-        $o_query = Ordine::orderBy('created_at', 'desc');
+        $query = Ordine::with([ 'cliente' , 'voci', 'transazioni' ]);
+
+        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
 
         switch ( strtoupper( $request->query('stato', false ) ) ) {
             case 'PAGATI':
-                $o_query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
+                $query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
                 break;
 
             case 'APERTI':
-                $o_query->where("stato", Ordine::APERTO );
+                $query->where("stato", Ordine::APERTO );
                 break;
             default: 
-                abort(400, "Devi impostare un filtro.");
                 break;
         }
 
-        return response( $o_query->with([ 'cliente' , 'voci', 'transazioni' ])->paginate($per_page) );
+        if ( !$per_page ) {
+            return response( $query->get() );
+        }
+
+        return response( $query->paginate($per_page) );
 
     }
 

@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/api/v1/auth', function ()
 {
     $user = request()->user();
-    return response()->json($user->makeVisible(['api_token']));
-})->middleware('auth');
 
+    return response()->json($user->makeVisible(['api_token']));
+
+})->middleware('auth');
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', function () { 

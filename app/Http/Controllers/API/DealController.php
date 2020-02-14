@@ -19,18 +19,23 @@ class DealController extends Controller
      */
     public function index( Request $request )
     {
-
-        $response = null; 
+        $request->validate([
+            'per_page' => 'int',
+            'order' => 'in:asc,desc',
+            'order_by' => 'in:created_at,updated_at,codice,titolo,disponibili'
+        ]);
 
         $per_page = (int) $request->query('per_page', 10);
 
-        $query = false;
+        $query =  Deal::with( [ 'servizi.esercente' ] );
+
+        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
 
         if ( $s = $request->query('s', false ) ) {
 
             $s = urldecode($s);
 
-            $query = Deal::where('titolo', 'LIKE', '%' . $s . '%' )->orWhere( 'codice', 'LIKE', '%' . $s . '%' );
+            $query = $query->where('titolo', 'LIKE', '%' . $s . '%' )->orWhere( 'codice', 'LIKE', '%' . $s . '%' );
 
         } 
         
@@ -47,14 +52,9 @@ class DealController extends Controller
             });
 
         } 
+ 
 
-        if ( $query ) { 
-
-            $response = $query->paginate($per_page); 
-
-        } else $response = Deal::with( [ 'servizi.esercente' ] )->paginate($per_page);
-
-        return response( $response );
+        return response( $query->paginate($per_page) );
     }
 
     /**

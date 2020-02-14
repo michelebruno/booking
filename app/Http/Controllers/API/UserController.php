@@ -26,6 +26,8 @@ class UserController extends Controller
 
         $query = User::whereIn('ruolo', ['admin', 'account_manager']);
 
+        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
+        
         return response( $query->paginate($per_page) );
 
     }

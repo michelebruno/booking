@@ -14,7 +14,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
     const [ ordini, setOrdini ] = useState()  
 
-    const [ collection, serverSideOptions, { filter }  ] = useServerSideCollection( url , defaultFilter )
+    const [ collection, serverSideOptions, { filter , getSordDirectionByName }  ] = useServerSideCollection( url , defaultFilter )
 
     useEffect( () => {
 
@@ -41,10 +41,10 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
     const colonne = [
         {
             name : "stato",
-            label : " ",
+            label : "Stato",
             options : {
                 sort : false, 
-                filterList : filter.stato || "Pagati",
+                filterList : filter.stato ,
                 filterOptions: {
                   names: ["Aperti", "Pagati"]
                 },
@@ -69,8 +69,8 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             label : "#",
             _filterName : "id",
             options : {
-                sort : false,
                 filter : false,
+                sortDirection : getSordDirectionByName('id'),
             }
         },
         {
@@ -86,13 +86,14 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             label : "Prodotti",
             options : {
                 sort : false,
+                filter : false
             }
         },
         {
-            name : "data",
+            name : "created_at",
             label : "Data",
             options : {
-                sort : false,
+                sortDirection : getSordDirectionByName('created_at'),
                 filter : false,
             }
         },
@@ -100,7 +101,17 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             name : "importo",
             label : "Totale",
             options :{ 
-                sort : false
+                sortDirection : getSordDirectionByName('importo'),
+                filter : false
+            }
+        },
+        {
+            name : "imponibile",
+            label : "Imponibile",
+            options : { 
+                sortDirection : getSordDirectionByName('imponibile'),
+                filter : false,
+                display : false,
             }
         },
         {
@@ -124,15 +135,10 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
         data={ordini}
         columns={colonne}
         options={{
-            ...serverSideOptions( colonne , { errorMessage : collection.error || undefined} ),
-            page : collection.current_page - 1,
-            count : collection.total,
+            ...serverSideOptions( colonne , { errorMessage : collection.error || undefined} ), 
             selectableRows : 'none',
             print : false,
             search : false,
-            filter : [
-                ["Elaborati"]
-            ],
         }}
         />
 
@@ -140,6 +146,6 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
 OrdiniTabella.defaultProps = {
     url : "/ordini",
-    defaultFilter : { stato : "Pagati" }
+    defaultFilter : { stato : [ "Pagati" ] }
 }
 export default OrdiniTabella;
