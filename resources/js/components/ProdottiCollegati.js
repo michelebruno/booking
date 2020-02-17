@@ -20,8 +20,6 @@ import localization from "../_services/localization"
 const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) => {
 
     const self = deal || servizio
-
-    const [data, setData] = useState()
  
     const [ selectedDealToAdd , setSelectedDealToAdd ] = useState("")
 
@@ -31,31 +29,9 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
 
     const fromServizio = Boolean(servizio)
 
-    const [ prodotti, setProdotti ] = useState()
+    const prodotti = ( deal && deal.servizi ) ? deal.servizi : servizio.deals 
 
-    useEffect(() => {
-
-        if ( ! prodotti ) {
-
-            if ( deal && deal.servizi ) {
-                setProdotti( deal.servizi )
-            } else if ( servizio && servizio.deals ) {
-                setProdotti( servizio.deals )
-            }
-
-            return;
-        }
-
-        const x = prodotti.map( prodotto => {
-            prodotto.tariffe.intero.importo = Helpers.prezzi.formatter(prodotto.tariffe.intero.importo )
-            prodotto.tariffe.intero.imponibile = Helpers.prezzi.formatter(prodotto.tariffe.intero.imponibile )
-            return prodotto
-        })
-        setData( x ) 
-    }, [ servizio , deal , prodotti ])
- 
-
-    return typeof prodotti !== "undefined" && typeof data !== "undefined" ? <div className="prodotti-collegati" >
+    return <div className="prodotti-collegati" >
         
         { selectedDealToAdd && <AxiosConfirmModal 
             onSuccess={ d =>{ 
@@ -97,7 +73,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
 
         <MUIDataTable 
             title={title}
-            data={data}
+            data={ prodotti }
             columns={ [
                 {
                     label: 'Cod.',
@@ -119,14 +95,16 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                     label: 'Imponibile',
                     name: 'tariffe.intero.imponibile',
                     options : {
-                        display : ! fromDeal
+                        display : ! fromDeal,
+                        customBodyRender : v => Helpers.prezzi.formatter(v)
                     }
                 },
                 {
                     label: 'Importo',
                     name: 'tariffe.intero.importo',
                     options : {
-                        display : fromDeal
+                        display : fromDeal,
+                        customBodyRender : v => Helpers.prezzi.formatter(v)
                     }
                 },
                 {
@@ -185,7 +163,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
             }}
             />
 
-    </div> : "No prodotti"
+    </div> 
 }
 ProdottiCollegati.defaultProps = {
     editable: true

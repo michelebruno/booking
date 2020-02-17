@@ -1,5 +1,8 @@
-import { useState , useEffect } from 'react'
+import React, { useState , useEffect, useCallback } from 'react'
 import localization from './localization';
+import PreLoaderWidget from '../components/Loader';
+import Tooltip  from "@material-ui/core/Tooltip"
+import { IconButton } from '@material-ui/core';
 
 /**
  * 
@@ -9,9 +12,27 @@ import localization from './localization';
  */
 export default function useServerSideCollection( baseUrl , defaultFilter ) {
     
-    const [collection, setCollection] = useState()
+    const [ collection , setCollection ] = useState({ loading: true , page : 0 , total : 0, data: []})
+
+    const [ searchInput , setSearchInput ] = useState()
 
     const [filter, _setFilter] = useState(defaultFilter)
+
+    useEffect(() => {
+
+        if (typeof searchInput === "undefined" ) {
+            return;
+        }
+        const t = setTimeout( () => {
+            setFilter({s: searchInput})
+        }, 1500 )
+
+        return () => {            
+            clearTimeout(t)
+        }
+
+    }, [ searchInput ])
+
 
     const getSordDirectionByName = n => {
         if ( filter && filter.orderBy && filter.orderBy === n) {
@@ -49,7 +70,7 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
         });
     }
 
-    const makeURLQuery = tempFilter => {
+    const makeURLQuery = useCallback( tempFilter => {
 
         let url = baseUrl 
 
@@ -66,9 +87,9 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
         }
 
         return url
-    }
+    }, [ baseUrl , filter ])
 
-    const loadApi = ( tempFilter ) => {
+    const loadApi = useCallback( ( tempFilter ) => {
     
         const source = axios.CancelToken.source() 
 
@@ -81,37 +102,46 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
                 if ( axios.isCancel(e) ) return;
 
                 if (e.response) {
-                    setCollection( () => ({ data : [] , error : e.response.data.message }) )
+                    setCollection( prev => Object.assig({}, prev, { data : [] , error : e.response.data.message }) )
                 } else console.log(e);
                 
             })
 
         return source.cancel
-    }
+    }, [ makeURLQuery ])
 
     useEffect( () => {
+        setCollection( prev => Object.assign({} , prev , { loading : true } ) )
         return loadApi()
-    }, [ filter ] )    
+    }, [ filter , loadApi ] )    
 
-    const datatableOptions = ( columns , customData ) => {
+    const datatableOptions = useCallback( ( columns , customData ) => {
 
-        const cNames =  columns.map(c => c.name )
+        const cNames =  columns.map( c => c.name )
         
-        const cLabels =  columns.map(c => c.label ) 
+        const cLabels =  columns.map( c => c.label ) 
 
         let labels = localization.it.MUIDatatableLabels
 
-        if ( customData && customData.errorMessage ) {
+        if ( collection.loading ) {
+            labels.body.noMatch = <div className="py-5"><PreLoaderWidget /></div>
+        } else if ( customData && customData.errorMessage ) {
             labels.body.noMatch = customData.errorMessage
-        }
+        } 
         
-        return {
+        const options = {
 
             serverSide : true,
 
             onChangePage : page => _setFilter( filter => Object.assign( {}, filter , { page : page + 1 } ) ),
 
             onChangeRowsPerPage : per_page => _setFilter( ( p ) => Object.assign( {}, p, { per_page , page : 1 } ) ),
+
+            onSearchChange : setSearchInput,
+
+            onSearchClose : () => searchInput && setSearchInput(),
+
+            searchText : searchInput,
 
             onFilterChange : ( changedCol , filterList , context ) => {
 
@@ -137,7 +167,15 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
 
                 }
 
-            },
+            }, 
+
+            onRowsDelete : console.log,            
+
+            selectableRowsHeader : false,
+
+            customToolbar : collection.loading ? () => <Tooltip title="Loading..." >
+                <IconButton className="fas fa-spinner fa-spin" />
+            </Tooltip> : undefined,
 
             onColumnSortChange : ( changedCol , direction ) => _setFilter( prev => Object.assign( {} , prev, { order : (direction === "descending") ? "desc" : "asc" , orderBy :changedCol } ) ) ,
 
@@ -158,8 +196,12 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
 
             textLabels : { ... labels },
         }
-    }
 
+        return options
+
+    }, [ collection , filter , searchInput ] )
+
+    
     const reload = () => _setFilter( filter )
 
     return [ collection , datatableOptions , { filter , setFilter , reload , setCollection , getSordDirectionByName } ]

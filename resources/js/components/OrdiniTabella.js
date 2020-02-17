@@ -9,7 +9,7 @@ import MUIDataTable from 'mui-datatables';
 import PreLoaderWidget from './Loader';
 import useServerSideCollection from '../_services/useServerSideCollection';
 import Helpers, { prezziFormatter } from '../_services/helpers';
-
+ 
 const OrdiniTabella = ( { url , defaultFilter } ) => {
 
     const [ ordini, setOrdini ] = useState()  
@@ -129,7 +129,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
                 </>
             }
         }
-    ]
+    ] 
 
     return <MUIDataTable
         data={ordini}
@@ -138,7 +138,6 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             ...serverSideOptions( colonne , { errorMessage : collection.error || undefined} ), 
             selectableRows : 'none',
             print : false,
-            search : false,
         }}
         />
 

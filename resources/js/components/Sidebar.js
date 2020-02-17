@@ -1,89 +1,186 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Dropdown } from 'react-bootstrap'; 
+import { Link, useRouteMatch } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { connect } from "react-redux"
 
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse'; 
+import { makeStyles } from '@material-ui/core/styles';
+
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import StorefrontIcon from '@material-ui/icons/Storefront';
+import SettingsIcon from '@material-ui/icons/Settings';
+
+
+
+
+
 const SideNavContent = ( { user } ) => {
-    return <React.Fragment>
+
+    const classes = makeStyles(theme => ({
+        root: {
+          width: '100%',
+          maxWidth: 360,
+        },
+        nested: {
+          paddingLeft: theme.spacing(4),
+        },
+      }))()
+
+    const items = [
+        {
+            label : "Dashboard",
+            icon : <i className="mdi mdi-view-dashboard"></i>,
+            pathname : "/dashboard",
+        },
+        {
+            label : "Deals",
+            icon : <i className="fas fa-shopping-cart "/>,
+            pathname : "/deals",
+            roles : [ 'admin' , 'account_manager' ],
+            subItems : [
+                {
+                    pathname : "/deals/d-2",
+                    label : "Scheda deal"
+                },
+                {
+                    pathname : "/deals/crea",
+                    label : "Crea deal"
+                },
+            ]
+        },
+        {
+            label : "Ordini",
+            icon : <ShoppingCartIcon />,
+            pathname : "/ordini",
+            roles : [ 'admin' , 'account_manager' ]
+        },
+        {
+            label : "Clienti",
+            pathname : "/utenti",
+            icon : <SupervisorAccountIcon />,
+            roles : [ "admin" , "account_manager" ]
+        },
+        {
+            label : "Esercenti",
+            pathname : "/esercenti",
+            icon : <StorefrontIcon />,
+            roles : [ "admin" , "account_manager" ]
+        },
+        {
+            label : "Impostazioni",
+            pathname : "/settings",
+            icon : <SettingsIcon />,
+            roles : [ "admin" , "account_manager" ]
+        },
+        {
+            label : "Il mio profilo",
+            icon : <i className="fas fa-user" />,
+            roles : [ "esercente" ],
+        },
+
+    ]
+
+
+    const SidebarItem = ({ roles , label , icon , pathname , subItems }) => {
+        
+        const match = useRouteMatch(pathname)
+        const [open, setOpen] = React.useState(Boolean(match))
+
+        const renderLink = React.useMemo(
+            () =>
+              React.forwardRef( (linkProps, ref) => (
+                <Link ref={ref} to={pathname} {...linkProps} />
+              )),
+            [pathname],
+          );
+
+
+        React.useEffect( () => {
+            if ( match ) {
+                setOpen(true)
+            }
+        }, [ match ])
+
+        const SidebarSubItem = ( { label , pathname , icon , roles } ) => {
+            
+            const renderLink = React.useMemo(
+                () =>
+                  React.forwardRef( (linkProps, ref) => (
+                    <Link ref={ref} to={pathname} {...linkProps} />
+                  )),
+                [pathname],
+              );
+            
+            const match = useRouteMatch(pathname)
+
+            React.useEffect( () => {
+                if ( match ) {
+                    setOpen(true)
+                }
+            }, [ match ])
+    
+            return ( ! Array.isArray( roles ) || roles.indexOf( user.ruolo ) !== -1 ) 
+            && <ListItem button className={classes.nested} component={ renderLink } dense={true} selected={ Boolean( match ) } >
+                { icon && <ListItemIcon>
+                    { icon }
+                </ListItemIcon>}
+                <ListItemText primary={ label } inset={!icon} />
+            </ListItem>
+        }
+        
+
+        return ( ! Array.isArray( roles) || roles.indexOf(user.ruolo) !== -1 ) && <>
+                <ListItem button component={ renderLink } selected={ match ? match.isExact : false }>
+                    { icon && <ListItemIcon>
+                        { icon }
+                    </ListItemIcon> }
+                    <ListItemText primary={label} inset={!icon} />
+                
+                { subItems && ( open ? <ExpandLess  onClick={ (e) => {
+                    e.preventDefault();
+                    e.stopPropagation()
+                    setOpen(!open)
+                }} /> : <ExpandMore onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation()
+                    setOpen(!open)
+                }} /> ) }
+
+                </ListItem>
+            { subItems && 
+                <Collapse in={open} timeout={1000} >
+                  <List component="div" disablePadding >
+                    { subItems.map( ( props, index ) => <SidebarSubItem key={index} {...props} /> ) }
+                  </List>
+                </Collapse>
+            }
+        </>
+    }
+
+    return <>
 
         <div id="sidebar-menu">
-            <ul className="metismenu" id="side-menu">
-                <li className="menu-title">Menu</li>
+            <List className={classes.root} component="nav" subheader={<ListSubheader component="div" id="nested-list-subheader">Menu</ListSubheader>}>
 
-                <li>
-                    <Link to="/dashboard" className="waves-effect side-nav-link-ref">
-                        <i className="mdi mdi-view-dashboard"></i>
-                        <span>Dashboard </span>
-                    </Link>
-                 </li>
-                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/deals" className="waves-effect side-nav-link-ref" >
-                        <i className="fas fa-shopping-cart "></i>
-                        <span>Prodotti</span>
-                    </Link>
-                    <ul className="nav-second-level nav" >
-                        <li>
-                            <Link to="/deals/d-2" className="side-nav-link-ref"> 
-                                <span>Scheda deal</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/deals/crea" className="side-nav-link-ref">Crea deal</Link>
-                        </li>
-                    </ul>
-                </li>}
-                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/ordini" className="waves-effect side-nav-link-ref" >
-                        <i className="fas fa-shopping "></i>
-                        <span>Ordini</span>
-                    </Link>
-                </li>}{/*
-                <li>
-                    <Link to="/tickets" className="waves-effect side-nav-link-ref" >
-                        <i className="fas fa-ticket-alt "></i>
-                        <span>Tickets</span>
-                    </Link>
-                </li> */}
-                { [ 'esercente' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/account" >
-                        <i className="fas fa-user" />
-                        <span>Il mio account</span>
-                    </Link>
-                </li>}
-                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/clienti" >
-                        <i className="fas fa-user-friends" />
-                        <span>Clienti</span>
-                    </Link>
-                </li>} 
-                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/utenti" >
-                        <i className="fas fa-user" />
-                        <span>Utenti</span>
-                    </Link>
-                </li>} 
-                { [ 'admin' , 'account_manager' ].indexOf(user.ruolo) !== -1 &&<li>
-                    <Link to="/esercenti" className="waves-effect side-nav-link-ref" aria-expanded="false">
-                        <i className="mdi mdi-tooltip-account "></i>
-                        <span>Esercenti</span>
-                    </Link>
-                </li> } 
-                { [ 'admin' ].indexOf(user.ruolo) !== -1 && <li>
-                    <Link to="/settings" className="waves-effect side-nav-link-ref" >
-                        <i className="mdi mdi-settings"></i>
-                        <span>Impostazioni</span>
-                    </Link>
-                </li> }
-            </ul>
+                { items.map( (item, index ) => <SidebarItem {...item} key={index} /> ) }
+                
+            </List>
         </div>
         <div className="clearfix"></div>
-    </React.Fragment>
+    </>
 }
 
 
-const UserProfile = ( { user } ) => {
+/* const UserProfile = ( { user } ) => {
     const profilePic = ( typeof user.links !== 'undefined' && typeof user.links.avatar !== 'undefined' ) ? user.links.avatar : false;
     return <React.Fragment>
         <div className="user-box text-center">
@@ -125,7 +222,7 @@ const UserProfile = ( { user } ) => {
         </div>
     </React.Fragment>
 }
-
+ */
 const Sidebar = ( { currentUser , ...props } ) => {
     
     if ( ! props.isCondensed) {
@@ -137,10 +234,8 @@ const Sidebar = ( { currentUser , ...props } ) => {
         if (!isSmallScreen) {
             document.body.classList.add("enlarged");
         }
-    }
-
-    
-    
+    }    
+ 
     return(
         <React.Fragment>
             <div className='left-side-menu' >

@@ -27,7 +27,7 @@ const withLayout = (WrappedComponent) => {
 
 const App = ( { currentUser, settings, ...props} ) => {
 	
-	React.useEffect( () => {
+	useEffect( () => {
 		props.authenticate().then( props.getAutoloadedSettings ); 
 	}, [])
 
@@ -46,7 +46,7 @@ const App = ( { currentUser, settings, ...props} ) => {
 								exact={route.exact}
 								roles={route.roles}
 								component={ props => <Suspense fallback={ loading() }>
-											<AuthLayout {...props} tastimenu={route.tastimenu} title={route.title}>
+											<AuthLayout {...props} title={route.title}>
 												<route.component {...props} />
 											</AuthLayout>
 										</Suspense>

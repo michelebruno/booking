@@ -7,6 +7,9 @@ import Card from "react-bootstrap/Card"
 import Button from "react-bootstrap/Button"
 import ButtonToolbar from "react-bootstrap/ButtonToolbar"
 import Modal  from "react-bootstrap/Modal"
+import Tooltip  from "@material-ui/core/Tooltip"
+import IconButton  from "@material-ui/core/IconButton"
+import AddIcon from '@material-ui/icons/Add';
 
 import MUIDataTable from "mui-datatables"
 
@@ -15,13 +18,14 @@ import useServerSideCollection from '../_services/useServerSideCollection'
 import UtenteForm from "../components/UtenteForm"
 import PreLoaderWidget from "../components/Loader"
 
-const Utenti = ( props ) => {
+
+const Utenti = ( { setTopbarButtons , unsetTopbarButtons } ) => {
 
     const [ collection, serverSideOptions, { reload , getSordDirectionByName } ] = useServerSideCollection( "/users" )
+    
+    const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const utenti = collection && collection.data
-
-    const [aggiungiModal, setAggiungiModal] = useState(false)
 
     const columns = [ 
         {
@@ -72,19 +76,19 @@ const Utenti = ( props ) => {
                             url += "/utenti/"
                             break;
                     }
-                    return <React.Fragment><Button size="sm" as={Link} to={{pathname: url+row.id, state: { utente : row}}} ><i className="fas fa-edit" /></Button></React.Fragment>
+
+                    return <React.Fragment><Button size="sm" as={Link} to={{ pathname: url+row.id , state: { utente : row} } } ><i className="fas fa-edit" /></Button></React.Fragment>
                 }
             } 
         }
     ]
 
-    props.setTopbarButtons( () => <ButtonToolbar className="d-inline-block align-self-center" >
-        <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
-    </ButtonToolbar>)
-
-    useEffect(() => {
-        return props.unsetTopbarButtons
-    }, [])
+    useEffect( () => {
+        setTopbarButtons( () => <ButtonToolbar className="d-inline-block align-self-center" >
+            <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
+        </ButtonToolbar>)
+        return unsetTopbarButtons
+    }, [ setTopbarButtons , unsetTopbarButtons ] )
 
     return(
         <Card>
@@ -108,6 +112,11 @@ const Utenti = ( props ) => {
                         data={utenti}
                         options={{
                             ...serverSideOptions(columns),
+                            customToolbar : () => <Tooltip title="Crea nuovo utente"> 
+                                    <IconButton  onClick={() => setAggiungiModal(true)} >
+                                        <AddIcon  />
+                                    </IconButton>
+                                </Tooltip>
                         }}
                     />
                 } 
