@@ -27,7 +27,7 @@ const ClientiScheda = ( { match } ) => {
         return () => {
             source.cancel()
         };
-    }, [cliente])
+    }, [cliente, match.params.cliente_id])
 
     if ( ! cliente ) return <PreLoaderWidget />
 

@@ -117,7 +117,7 @@ const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
 
         }
 
-    }, [api])
+    }, [api, match.params.id])
 
     useEffect(() => {
         props.setTopbarButtons( TastiProfiloEsercente )

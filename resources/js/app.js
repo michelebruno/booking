@@ -25,11 +25,11 @@ const withLayout = (WrappedComponent) => {
 }
 
 
-const App = ( { currentUser, settings, ...props} ) => {
+const App = ( { currentUser, settings, authenticate, getAutoloadedSettings, ...props} ) => {
 	
 	useEffect( () => {
-		props.authenticate().then( props.getAutoloadedSettings ); 
-	}, [])
+		authenticate().then( getAutoloadedSettings ); 
+	}, [authenticate, getAutoloadedSettings])
 
     
 	return(

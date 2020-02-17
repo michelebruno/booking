@@ -45,7 +45,7 @@ const ServiziScheda = ( { location , ...props} ) => {
                 source.cancel()
             };
         }
-    }, [ servizio ] )
+    }, [location.pathname, servizio] )
 
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
 

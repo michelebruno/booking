@@ -98,7 +98,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
             return get( '/esercenti/' + match.params.id )
         }
 
-    }, [] )
+    }, [location.state, match.params.id ] )
     
     useEffect( () => {
         if (api.status === "submit") {

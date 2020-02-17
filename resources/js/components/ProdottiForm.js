@@ -66,7 +66,7 @@ const ProdottiForm = ( props ) => {
     
     const source = axios.CancelToken.source()
 
-    React.useEffect( () => source.cancel , [] )
+    React.useEffect( () => source.cancel , [source.cancel] )
 
     const handleSubmit = ( e ) => {
 

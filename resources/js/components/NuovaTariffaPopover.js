@@ -11,8 +11,6 @@ import { Typography } from "@material-ui/core"
 
 
 const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess , anchorElement, iva , ivaInclusa } ) => {
-
-    if ( ! varianti ) return null;
     
     const [disponibili, setDisponibili] = useState( Object.values(varianti) )
 
@@ -30,7 +28,7 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
         setDisponibili(disponibili)
         setVariante( _.head( disponibili ) ? _.head( disponibili ).id : undefined )
         return source.cancel
-    }, [tariffe])
+    }, [ tariffe , keys , source.cancel , varianti ])
 
     const handleSubmit = ( ) => {
         let requestData = { 
@@ -57,10 +55,12 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
             })
     }
 
+
+    if ( ! varianti ) return null;
+
     const open = Boolean(anchorElement)
 
     const id = open ? 'simple-popover' : undefined;
-
     return <Popover
         id={id}
         open={ open }

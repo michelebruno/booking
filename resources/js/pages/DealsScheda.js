@@ -59,7 +59,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
             };
         }
 
-    }, [deal] )
+    }, [deal, location.pathname] )
         
     const DeleteDealButton = props => {
         const [show, setShow] = useState(false)
@@ -94,13 +94,14 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
         </div>
     }
 
-    const TastiDeal = ( ) => {
-        if ( ! deal || ! deal._links ) return null;
-
-        return deal.cestinato ? <RestoreDealButton></RestoreDealButton> : <DeleteDealButton><span className="ml-2 d-none d-md-inline">Elimina deal</span></DeleteDealButton>
-    }
 
     useEffect( () => {
+        
+        const TastiDeal = ( ) => {
+            if ( ! deal || ! deal._links ) return null;
+
+            return deal.cestinato ? <RestoreDealButton></RestoreDealButton> : <DeleteDealButton><span className="ml-2 d-none d-md-inline">Elimina deal</span></DeleteDealButton>
+        }
         
         isAdmin && props.setTopbarButtons( TastiDeal )
         return () => {

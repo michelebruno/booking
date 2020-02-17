@@ -49,7 +49,7 @@ const OrdiniScheda = ( { match , location, history } ) => {
             .catch( e => e )
 
         return source.cancel
-    }, [ ordine ] )
+    }, [ match.params.ordine_id, ordine ] )
 
     if ( ! ordine ) return <PreLoaderWidget />
 
