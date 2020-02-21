@@ -32,12 +32,7 @@ class CreateUsersTable extends Migration
                 
             $table->string('password')
                 ->nullable()
-                ->default(null);
-                
-            $table->string('api_token', 80)
-                ->unique()
-                ->nullable()
-                ->default(null);
+                ->default(null); 
                 
             $table->string('cf', 16)
                 ->unique()

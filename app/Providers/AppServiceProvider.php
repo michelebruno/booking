@@ -60,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        \Laravel\Passport\Passport::routes();
+
         \App\Ordine::observe(\App\Observers\OrdineObserver::class);
         \App\VoceOrdine::observe(\App\Observers\VoceOrdineObserver::class);
 

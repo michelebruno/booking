@@ -28,7 +28,7 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
         setDisponibili(disponibili)
         setVariante( _.head( disponibili ) ? _.head( disponibili ).id : undefined )
         return source.cancel
-    }, [ tariffe , keys , source.cancel , varianti ])
+    }, [ tariffe , varianti ])
 
     const handleSubmit = ( ) => {
         let requestData = { 

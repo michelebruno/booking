@@ -2,7 +2,7 @@ import { authenticate , getAutoloadedSettings } from "../_actions"
 
 const login = () => {
     return dispatch => {
-        return axios.get( "/auth", {withCredentials: true} )
+        return axios.get( "/account", {withCredentials: true} )
             .then( res => {
                 return dispatch( authenticate(res.data) )
             } )

@@ -190,13 +190,13 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
 
             download : false,
 
-            page : collection.current_page - 1,
+            page : collection && collection.current_page ? collection.current_page - 1 : undefined,
 
-            count : collection.total,
+            count : collection && collection.total ? collection.total : undefined,
 
             textLabels : { ... labels },
-        }
-
+        } 
+        
         return options
 
     }, [ collection , filter , searchInput ] )

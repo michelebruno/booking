@@ -69,7 +69,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     
     Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore');
     Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote');
-
-
     
 });

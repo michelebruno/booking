@@ -54,14 +54,6 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $user = new Esercente($dati);
 
-        $api_token = Str::random(40);
-
-        while ( User::where('api_token', $api_token)->count() ) {
-            $api_token = Str::random(40);
-        }
-
-        $user->api_token = $api_token;
-
         $user->password = Hash::make( $request->input('password') );
         
         $user->saveOrFail();

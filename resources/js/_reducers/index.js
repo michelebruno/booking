@@ -10,7 +10,10 @@ const rootReducer = ( state = initialState, action ) => {
 
     if (action.type === AUTHENTICATION_SUCCESSFUL ) {
 
-        window.axios.defaults.headers.common['Authorization'] = "Bearer " + action.payload.api_token
+        /**
+         * @deprecated
+         */
+        // window.axios.defaults.headers.common['Authorization'] = "Bearer " + action.payload.api_token
 
         return Object.assign({}, state, { 
             currentUser : action.payload,
