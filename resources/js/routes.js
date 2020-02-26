@@ -46,7 +46,7 @@ const routes = [
 
   // other pages
   { path: '/account', exact:true, component: Account, route: PrivateRoute, title: 'Il tuo profilo' },
-  { path: '/logout', exact:true, component: () => window.location = "/logout" && "", route: PrivateRoute, title: 'Il tuo profilo' },
+  { path: '/logout', exact:true, component: () => window.location = "https://localhost/logout" && "", route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/account/modifica', component: AccountModifica, route: PrivateRoute, title: 'Il tuo profilo' },
   { path: '/clienti/:cliente_id', component: ClientiScheda, route: PrivateRoute, title: 'Clienti' },
   { path: '/clienti', component: Clienti, route: PrivateRoute, title: 'Clienti' },

@@ -12,41 +12,11 @@
 */
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function() {
-    Route::get('/', function () { 
-        return view('app');
-    });
-
-    Route::get('/esercenti/{a?}/{b?}/{c?}/{d?}', function() {
-        return view('app');
-    });
-
-    Route::get('/utenti/{a?}/{b?}', function() {
-        return view('app');
-    });
-    
-    Route::get('/clienti/{a?}/{b?}', function() {
-        return view('app');
-    });
-    
-    Route::get('/ordini/{a?}/{b?}', function() {
-        return view('app');
-    });
-    
-    Route::get('/dashboard', function() {
-        return view('app');
-    });
-    
-    Route::get('/account/{a?}/{b?}', function() {
-        return view('app');
-    });
-    
-    Route::get('/deals/{a?}/{b?}', function() {
-        return view('app');
-    });
-
-    Route::get('/settings/{a?}/{b?}', function() {
+Route::middleware(['auth', 'verified'])->prefix('app')->group(function() { 
+        
+    Route::get('/{a?}/{b?}/{c?}/{d?}', function () { 
         return view('app');
     });
 
@@ -54,6 +24,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
 Route::get('/', function () { 
     return redirect('/login');
+});
+
+Route::get('cart', function () {
+    return view('cart');
 });
 
 Auth::routes(['verify' => true , 'register' => false]);

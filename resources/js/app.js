@@ -34,7 +34,7 @@ const App = ( { currentUser, settings, authenticate, getAutoloadedSettings, ...p
     
 	return(
 		// rendering the router with layout 
-		<BrowserRouter>	
+		<BrowserRouter basename="/app/">	
 			{ !currentUser && !settings && loading()}
 			{ currentUser && <React.Fragment>
 				<Switch>

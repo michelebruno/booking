@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 
 mix.disableNotifications()   
    .browserSync({
-      files: ["public/**/*.css", "public/**/*.js", "public/*.js"],
+      files: ["public/**/*.css", "public/**/*.js", "public/*.js", "resource/views/**"],
       proxy: {
          target: "https://localhost",
       },
@@ -22,4 +22,5 @@ mix.disableNotifications()
    })
    .react('resources/js/index.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
+   .sass('resources/sass/style.scss', 'public/css')
    .sourceMaps( true, 'source-map')

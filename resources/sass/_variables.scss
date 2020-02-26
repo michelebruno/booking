@@ -145,7 +145,7 @@ $theme-colors: map-merge((
 $yiq-contrasted-threshold:  180;
 
 // Customize the light and dark text colors for use in our YIQ color contrast function.
-$yiq-text-dark:             $gray-800;
+$yiq-text-dark:             $black;
 $yiq-text-light:            $white;
 
 
@@ -187,7 +187,7 @@ $sizes: map-merge((
 //
 // Settings for the `<body>` element.
 
-$body-bg:                   #ebeff2;
+$body-bg:                   $white !default;
 $body-color:                $gray-700;
 
 
@@ -220,7 +220,7 @@ $grid-gutter-width:           24px;
 // Font, line-height, and color for body text, headings, and more.
 
 // stylelint-disable value-keyword-case
-$font-family-sans-serif:      'Roboto', sans-serif;
+$font-family-sans-serif:      'Alegreya Sans', "Roboto", sans-serif;
 $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 $font-family-base:            $font-family-sans-serif;
 

@@ -8,7 +8,7 @@ class CartController extends Controller
 {
     public function index(Request $request)
     {
-        # code...
+        return view('cart');
     }
 
     public function checkout(Request $request)

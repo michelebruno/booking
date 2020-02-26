@@ -71,10 +71,7 @@ class Prodotto extends Model
     {
         $tariffe = $this->tariffe()->get();
 
-        return $tariffe->mapWithKeys( function ( $tariffa )
-        {
-            return [ $tariffa->slug => $tariffa ]; 
-        });
+        return $tariffe->keyBy('slug');
     }
 
     public function setTariffeAttribute( $tariffe )
