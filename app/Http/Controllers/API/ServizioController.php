@@ -24,7 +24,7 @@ class ServizioController extends Controller
 
             $s = urldecode($s);
             $servizi = Servizio::where('titolo', 'LIKE', '%' . $s . '%' )->get();
-            $response = $servizi->load('deals');
+            $response = $servizi->loadMissing('deals');
 
         }
         
@@ -44,7 +44,7 @@ class ServizioController extends Controller
 
         if ( $query ) { 
             $response = $query->get(); 
-        } else $response = Servizio::all()->load('deals');
+        } else $response = Servizio::all()->loadMissing('deals');
 
         return response( $response );
     }

@@ -74,7 +74,7 @@ class EsercenteServizioController extends Controller
         // TODO impostare 
         $servizio->tariffe = $request->input('tariffe');
 
-        return response($servizio->load([ 'deals' , 'esercente']) , 201);
+        return response($servizio->loadMissing([ 'deals' , 'esercente']) , 201);
     }
 
     /**
@@ -90,7 +90,7 @@ class EsercenteServizioController extends Controller
 
         $this->authorize('view' , $servizio) ;
 
-        return response( $servizio->load([ 'deals' , 'esercente']) );
+        return response( $servizio->loadMissing([ 'deals' , 'esercente']) );
     }
 
     /**
@@ -140,7 +140,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->tariffe = $request->input('tariffe', null);
 
-        return response( $servizio->load('deals') );
+        return response( $servizio->loadMissing('deals') );
     }
 
     public function aggiungiTariffa(Request $request, Esercente $esercente, Servizio $servizio)
@@ -156,7 +156,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => Tariffa::includiIva( $dati['imponibile'] , $servizio->iva ) ]);
 
-        return response( $servizio->load('deals') , 201);
+        return response( $servizio->loadMissing('deals') , 201);
     }
 
     public function editTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
@@ -174,7 +174,7 @@ class EsercenteServizioController extends Controller
         $tariffa->importo = Tariffa::includiIva( $d['imponibile'] , $servizio->iva );
         $tariffa->save();
         
-        return response( $servizio->load('deals')  );
+        return response( $servizio->loadMissing('deals')  );
     }
 
     public function deleteTariffa(Request $request, Esercente $esercente, Servizio $servizio, Tariffa $tariffa)
@@ -187,7 +187,7 @@ class EsercenteServizioController extends Controller
 
         $tariffa->delete();
         
-        return response( $servizio->load('deals')  );
+        return response( $servizio->loadMissing('deals')  );
     }
 
     /**
@@ -222,7 +222,7 @@ class EsercenteServizioController extends Controller
 
         $servizio->restore();
 
-        return response($servizio->load('deals') );
+        return response($servizio->loadMissing('deals') );
 
     }
 }

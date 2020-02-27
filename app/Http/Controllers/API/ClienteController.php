@@ -50,7 +50,7 @@ class ClienteController extends Controller
     {
         // TODO $this->authorize();
 
-        return response( $cliente->load('ordini') );
+        return response( $cliente->loadMissing('ordini') );
     }
 
     /**

@@ -91,7 +91,7 @@ class DealController extends Controller
 
         $prodotto->save();
 
-        return response( $prodotto->load('servizi') , 201);
+        return response( $prodotto->loadMissing('servizi') , 201);
     }
 
     /**
@@ -106,7 +106,7 @@ class DealController extends Controller
 
         $this->authorize( 'view', $deal );
 
-        return response( $deal->load('servizi') );
+        return response( $deal->loadMissing('servizi') );
     }
 
     /**
@@ -133,7 +133,7 @@ class DealController extends Controller
         
         $deal->save();
 
-        return response($deal->load('servizi') );
+        return response($deal->loadMissing('servizi') );
     }
 
     /**
@@ -160,7 +160,7 @@ class DealController extends Controller
         $deal = Deal::onlyTrashed()->whereCodice($deal)->firstOrFail();
 
         if ( $deal->restore() ) {
-            return response( $deal->load('servizi') );
+            return response( $deal->loadMissing('servizi') );
         } else abort(500);
     }
 

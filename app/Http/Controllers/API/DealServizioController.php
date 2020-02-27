@@ -54,9 +54,9 @@ class DealServizioController extends Controller
 
         $deal->servizi()->attach( $servizio->id );
 
-        if ( $request->query('from', false) == 'servizio') return response( $servizio->load('deals') );
+        if ( $request->query('from', false) == 'servizio') return response( $servizio->loadMissing('deals') );
 
-        return response( $deal->load('servizi') , 201 );
+        return response( $deal->loadMissing('servizi') , 201 );
             
 
     }
@@ -85,7 +85,7 @@ class DealServizioController extends Controller
         $dati = $request->validate(['servizi' => 'required|array']);
         $deal->servizi()->sync($dati['servizi']);
 
-        if ( $request->query( 'from', false ) == 'servizio') return response($servizio->load('deals'));
+        if ( $request->query( 'from', false ) == 'servizio') return response($servizio->loadMissing('deals'));
 
         return response($deal);
     }
@@ -103,8 +103,8 @@ class DealServizioController extends Controller
         
         $deal->servizi()->detach($servizio);
 
-        if ( $request->query('from', false) == 'servizio') return response($servizio->load('deals'));
+        if ( $request->query('from', false) == 'servizio') return response($servizio->loadloadMissing('deals'));
 
-        return response($deal->load('servizi'));
+        return response($deal->loadMissing('servizi'));
     }
 }

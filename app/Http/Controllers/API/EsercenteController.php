@@ -114,7 +114,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
 
         $this->authorize( 'view', $esercente );
         
-        return response( $esercente->load('servizi') );
+        return response( $esercente->loadMissing('servizi') );
     }
 
     /**

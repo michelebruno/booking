@@ -143,7 +143,7 @@ class Ordine extends Model
 
     public function loadAll()
     {        
-        return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
+        return $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets']);
     }
 
     public static function withAll( $query )
