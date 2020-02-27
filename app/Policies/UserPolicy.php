@@ -27,9 +27,11 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function view(User $user, User $model = null)
+    public function view(User $user, User $model)
     {  
-
+        if ( $model->trashed() ) {
+            // ? chi può vedere i cestinati?
+        }
         return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
     }
 

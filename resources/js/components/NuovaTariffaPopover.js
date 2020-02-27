@@ -46,7 +46,7 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
 
                 setError(false)
 
-                onSuccess(res.data)
+                onSuccess( res.data )
 
                 onClose( res )
             })

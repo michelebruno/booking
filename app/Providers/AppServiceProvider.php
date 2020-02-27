@@ -28,6 +28,15 @@ class AppServiceProvider extends ServiceProvider
             return $n;
         } ); 
         
+        $this->app->singleton('VariantiTariffe', function ($app)
+        {
+            return \App\VarianteTariffa::all()->keyBy('slug');
+        });
+
+        $this->app->singleton('Prodotti', function ($app)
+        {
+            return \App\Prodotto::all();
+        });
         $this->app->singleton(\PayPal\Rest\ApiContext::class, function ( $app )
         {
             return new \PayPal\Rest\ApiContext(
@@ -37,7 +46,6 @@ class AppServiceProvider extends ServiceProvider
                 )
             );
         });
-
 
         $this->app->singleton(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, function ($app)
         {

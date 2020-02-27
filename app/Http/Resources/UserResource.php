@@ -14,8 +14,12 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        return $array = parent::toArray($request);
+        $array = parent::toArray($request);
 
-        // TODO: Aggiungere i links
+        $array['meta'] = $this->meta->mapWithKeys(function ($item) {
+            return [ $item['chiave'] => $item["valore"] ];
+        });
+
+        return $array;
     }
 }

@@ -49,7 +49,9 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'cf' => ['required', 'max:16', 'unique:users'], // TODO verificare il formato,
             'nome' => 'string|required',
             'sdi' => 'sometimes|nullable|max:7',
-            'pec' => 'sometimes|nullable|email'
+            'pec' => 'sometimes|nullable|email',
+            'sede_legale' => 'required|sometimes', // Formato?
+            'ragione_sociale' => 'required|sometimes' // Formato?
         ]);
 
         $user = new Esercente($dati);
@@ -58,17 +60,17 @@ class EsercenteController extends \App\Http\Controllers\Controller
         
         $user->saveOrFail();
 
-        $user->nome = $request->input('nome') ;
+        $user->nome = $dati['nome'];
 
-        $user->sdi = $request->input('sdi', false) ;
+        $user->sdi = $dati['sdi'] ;
 
-        $user->pec = $request->input('pec', false) ;
+        $user->pec = $dati['pec'] ;
 
-        $user->indirizzo = $request->input('indirizzo', false) ;
+        $user->indirizzo = $dati['indirizzo'] ;
 
-        $user->sede_legale = $request->input('sede_legale', false) ;
+        $user->sede_legale = $dati['sede_legale'] ;
 
-        $user->ragione_sociale = $request->input('ragione_sociale', false) ;
+        $user->ragione_sociale = $dati['ragione_sociale'] ;
 
         $user->save();
 

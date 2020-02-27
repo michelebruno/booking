@@ -66,6 +66,7 @@ class EsercenteServizioController extends Controller
 
         $servizio = new Servizio($dati);
 
+        // TODO usare $servizio->esercente()->associate($esercente->id);
         $servizio->esercente_id = $esercente->id;
         
         $servizio->save();
@@ -105,7 +106,7 @@ class EsercenteServizioController extends Controller
 
         $this->authorize('create', $servizio );
 
-        if ( $request->user()->ruolo == 'esercente' ) {
+        if ( $request->user()->isEsercente() ) {
 
             $dati = $request->validate([
                 'stato' => 'string|in:pubblico,privato,bozza',
@@ -128,7 +129,7 @@ class EsercenteServizioController extends Controller
                 'codice' => Rule::unique('prodotti','codice')->ignore($servizio->id),
                 'iva' => 'integer|',
                 'tariffe' => 'array|bail',
-                'tariffe.intero.imponibile' => ''
+                'tariffe.intero.imponibile' => 'numeric'
             ]);
 
         }
@@ -150,10 +151,10 @@ class EsercenteServizioController extends Controller
         
         $dati = $request->validate([
             'variante' => ['required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $servizio->id )],
-            'imponibile' => 'required|int'
+            'imponibile' => 'required|numeric'
         ]);
 
-        $servizio->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'imponibile' => $dati['imponibile']]);
+        $servizio->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => Tariffa::includiIva( $dati['imponibile'] , $servizio->iva ) ]);
 
         return response( $servizio->load('deals') , 201);
     }
@@ -164,11 +165,13 @@ class EsercenteServizioController extends Controller
 
         $this->authorize('update' , $servizio );
 
-        $d = $request->validate(['imponibile' => 'required|int']);
+        $d = $request->validate([
+            'imponibile' => 'required|numeric'
+        ]);
 
         if ( $tariffa->prodotto_id !== $servizio->id ) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
         
-        $tariffa->imponibile = $d['imponibile'];
+        $tariffa->importo = Tariffa::includiIva( $d['imponibile'] , $servizio->iva );
         $tariffa->save();
         
         return response( $servizio->load('deals')  );
@@ -179,7 +182,7 @@ class EsercenteServizioController extends Controller
         if ( $esercente->id !== $servizio->esercente_id ) abort(404, 'Questo servizio non è associato a questo esercente.');
         if ( $tariffa->prodotto_id !== $servizio->id ) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
 
-        $this->authorize('update' , $servizio );
+        $this->authorize('update' ,[ $servizio , $esercente ]);
         // TODO $this->authorize('delete' , $tariffa );
 
         $tariffa->delete();

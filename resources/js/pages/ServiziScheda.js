@@ -24,6 +24,7 @@ const ServiziScheda = ( { location , ...props} ) => {
 
     const editable = typeof servizio.esercente !== 'undefined' ? ( servizio.esercente.id == props.currentUser.id  ? false : true ) : undefined ; 
 
+    const reloadResource = () => setServizio( s => Object.assign({ willBeReloaded : true }, s) )
     useEffect( () => {
 
         if ( ! servizio || servizio.willBeReloaded ) {
@@ -94,7 +95,7 @@ const ServiziScheda = ( { location , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={d => setServizio(d)} iva={iva} ivaInclusa={false} editable={editable} />
+                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={ d => setServizio(d) } reloadResource={ reloadResource } iva={iva} ivaInclusa={false} editable={editable} />
                         </Card.Body>
                     </Card>
                 </Col>

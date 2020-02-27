@@ -29,13 +29,11 @@ class DealPolicy
      * @return mixed
      */
     public function view(User $user, Deal $deal)
-    {
-        return true; // ? Va bene?
-    }
+    {     
+        if ( $deal->trashed() ) {
+            return in_array( $user->ruolo , [ User::RUOLO_ADMIN , User::RUOLO_ACCOUNT] );
+        } else return true;
 
-    public function viewTrashed(User $user, Deal $deal)
-    {
-        return in_array($user->ruolo, [ 'admin' , 'account_manager' ] );
     }
 
     /**
@@ -46,7 +44,7 @@ class DealPolicy
      */
     public function create(User $user)
     {
-        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
+        return in_array( $user->ruolo , [ User::RUOLO_ADMIN , User::RUOLO_ACCOUNT] );
     }
 
     /**

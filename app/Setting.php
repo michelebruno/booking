@@ -18,7 +18,6 @@ class Setting extends Model
 
     public $incrementing = false;
     
-
     /**
      * 
      *

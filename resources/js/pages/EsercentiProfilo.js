@@ -181,9 +181,16 @@ const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
                                 {esercente.ragione_sociale && <span className="d-flex justify-content-between">
                                     <strong>Ragione sociale</strong><span>{ esercente.ragione_sociale }</span>
                                 </span>}
-                                {esercente.sede_legale && <span className="d-flex justify-content-between">
-                                    <strong>Sede legale</strong><span>{ esercente.sede_legale } </span>
-                                </span>}
+                                { esercente.sede_legale && <>
+                                    <strong>Sede Legale</strong><br/>
+                                    { esercente.sede_legale.via && <>
+                                        { esercente.sede_legale.via + " "} 
+                                        { esercente.sede_legale.civico && esercente.sede_legale.civico }<br/>
+                                    </>}
+                                    { esercente.sede_legale.citta &&  esercente.sede_legale.citta } 
+                                    { esercente.sede_legale.provincia &&  " (" + esercente.sede_legale.provincia + ")" }
+                                    { esercente.sede_legale.cap &&  " - " + esercente.sede_legale.cap + " " }<br />
+                                </> }
                                 <span className="d-flex justify-content-between">
                                     <strong>P.IVA</strong><span>{ esercente.piva }</span>
                                 </span>

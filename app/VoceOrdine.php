@@ -6,16 +6,45 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * 
- * @property  string  $ordine_id 
- * @property  int  $prodotto_id 
- * @property  string  $codice 
- * @property  int  $quantita 
- * @property  float{10,2}  $costo_unitario
- * @property  \App\Prodotto  $prodotto
- * @property  \App\Tariffa  $tariffa
- * @property  \App\Tickets[]  $tickets
- *  
+ * App\VoceOrdine
+ *
+ * @property string  $ordine_id
+ * @property int  $prodotto_id
+ * @property string  $codice
+ * @property int  $quantita
+ * @property float{10,2}  $costo_unitario
+ * @property \App\Prodotto  $prodotto
+ * @property \App\Tariffa  $tariffa
+ * @property \App\Tickets[]  $tickets
+ * @property int $id
+ * @property string|null $descrizione
+ * @property int|null $tariffa_id
+ * @property int $iva
+ * @property float $imponibile
+ * @property float $imposta
+ * @property float $importo
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $riscattati
+ * @property-read int|null $tickets_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCodice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCostoUnitario($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereDescrizione($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImponibile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImporto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImposta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereIva($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereOrdineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereProdottoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereQuantita($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereTariffaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class VoceOrdine extends Model
 {

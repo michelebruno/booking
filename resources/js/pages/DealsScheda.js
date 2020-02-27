@@ -33,10 +33,7 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
     const { titolo , descrizione , disponibili , iva, stato , codice } = deal || {}
 
     const reloadDeal = () => {
-        setDeal( d => {
-            d.willBeReloaded = true
-            return d
-        })
+        setDeal( d => Object.assign({}, d, { willBeReloaded : true }))
     }
 
     useEffect( () => {

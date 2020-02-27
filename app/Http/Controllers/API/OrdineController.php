@@ -11,6 +11,7 @@ use App\Deal;
 use App\Tariffa;
 use App\VoceOrdine;
 use App\Ordine;
+use App\User;
 use Illuminate\Http\Request;
 
 class OrdineController extends Controller
@@ -65,9 +66,9 @@ class OrdineController extends Controller
         $request->authorize();
         $dati = $request->validated();
 
-        if ( in_array( $request->user()->ruolo , [ 'admin' , 'account_manager' ] ) ) {
+        if ( in_array( $request->user()->ruolo , [ User::RUOLO_ACCOUNT , User::RUOLO_ADMIN ] ) ) {
             try {
-                $cliente = Cliente::email( $dati["cliente"]["email"] );
+                $cliente = Cliente::whereEmail( $dati["cliente"]["email"] )->firstOrFail();
             } catch (\Throwable $th) {
                 $cliente = new Cliente($dati['cliente']);
                 $cliente->save();
@@ -76,7 +77,7 @@ class OrdineController extends Controller
 
         $voci = [];
 
-        foreach ($dati['voci'] as $key => $voce) {
+        foreach ($dati['voci'] as $voce) {
 
             $tariffa = Tariffa::findOrFail($voce['tariffa_id']);
 
@@ -88,8 +89,6 @@ class OrdineController extends Controller
 
             $v->tariffa_id = $voce['tariffa_id'];
             $v->quantita = $voce["qta"];
-
-            // TODO ridurre i disponibili
 
             $voci[] = $v;
 
@@ -117,7 +116,7 @@ class OrdineController extends Controller
 
         $ordine->saveOrFail();
 
-        return response($ordine->fresh()->completo(), 201);
+        return response( $ordine->fresh()->completo(), 201 );
 
     }
 
@@ -129,7 +128,8 @@ class OrdineController extends Controller
      */
     public function show(Ordine $ordine)
     {
-        return response($ordine->completo());
+        // TODO $this->authorize('view', $ordine );
+        return response( $ordine->completo() );
     }
 
     /**

@@ -6,10 +6,9 @@ use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 /**
- * 
- * 
- * 
- * @property  string  $stato
+ * App\Ordine
+ *
+ * @property string  $stato
  *      - INIT se è in fase di creazione
  *      - APERTO quando deve essere pagato dal cliente
  *      - ELABORAZIONE se il pagamento è in stato di verifica
@@ -17,7 +16,40 @@ use Illuminate\Database\Eloquent\Model;
  *      - ELABORATO se i tickets stati generati e inviati
  *      - CHIUSO se tutti i tickets sono stati usati
  *      - RIMBORSATO se è stato rimborsato // ? Anche solo parzialmente?
- * 
+ * @property string $id
+ * @property float|null $imponibile
+ * @property float|null $imposta
+ * @property float|null $importo
+ * @property float|null $dovuto
+ * @property int $cliente_id
+ * @property string|null $data
+ * @property string|null $paypal_order_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Cliente $cliente
+ * @property-read mixed $links
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\OrdineMeta[] $meta
+ * @property-read int|null $meta_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Transazione[] $transazioni
+ * @property-read int|null $transazioni_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\VoceOrdine[] $voci
+ * @property-read int|null $voci_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereClienteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereDovuto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereImponibile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereImporto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereImposta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine wherePaypalOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereStato($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine withAll()
+ * @mixin \Eloquent
  */
 class Ordine extends Model
 {
@@ -40,7 +72,7 @@ class Ordine extends Model
     ];
 
     protected $appends = [
-        "_links" , "meta", "links"
+        "_links" , "links"
     ];
 
     protected $year;
@@ -89,7 +121,7 @@ class Ordine extends Model
 
     public function getMetaAttribute()
     {
-        $meta = $this->meta()->get();
+        $meta = $this->getRelation('meta');
         
         return $meta->mapWithKeys(function ($item) {
             return [ $item['chiave'] => $item["valore"] ];
@@ -101,7 +133,12 @@ class Ordine extends Model
      */
     public function completo()
     {
-        return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
+        $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets']);
+
+        $this->append('meta');
+
+        return $this;
+
     }
 
     public function loadAll()
@@ -109,7 +146,7 @@ class Ordine extends Model
         return $this->load(['cliente' , 'transazioni', 'voci.tickets']);
     }
 
-    public function scopeWithAll( $query )
+    public static function withAll( $query )
     {        
         return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
 

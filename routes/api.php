@@ -17,7 +17,7 @@ use App\User;
 
 Route::post('/webhooks/paypal', 'PaypalController@store');
 
-Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api'] , 'namespace' => 'API' ], function () {
 
     Route::get('account', function() { 
         
@@ -31,44 +31,44 @@ Route::group(['middleware' => ['auth:api']], function () {
     
     });
     
-    Route::apiResource('users', 'API\UserController');
+    Route::apiResource('users', 'UserController');
 
-    Route::apiResource('clienti', 'API\ClienteController' , [ 'parameters' => [ 'clienti' => 'cliente' ] ] );
-    Route::delete('clienti/{cliente}/forceDelete', 'API\ClienteController@forceDelete');
+    Route::apiResource('clienti', 'ClienteController' , [ 'parameters' => [ 'clienti' => 'cliente' ] ] );
+    Route::delete('clienti/{cliente}/forceDelete', 'ClienteController@forceDelete');
 
-    Route::apiResource('deals', 'API\DealController');
-    Route::patch('/deals/{deal}/restore', 'API\DealController@restore');
+    Route::apiResource('deals', 'DealController');
+    Route::patch('/deals/{deal}/restore', 'DealController@restore');
     
-    Route::apiResource('deals.tariffe', 'API\DealTariffeController' , [ 'parameters' => [ 'tariffe' => 'tariffa' ] ] );
+    Route::apiResource('deals.tariffe', 'DealTariffeController' , [ 'parameters' => [ 'tariffe' => 'tariffa' ] ] );
 
-    Route::apiResource('deals.servizi', 'API\DealServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' ] ] );
+    Route::apiResource('deals.servizi', 'DealServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' ] ] );
     
-    Route::apiResource('ordini', 'API\OrdineController', [ 'parameters' => [ 'ordini' => 'ordine' ] ]);
+    Route::apiResource('ordini', 'OrdineController', [ 'parameters' => [ 'ordini' => 'ordine' ] ]);
     
-    Route::apiResource('ordini.voci', 'API\VoceOrdineController', [ 'parameters' => [ 'ordini' => 'ordine', 'voci' => 'voce' ] ]);
+    Route::apiResource('ordini.voci', 'VoceOrdineController', [ 'parameters' => [ 'ordini' => 'ordine', 'voci' => 'voce' ] ]);
 
-    Route::post('/ordini/{ordine}/transazioni/paypal', 'API\OrdineTransazioneController@storePaypal' );
+    Route::post('/ordini/{ordine}/transazioni/paypal', 'OrdineTransazioneController@storePaypal' );
 
-    Route::apiResource('ordini.transazioni', 'API\OrdineTransazioneController', [ 'parameters' => [ 'ordini' => 'ordine', 'transazioni' => 'transazione' ] ])
+    Route::apiResource('ordini.transazioni', 'OrdineTransazioneController', [ 'parameters' => [ 'ordini' => 'ordine', 'transazioni' => 'transazione' ] ])
         ->only([ 'post' ]);
 
-    Route::apiResource('settings', 'API\SettingController');
+    Route::apiResource('settings', 'SettingController');
     
-    Route::apiResource('servizi', 'API\ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
+    Route::apiResource('servizi', 'ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
         ->only([ 'get' , 'head' ]);
     
-    Route::apiResource( 'esercenti.servizi' , 'API\EsercenteServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' , 'esercenti' => 'esercente' ] ] );
+    Route::apiResource( 'esercenti.servizi' , 'EsercenteServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' , 'esercenti' => 'esercente' ] ] );
     
-    Route::get('/servizi', 'API\ServizioController@index');
+    Route::get('/servizi', 'ServizioController@index');
 
-    Route::patch('/esercenti/{esercente}/servizi/{servizio}/restore', 'API\EsercenteServizioController@restore');
-    Route::post('/esercenti/{esercente}/servizi/{servizio}/tariffe', 'API\EsercenteServizioController@aggiungiTariffa');
-    Route::patch('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'API\EsercenteServizioController@editTariffa');
-    Route::delete('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'API\EsercenteServizioController@deleteTariffa'); // TODO una risorsa esercente.servizi.tariffe
+    Route::patch('/esercenti/{esercente}/servizi/{servizio}/restore', 'EsercenteServizioController@restore');
+    Route::post('/esercenti/{esercente}/servizi/{servizio}/tariffe', 'EsercenteServizioController@aggiungiTariffa');
+    Route::patch('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'EsercenteServizioController@editTariffa');
+    Route::delete('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'EsercenteServizioController@deleteTariffa'); // TODO una risorsa esercente.servizi.tariffe
     
-    Route::apiResource('esercenti', 'API\EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
+    Route::apiResource('esercenti', 'EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
     
-    Route::patch('/esercenti/{esercente}/restore', 'API\EsercenteController@restore');
-    Route::patch('/esercenti/{esercente}/note', 'API\EsercenteController@setNote');
+    Route::patch('/esercenti/{esercente}/restore', 'EsercenteController@restore');
+    Route::patch('/esercenti/{esercente}/note', 'EsercenteController@setNote');
     
 });

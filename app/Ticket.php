@@ -7,10 +7,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 /**
+ * App\Ticket
+ *
  * @property string $stato può essere:
  *      - APERTO
  *      - SCADUTO
  *      - CHIUSO
+ * @property string $token
+ * @property int $voce_ordine_id
+ * @property int $prodotto_id
+ * @property int $variante_tariffa_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Ordine $ordine
+ * @property-read \App\VarianteTariffa $varianteTariffa
+ * @property-read \App\VoceOrdine $voce
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereProdottoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereStato($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereVarianteTariffaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereVoceOrdineId($value)
+ * @mixin \Eloquent
  */
 class Ticket extends Model
 {

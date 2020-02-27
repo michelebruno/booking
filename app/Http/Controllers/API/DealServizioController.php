@@ -40,12 +40,12 @@ class DealServizioController extends Controller
         
         // TODO authorize
 
-        $servizio = Servizio::codice( $dati['servizio'] );
-
+        $servizio = Servizio::whereCodice( $dati['servizio'] )->firstOrFail();
+        
         $dati = $request->validate([
             'servizio' => [ 
                 function ( $attribute , $value, $fail ) use ( $servizio , $deal ) {
-                    if ( $deal->servizi->contains( $servizio->id ) ) {
+                    if ( $deal->servizi->find( $servizio->id ) ) {
                         $fail($attribute. " è già associato al deal.");
                     }
                 }

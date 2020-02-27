@@ -68,7 +68,9 @@ class DealTariffeController extends Controller
     {
         $this->authorize('update', $tariffa);
 
-        if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
+        if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa.");
+
+        // TODO può essere veramente nullable?
 
         $d = $request->validate( [ 
             'importo' => 'numeric|nullable' 
@@ -91,7 +93,8 @@ class DealTariffeController extends Controller
     {
         $this->authorize('delete', $tariffa);
 
-        if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
+        if ( $tariffa->prodotto_id !== $deal->id ) 
+            return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
         $tariffa->forceDelete();
 

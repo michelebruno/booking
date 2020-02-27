@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Deal;
-use App\Tariffa;
+use App\Deal; 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -27,7 +26,7 @@ class DealController extends Controller
 
         $per_page = (int) $request->query('per_page', 10);
 
-        $query =  Deal::with( [ 'servizi.esercente' ] );
+        $query =  Deal::with( [] );
 
         $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
 
@@ -53,13 +52,13 @@ class DealController extends Controller
 
         } 
  
-
         return response( $query->paginate($per_page) );
     }
 
     /**
      * Store a newly created resource in storage.
-     *
+     * 
+     * @todo  De
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -74,7 +73,7 @@ class DealController extends Controller
             'disponibili' => 'integer',
             'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
             'iva' => 'integer|required',
-            'tariffe' => 'array|bail',
+            'tariffe' => 'array|required|bail',
             'tariffe.intero.imponibile' => 'sometimes|numeric',
             'tariffe.intero.importo' => 'required_if:tariffe.intero.imponibile,null|numeric'
         ]);
@@ -103,11 +102,9 @@ class DealController extends Controller
      */
     public function show($deal)
     {
-        $deal = Deal::withTrashed()->codice($deal);
+        $deal = Deal::withTrashed()->whereCodice($deal)->firstOrFail();
 
-        if ( $deal->trashed()) {
-            $this->authorize('viewTrashed', $deal );
-        }
+        $this->authorize( 'view', $deal );
 
         return response( $deal->load('servizi') );
     }
@@ -150,7 +147,9 @@ class DealController extends Controller
         $this->authorize('delete', $deal);
 
         if ( $deal->delete() ) {
-            return response(204);
+
+            return response( $deal );
+            
         }
     }
 
@@ -158,7 +157,7 @@ class DealController extends Controller
     {
         $this->authorize('restore', Deal::class);
 
-        $deal = Deal::onlyTrashed()->codice($deal);
+        $deal = Deal::onlyTrashed()->whereCodice($deal)->firstOrFail();
 
         if ( $deal->restore() ) {
             return response( $deal->load('servizi') );

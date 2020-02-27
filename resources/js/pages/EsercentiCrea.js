@@ -26,9 +26,13 @@ const FormEsercente = ( { match, location, ...props} ) => {
     const [indirizzocitta, setIndirizzocitta] = useState("")
     const [indirizzoProvincia, setIndirizzoProvincia] = useState("")
     const [indirizzoCAP, setIndirizzoCAP] = useState("")
+    const [sedeLegaleVia, setSedeLegaleVia] = useState("")
+    const [sedeLegaleCivico, setSedeLegaleCivico] = useState("")
+    const [sedeLegalecitta, setSedeLegalecitta] = useState("")
+    const [sedeLegaleProvincia, setSedeLegaleProvincia] = useState("")
+    const [sedeLegaleCAP, setSedeLegaleCAP] = useState("")
     const [cf, setCf] = useState("")
-    const [ragione_sociale, setRagione_sociale] = useState("")
-    const [sede_legale, setSede_legale] = useState("")
+    const [ragione_sociale, setRagione_sociale] = useState("") 
     const [piva, setPiva] = useState("")
     const [nome, setNome] = useState("")
     const [sdi, setSdi] = useState("")
@@ -54,13 +58,20 @@ const FormEsercente = ( { match, location, ...props} ) => {
                 setIndirizzoCAP(initial.indirizzo.cap ? initial.indirizzo.cap : "")
             }
     
+            if ( initial.sede_legale ) {
+                setSedeLegaleVia(initial.sede_legale.via ? initial.sede_legale.via : "")
+                setSedeLegaleCivico(initial.sede_legale.civico ? initial.sede_legale.civico : "")
+                setSedeLegalecitta(initial.sede_legale.citta ? initial.sede_legale.citta : "")
+                setSedeLegaleProvincia(initial.sede_legale.provincia ? initial.sede_legale.provincia : "")
+                setSedeLegaleCAP(initial.sede_legale.cap ? initial.sede_legale.cap : "")
+            }
+    
             setCf(initial.cf ? initial.cf : "")
             setPiva(initial.piva ? initial.piva : "")
             setNome(initial.nome ? initial.nome : "")
             setSdi(initial.sdi ? initial.sdi : "")
             setPec(initial.pec ? initial.pec : "")
-            setRagione_sociale(initial.ragione_sociale ? initial.ragione_sociale : "")
-            setSede_legale(initial.sede_legale ? initial.sede_legale : "")
+            setRagione_sociale(initial.ragione_sociale ? initial.ragione_sociale : "") 
 
         }
     }
@@ -153,12 +164,18 @@ const FormEsercente = ( { match, location, ...props} ) => {
             provincia: indirizzoProvincia,
             cap: indirizzoCAP
         },
+        sede_legale: {
+            via: sedeLegaleVia,
+            civico: sedeLegaleCivico,
+            citta: sedeLegalecitta,
+            provincia: sedeLegaleProvincia,
+            cap: sedeLegaleCAP
+        },
         nome,
         cf,
         piva,
         sdi,
-        ragione_sociale,
-        sede_legale,
+        ragione_sociale, 
         pec
     }
     const handleSubmit = e => { e.preventDefault(); setApi({status: "submit", data: api.data}) }
@@ -242,13 +259,33 @@ const FormEsercente = ( { match, location, ...props} ) => {
                                     { showErrorsFeedback(errors, "ragione_sociale") }
                                 </Col>
                             </Form.Group>
-                            <Form.Group as={Row} controlId="sedelegale">
-                                <Form.Label column sm="2" >Sede legale</Form.Label>
-                                <Col sm="10">
-                                    <Form.Control required isInvalid={isInvalid(errors, "sede_legale" )} value={sede_legale} onChange={ e => setSede_legale(e.target.value)} />
-                                    { showErrorsFeedback(errors, "sede_legale") }
+                            <Form.Group as={Row}>
+                                <Form.Label column sm="2">Sede Legale</Form.Label>
+                                <Col>
+                                    <Form.Group as={Row}>
+                                        <Col className="mb-2" sm="8">
+                                            <Form.Control placeholder="Via" isInvalid={isInvalid(errors, "sede_legale.via" )} name="via" value={ sedeLegaleVia } onChange={ e => setSedeLegaleVia(e.target.value)} />
+                                            { showErrorsFeedback(errors, "sede_legale.via") } 
+                                        </Col>
+                                        <Col className="mb-2" sm="2">
+                                            <Form.Control isInvalid={isInvalid(errors, "sede_legale.civico" )} id="civico"  name="civico" placeholder="Civico" value={ sedeLegaleCivico } onChange={ e => setSedeLegaleCivico(e.target.value)} />
+                                            { showErrorsFeedback(errors, "sede_legale.civico") }
+                                        </Col>
+                                        <Col className="mb-2" sm="3">
+                                            <Form.Control size="5" maxLength="5" isInvalid={isInvalid(errors, "sede_legale.cap" )} placeholder="CAP" value={ sedeLegaleCAP } onChange={ e => setSedeLegaleCAP(e.target.value)} />
+                                            { showErrorsFeedback(errors, "sede_legale.cap") }
+                                        </Col>
+                                        <Col className="mb-2" sm="4">
+                                            <Form.Control isInvalid={isInvalid(errors, "sede_legale.citta" )} id="citta" name="citta" placeholder="citta" value={ sedeLegalecitta } onChange={ e => setSedeLegalecitta(e.target.value)} />
+                                            { showErrorsFeedback(errors, "sede_legale.citta") }
+                                        </Col>
+                                        <Col className="mb-2" sm="3">
+                                            <Form.Control size="2" maxLength="2"  isInvalid={isInvalid(errors, "sede_legale.provincia" )} id="provincia" name="provincia" placeholder="provincia" value={ sedeLegaleProvincia } onChange={ e => setSedeLegaleProvincia(e.target.value)} />
+                                            { showErrorsFeedback(errors, "sede_legale.provincia") }
+                                        </Col>
+                                    </Form.Group>
                                 </Col>
-                            </Form.Group>
+                            </Form.Group> 
                             <Form.Row>
                                 <Col sm="6"> 
                                     <Form.Group as={Row} controlId="piva">

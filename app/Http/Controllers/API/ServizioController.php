@@ -20,20 +20,13 @@ class ServizioController extends Controller
 
         $query = false;
 
-        if ( $s = $request->query('s', false )) {
+        if ( $s = $request->query('s', false ) ) {
 
             $s = urldecode($s);
             $servizi = Servizio::where('titolo', 'LIKE', '%' . $s . '%' )->get();
             $response = $servizi->load('deals');
 
         }
-        if ( $s = $request->query('s', false ) ) {
-
-            $s = urldecode($s);
-
-            $query = Servizio::where('titolo', 'LIKE', '%' . $s . '%' );
-
-        } 
         
         if ( $notAttachedToDeals = $request->query('notAttachedToDeals', false ) ) { // Separati con la virgola
 

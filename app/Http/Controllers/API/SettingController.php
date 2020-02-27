@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\VarianteTariffa;
 use App\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -40,7 +39,7 @@ class SettingController extends Controller
             {
                 $array = [];
     
-                $varianti = VarianteTariffa::all();
+                $varianti = app('VariantiTariffe');
     
                 foreach ($varianti as $variante) {
                     $array['varianti_tariffe'][$variante->slug] = $variante;

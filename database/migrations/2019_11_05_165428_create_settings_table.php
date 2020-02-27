@@ -14,7 +14,7 @@ class CreateSettingsTable extends Migration
     public function up()
     {
         Schema::create('settings', function (Blueprint $table) { 
-            $table->string('chiave')->unique()->primary();
+            $table->string('chiave')->primary();
             $table->string('valore')->nullable();
             $table->boolean('autoload')->default(false);
             $table->timestamps();
