@@ -8,17 +8,14 @@ use Illuminate\Support\Facades\Cache;
 /**
  * App\VoceOrdine
  *
- * @property string  $ordine_id
- * @property int  $prodotto_id
- * @property string  $codice
- * @property int  $quantita
- * @property float{10,2}  $costo_unitario
- * @property \App\Prodotto  $prodotto
- * @property \App\Tariffa  $tariffa
- * @property \App\Tickets[]  $tickets
  * @property int $id
+ * @property string $ordine_id
+ * @property int|null $prodotto_id
+ * @property string $codice
  * @property string|null $descrizione
+ * @property float $costo_unitario
  * @property int|null $tariffa_id
+ * @property int $quantita
  * @property int $iva
  * @property float $imponibile
  * @property float $imposta
@@ -26,6 +23,9 @@ use Illuminate\Support\Facades\Cache;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $riscattati
+ * @property-read \App\Prodotto|null $prodotto
+ * @property-read \App\Tariffa|null $tariffa
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Ticket[] $tickets
  * @property-read int|null $tickets_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newQuery()

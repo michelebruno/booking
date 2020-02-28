@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\HaAttributiMeta;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -37,14 +38,15 @@ use Laravel\Passport\HasApiTokens;
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User email($email)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User esercente()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User admin()
  * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User fornitori()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\User onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User query()
  * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User superAdmin()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereApiToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCf($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
@@ -62,19 +64,26 @@ use Laravel\Passport\HasApiTokens;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User esercenti()
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use Notifiable, SoftDeletes, HasApiTokens, HaAttributiMeta;
 
-    use HaAttributiMeta;
+    const RUOLI = [
+        "admin",
+        "account_manager",
+        "fornitore",
+        "cliente"
+    ];
 
     const RUOLO_ADMIN = "admin";
-    const RUOLO_ACCOUNT = "account_manager";
-    const RUOLO_CLIENTE = "cliente";
-    const RUOLO_ESERCENTE = "esercente";
 
-    use Notifiable, SoftDeletes, HasApiTokens;
+    const RUOLO_ACCOUNT = "account_manager";
+
+    const RUOLO_CLIENTE = "cliente"; 
+
+    const RUOLO_FORNITORE = "fornitore";
+
 
     protected $table = 'users';
 
@@ -84,7 +93,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password', 'cf', 'piva', 'ruolo', 'nome'
+        'cf', 
+        'email', 
+        'username', 
+        'password', 
+        'piva', 
+        'ruolo', 
+        'nome'
     ];
 
     /**
@@ -93,11 +108,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token' 
+        'password',
+        'remember_token' 
     ];
 
     protected $appends = [
-        'abilitato' , '_links'
+        'abilitato', 
+        '_links'
     ];
 
     /**
@@ -115,46 +132,26 @@ class User extends Authenticatable implements MustVerifyEmail
      * 
      */
 
-    public function scopeEsercenti($query)
+    public function scopeSuperAdmin(Builder $query )
     {
-        return $query->where('ruolo', self::RUOLO_ESERCENTE );
+        return $query->where( 'ruolo', self::RUOLO_ADMIN );
     }
 
+    public function scopeAdmin(Builder $query)
+    {
+        return $query->whereIn( 'ruolo', [ 'admin', 'account_manager' ] );
+    }
+
+
+    public function scopeFornitori(Builder $query)
+    {
+        return $query->where('ruolo', self::RUOLO_FORNITORE );
+    }
+    
     public function meta()
     {
-        return $this->hasMany('App\UserMeta', 'user_id' );
+        return $this->hasMany(UserMeta::class, 'user_id' );
     }
-
-    public static function toCamelCase(array $array)
-    {
-        $newArray = [];
-
-        foreach ($array as $key => $value) {
-
-            if ( is_array($value) ) $value = static::toCamelCase($value);
-
-            $key = lcfirst(implode('', array_map('ucfirst', explode('_', $key))));
-
-            $newArray[$key] = $value;
-        }
-
-        return $newArray;
-    }
-
-    public function exceptFromTraits($class, $array = false )
-    {
-        if ( $array === false ) $array = $this->meta;
-        $except = [];
-
-        $traits = class_uses_recursive($class);
-
-        if ( in_array('App\Traits\HaIndirizzo', $traits) ) {
-            $except = array_merge($traits, ['indirizzo_via','indirizzo_civico','indirizzo_citta','indirizzo_provincia','indirizzo_cap']);
-        }
-
-        return Arr::except($array, $except);
-    }
-
 
     public function getLinksAttribute()
     {
@@ -169,9 +166,36 @@ class User extends Authenticatable implements MustVerifyEmail
      * * CUSTOM FUNCTIONS
      */
 
-    public function isEsercente()
+    public function isSuperAdmin()
     {
-        return $this->ruolo === self::RUOLO_ESERCENTE;
+        return $this->ruolo === self::RUOLO_ADMIN;
+    }
+    
+    /**
+     * Verifica se l'utente è un gestore del sistema.
+     * 
+     * Ritorna true se appartiene ai ruoli: admin, account_manager.
+     *
+     * @return bool 
+     */
+    public function isAdmin()
+    {
+        return in_array( $this->ruolo , [ self::RUOLO_ACCOUNT , self::RUOLO_ADMIN ]);
+    }
+
+    /**
+     * Verifica se è un account manager.
+     *
+     * @return bool
+     */
+    public function isAccountManager()
+    {
+        return $this->ruolo === self::RUOLO_ACCOUNT;
+    }
+
+    public function isFornitore()
+    {
+        return $this->ruolo === self::RUOLO_FORNITORE;
     }
 
 

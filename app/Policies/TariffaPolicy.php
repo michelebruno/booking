@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Deal;
-use App\Servizio;
+use App\Fornitura;
 use App\Tariffa;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -18,7 +18,7 @@ class TariffaPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function viewAny(User $user, ?Deal $deal, ?Servizio $servizio )
+    public function viewAny(User $user, ?Deal $deal, ?Fornitura $fornitura )
     {
         //
     }
@@ -30,7 +30,7 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function view(User $user, Tariffa $tariffa, ?Deal $deal, ?Servizio $servizio )
+    public function view(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura )
     {
         //
     }
@@ -41,7 +41,7 @@ class TariffaPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function create(User $user, ?Deal $deal, ?Servizio $servizio )
+    public function create(User $user, ?Deal $deal, ?Fornitura $fornitura )
     {
         //
     }
@@ -53,9 +53,9 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function update(User $user, Tariffa $tariffa, ?Deal $deal, ?Servizio $servizio )
+    public function update(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura )
     {
-        return in_array($user->ruolo, [ 'admin' , 'account_manager' ]);
+        return $user->isAdmin();
     }
 
     /**

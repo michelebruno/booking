@@ -12,13 +12,13 @@ import useServerSideCollection from '../_services/useServerSideCollection';
 
 const Esercenti = ( props ) => {
 
-    const [ collection, serverSideOptions ] = useServerSideCollection( "/esercenti" )
+    const [ collection, serverSideOptions ] = useServerSideCollection( "/fornitori" )
 
     const esercenti = collection && collection.data
 
     useEffect(() => {
         props.setTopbarButtons( () => {
-            return <Button size="sm" as={Link} to="/esercenti/crea">Nuovo</Button>
+            return <Button size="sm" as={Link} to="/fornitori/crea">Nuovo</Button>
         })
         return () => {
             props.unsetTopbarButtons()
@@ -33,7 +33,7 @@ const Esercenti = ( props ) => {
             options : {
                 customBodyRender : ( cell , { rowIndex } ) => {
                     const row = esercenti[rowIndex]
-                    return <Link to={{ pathname : "/esercenti/" + row.id , state : { esercente : row }} } >{cell}</Link>
+                    return <Link to={{ pathname : "/fornitori/" + row.id , state : { esercente : row }} } >{cell}</Link>
                 }
             }
 

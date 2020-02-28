@@ -29,7 +29,7 @@ const ServiziTabella = ( {  title, esercente, editable, url  , ...props } ) => {
             </Button>
 
             <AxiosConfirmModal url={ props.url } show={show} method="delete" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
-                Sei sicuro di cancellare questo servizio?
+                Sei sicuro di cancellare questa fornitura?
             </AxiosConfirmModal>
 
         </div>
@@ -46,7 +46,7 @@ const ServiziTabella = ( {  title, esercente, editable, url  , ...props } ) => {
             </Button>
 
             <AxiosConfirmModal url={ props.url } show={show} method="patch" onHide={() => { setShow(false); reloadApi()}} title="Conferma" >
-                Sei sicuro di voler ripristinare questo servizio?
+                Sei sicuro di voler ripristinare questa fornitura?
             </AxiosConfirmModal>
         </div>
     }

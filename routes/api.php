@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Esercente;
+use App\Fornitore;
 use App\User;
 
 /*
@@ -23,8 +23,8 @@ Route::group(['middleware' => ['auth:api'] , 'namespace' => 'API' ], function ()
         
         $user = request()->user();
     
-        if ( $user->ruolo == 'esercente' ) {
-            return response( Esercente::findOrFail($user->id) );
+        if ( $user->ruolo == User::RUOLO_FORNITORE ) {
+            return response( Fornitore::findOrFail($user->id) );
         }
     
         return response($user);
@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth:api'] , 'namespace' => 'API' ], function ()
     
     Route::apiResource('deals.tariffe', 'DealTariffeController' , [ 'parameters' => [ 'tariffe' => 'tariffa' ] ] );
 
-    Route::apiResource('deals.servizi', 'DealServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' ] ] );
+    Route::apiResource('deals.forniture', 'DealFornituraController' , [ 'parameters' => [ 'forniture' => 'fornitura' ] ] );
     
     Route::apiResource('ordini', 'OrdineController', [ 'parameters' => [ 'ordini' => 'ordine' ] ]);
     
@@ -54,21 +54,21 @@ Route::group(['middleware' => ['auth:api'] , 'namespace' => 'API' ], function ()
 
     Route::apiResource('settings', 'SettingController');
     
-    Route::apiResource('servizi', 'ServizioController', [ 'parameters' => [ 'servizi' => 'servizio' ]])
+    Route::apiResource('forniture', 'FornituraController', [ 'parameters' => [ 'forniture' => 'fornitura' ]])
         ->only([ 'get' , 'head' ]);
     
-    Route::apiResource( 'esercenti.servizi' , 'EsercenteServizioController' , [ 'parameters' => [ 'servizi' => 'servizio' , 'esercenti' => 'esercente' ] ] );
+    Route::apiResource( 'fornitori.forniture' , 'FornitoreFornituraController' , [ 'parameters' => [ 'forniture' => 'fornitura' , 'fornitori' => 'fornitore' ] ] );
     
-    Route::get('/servizi', 'ServizioController@index');
+    Route::get('/forniture', 'FornituraController@index');
 
-    Route::patch('/esercenti/{esercente}/servizi/{servizio}/restore', 'EsercenteServizioController@restore');
-    Route::post('/esercenti/{esercente}/servizi/{servizio}/tariffe', 'EsercenteServizioController@aggiungiTariffa');
-    Route::patch('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'EsercenteServizioController@editTariffa');
-    Route::delete('/esercenti/{esercente}/servizi/{servizio}/tariffe/{tariffa}', 'EsercenteServizioController@deleteTariffa'); // TODO una risorsa esercente.servizi.tariffe
+    Route::patch('/fornitori/{fornitore}/forniture/{fornitura}/restore', 'FornitoreFornituraController@restore');
+    Route::post('/fornitori/{fornitore}/forniture/{fornitura}/tariffe', 'FornitoreFornituraController@aggiungiTariffa');
+    Route::patch('/fornitori/{fornitore}/forniture/{fornitura}/tariffe/{tariffa}', 'FornitoreFornituraController@editTariffa');
+    Route::delete('/fornitori/{fornitore}/forniture/{fornitura}/tariffe/{tariffa}', 'FornitoreFornituraController@deleteTariffa'); // TODO una risorsa fornitore.forniture.tariffe
     
-    Route::apiResource('esercenti', 'EsercenteController', [ 'parameters' => [ 'esercenti' => 'esercente' ]]);
+    Route::apiResource('fornitori', 'FornitoreController', [ 'parameters' => [ 'fornitori' => 'fornitore' ]]);
     
-    Route::patch('/esercenti/{esercente}/restore', 'EsercenteController@restore');
-    Route::patch('/esercenti/{esercente}/note', 'EsercenteController@setNote');
+    Route::patch('/fornitori/{fornitore}/restore', 'FornitoreController@restore');
+    Route::patch('/fornitori/{fornitore}/note', 'FornitoreController@setNote');
     
 });

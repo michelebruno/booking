@@ -92,7 +92,7 @@ const UtenteForm =  ( { onSuccess }) => {
                         <Form.Control as="select" required value={ruolo} onChange={ e => setRuolo(e.target.value) } { ...dynamicProps("ruolo")}>
                             <option value="admin">Admin</option>
                             <option value="account_manager">Account manager</option>
-                            {/* <option value="esercente">Esercente</option>
+                            {/* <option value="esercente">Fornitore</option>
                             <option value="cliente">Cliente</option> */}
                         </Form.Control>
                     </Form.Group> 

@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Esercente;
-use App\User;
-
+use App\Fornitore;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Validation\Rule;
 
-class EsercenteController extends \App\Http\Controllers\Controller
+class FornitoreController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,11 +18,11 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Esercente::class);
+        $this->authorize('viewAny', Fornitore::class);
 
         $per_page = $request->query("per_page" , 10);
 
-        $query = Esercente::withTrashed();
+        $query = Fornitore::withTrashed();
         
         return response( $query->paginate($per_page) );
     }
@@ -36,8 +35,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-
-        $this->authorize('create', Esercente::class);
+        $this->authorize('create', Fornitore::class);
 
         // TODO Validazione della richiesta
         $dati = $request->validate([
@@ -54,7 +52,7 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'ragione_sociale' => 'required|sometimes' // Formato?
         ]);
 
-        $user = new Esercente($dati);
+        $user = new Fornitore($dati);
 
         $user->password = Hash::make( $request->input('password') );
         
@@ -105,88 +103,88 @@ class EsercenteController extends \App\Http\Controllers\Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $esercente
+     * @param  int $fornitore
      * @return \Illuminate\Http\Response
      */
-    public function show( $esercente )
+    public function show( $fornitore )
     {
-        $esercente = Esercente::withTrashed()->findOrFail($esercente);
+        $fornitore = Fornitore::withTrashed()->findOrFail($fornitore);
 
-        $this->authorize( 'view', $esercente );
+        $this->authorize( 'view', $fornitore );
         
-        return response( $esercente->loadMissing('servizi') );
+        return response( $fornitore->loadMissing('forniture') );
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Esercente  $esercente
+     * @param  \App\Fornitore  $fornitore
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Esercente $esercente)
+    public function update(Request $request, Fornitore $fornitore)
     {
-        $this->authorize( 'update' , $esercente );
+        $this->authorize( 'update' , $fornitore );
 
         $dati = $request->validate([
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($esercente->email, 'email')],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($fornitore->email, 'email')],
             'meta.*' => 'nullable',
             'indirizzo.*' => 'nullable',
-            'username' => [ 'required', Rule::unique('users', 'username')->ignore($esercente->username, 'username')],
-            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($esercente->piva, 'piva')], 
-            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($esercente->cf, 'cf' )],
+            'username' => [ 'required', Rule::unique('users', 'username')->ignore($fornitore->username, 'username')],
+            'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($fornitore->piva, 'piva')], 
+            'cf' => ['required', 'max:16' , Rule::unique('users', 'cf')->ignore($fornitore->cf, 'cf' )],
             'nome' => 'string|required',
             'sdi' => 'sometimes|nullable|max:7',
             'pec' => 'sometimes|nullable|email'
         ]);
 
-        $esercente->fill($dati); // TODO: quanto è sicuro? L'attributo fillable come è impostato?
+        $fornitore->fill($dati); // TODO: quanto è sicuro? L'attributo fillable come è impostato?
 
-        $esercente->nome = $request->input('nome', false) ;
+        $fornitore->nome = $request->input('nome', false) ;
 
-        $esercente->sdi = $request->input('sdi', false) ;
+        $fornitore->sdi = $request->input('sdi', false) ;
 
-        $esercente->pec = $request->input('pec', false) ;
+        $fornitore->pec = $request->input('pec', false) ;
 
-        $esercente->indirizzo = $request->input('indirizzo', false) ;
+        $fornitore->indirizzo = $request->input('indirizzo', false) ;
 
-        $esercente->sede_legale = $request->input('sede_legale', false) ;
+        $fornitore->sede_legale = $request->input('sede_legale', false) ;
 
-        $esercente->ragione_sociale = $request->input('ragione_sociale', false) ;
+        $fornitore->ragione_sociale = $request->input('ragione_sociale', false) ;
 
-        $esercente->save();
+        $fornitore->save();
 
         $metas = [];
 
-        return response( $esercente );
+        return response( $fornitore );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Esercente  $esercente
+     * @param  \App\Fornitore  $fornitore
      * @return \Illuminate\Http\Response
      */
-    public function destroy( Esercente $esercente)
+    public function destroy( Fornitore $fornitore)
     {
-        $this->authorize('delete', $esercente );
+        $this->authorize('delete', $fornitore );
 
-        $esercente->delete();
+        $fornitore->delete();
     
-        return response( $esercente, 200 );
+        return response( $fornitore, 200 );
 
     }
 
-    public function restore( $esercente )
+    public function restore( $fornitore )
     {
-        $this->authorize( 'restore', $esercente = Esercente::onlyTrashed()->findOrFail( $esercente ) );  // ? oppure withTrashed?
+        $this->authorize( 'restore', $fornitore = Fornitore::onlyTrashed()->findOrFail( $fornitore ) );  // ? oppure withTrashed?
 
-        if ( $esercente->restore() ) {
-            return response( $esercente );
+        if ( $fornitore->restore() ) {
+            return response( $fornitore );
         } else abort(400);
     }
 
-    public function setNote( Esercente $esercente , Request $request )
+    public function setNote( Fornitore $fornitore , Request $request )
     {
         // TODO : authorize
         // ? e per gli altri campi?
@@ -194,12 +192,11 @@ class EsercenteController extends \App\Http\Controllers\Controller
             'note' => 'required|string'
         ]);
 
-        $esercente->note = $dati['note'];
+        $fornitore->note = $dati['note'];
         
-        $esercente->save();
+        $fornitore->save();
 
-        return response($esercente);
+        return response($fornitore);
 
     }
-
 }

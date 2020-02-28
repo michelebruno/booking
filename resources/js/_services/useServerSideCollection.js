@@ -102,8 +102,8 @@ export default function useServerSideCollection( baseUrl , defaultFilter ) {
                 if ( axios.isCancel(e) ) return;
 
                 if (e.response) {
-                    setCollection( prev => Object.assig({}, prev, { data : [] , error : e.response.data.message }) )
-                } else console.log(e);
+                    setCollection( prev => Object.assign({}, prev, { data : [] , error : e.response.data.message }) )
+                } else console.warn("Errore axios inaspettato: ", e);
                 
             })
 

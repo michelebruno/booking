@@ -18,7 +18,7 @@ const ProdottiAsyncSelect = ( { url , label  } ) => {
     useEffect( () => {
 
         if ( ! url ) {
-            console.log("No URL")
+            console.warn("No URL")
             return;
         }
 

@@ -24,7 +24,7 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => Hash::make('password'), // password
         'remember_token' => Str::random(10),
         'cf' => $faker->unique()->numerify('0##########'),
-        'ruolo' => $faker->randomElement(['admin', 'fornitore', 'cliente'])
+        'ruolo' => $faker->randomElement(User::RUOLI)
     ];
     
     switch ($data['ruolo']) {

@@ -106,7 +106,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
         if ( props.shouldBeReloaded ) {
             return get('/account')
         } else if ( match.params.id ) {
-            return get( '/esercenti/' + match.params.id )
+            return get( '/fornitori/' + match.params.id )
         }
 
     }, [location.state, match.params.id ] )
@@ -116,10 +116,10 @@ const FormEsercente = ( { match, location, ...props} ) => {
             let method, url;
             if ( match.params.id || props.esercente || ( location.state && location.state.esercente )) {
                 method = "put"
-                url = "/esercenti/" + id
+                url = "/fornitori/" + id
             } else {
                 method = "post"
-                url = "/esercenti"
+                url = "/fornitori"
             }
 
             const source = axios.CancelToken.source()
@@ -131,7 +131,7 @@ const FormEsercente = ( { match, location, ...props} ) => {
                 cancelToken : source.token
             })
                 .then( response => {
-                    let to = props.isCurrentUser ? '/account' : "/esercenti/" + response.data.id 
+                    let to = props.isCurrentUser ? '/account' : "/fornitori/" + response.data.id 
                     setRedirect({to, state: { success : true } })
                 })
                 .catch( error =>

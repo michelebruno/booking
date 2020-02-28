@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read mixed $iva
  * @property-read mixed $nome
  * @property mixed $slug
- * @property-read \App\Prodotto $prodotto
  * @property-read \App\VarianteTariffa $variante
+ * @property-read \App\Prodotto $prodotto
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa query()
@@ -35,7 +35,10 @@ class Tariffa extends Model
     ];    
 
     public $fillable = [
-        'variante_tariffa_id', 'importo', 'slug'
+        'variante_tariffa_id',
+        'importo', 
+        'slug', 
+        'imponibile'
     ];
 
     /**
@@ -96,6 +99,9 @@ class Tariffa extends Model
     
     public function setImponibileAttribute( float $value )
     {
+        if ( ! $this->prodotto_id ) {
+            abort(500, "Non posso dedurre l'imposta di una tariffa di cui non conosco ancora il prodotto.");
+        }
         return $this->attributes['importo'] = self::includiIva( $value , $this->iva );
     }
 

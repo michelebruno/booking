@@ -56,7 +56,7 @@ class DealPolicy
      */
     public function update(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
+        return $user->isAdmin();
     }
 
     /**
@@ -68,7 +68,7 @@ class DealPolicy
      */
     public function delete(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
+        return $user->isAdmin();
     }
 
     /**
@@ -80,7 +80,7 @@ class DealPolicy
      */
     public function restore(User $user)
     {
-        return in_array( $user->ruolo , ['account_manager' , 'admin' ] );
+        return $user->isAdmin();
     }
 
     /**
@@ -92,6 +92,25 @@ class DealPolicy
      */
     public function forceDelete(User $user, Deal $deal)
     {
-        return in_array( $user->ruolo , [ 'admin' ] );
+        return $user->isSuperAdmin();
+    }
+
+    /**
+     * * FORNITURE COLLEGATE
+     */
+
+    public function createFornitura(User $user, Deal $deal)
+    {        
+        return $user->isSuperAdmin();
+    }
+
+    public function updateFornitura(User $user, Deal $deal)
+    {        
+        return $user->isSuperAdmin();
+    }
+
+    public function deleteFornitura(User $user, Deal $deal)
+    {        
+        return $user->isSuperAdmin();
     }
 }

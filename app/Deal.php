@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $codice
  * @property string $tipo
  * @property string|null $descrizione
- * @property int|null $esercente_id
+ * @property int|null $fornitore_id
  * @property string $stato
  * @property int|null $disponibili
  * @property int $iva
@@ -21,16 +21,15 @@ use Illuminate\Database\Eloquent\Builder;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Fornitura[] $forniture
+ * @property-read int|null $forniture_count
  * @property-read mixed $cestinato
  * @property-read mixed $condensato
  * @property-read mixed $links
  * @property-read string $smart
  * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Servizio[] $servizi
- * @property-read int|null $servizi_count
  * @property-read int|null $tariffe_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto attivi()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereCodice($codice)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal newQuery()
@@ -40,7 +39,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereDescrizione($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereDisponibili($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereEsercenteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereFornitoreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereIva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal whereStato($value)
@@ -71,9 +70,9 @@ class Deal extends Prodotto
     }
 
     
-    public function servizi()
+    public function forniture()
     {
-        return $this->belongsToMany('App\Servizio', 'prodotti_pivot', 'padre', 'figlio');
+        return $this->belongsToMany(Fornitura::class, 'prodotti_pivot', 'padre', 'figlio');
     }
 
     public function getLinksAttribute()
@@ -82,7 +81,7 @@ class Deal extends Prodotto
             'self' => '/deals/' . $this->codice,
             'restore' => '/deals/' . $this->codice . '/restore',
             'tariffe' => '/deals/' . $this->codice . '/tariffe',
-            'servizi' => '/deals/' . $this->codice . '/servizi',
+            'forniture' => '/deals/' . $this->codice . '/forniture',
         ];
     }
 }

@@ -31,12 +31,10 @@ const App = ( { currentUser, settings, authenticate, getAutoloadedSettings, ...p
 		authenticate().then( getAutoloadedSettings ); 
 	}, [authenticate, getAutoloadedSettings])
 
-    
 	return(
 		// rendering the router with layout 
 		<BrowserRouter basename="/app/">	
-			{ !currentUser && !settings && loading()}
-			{ currentUser && <React.Fragment>
+			{ (currentUser && loading) ? <React.Fragment>
 				<Switch>
 					{ routes.map( ( route, index ) => {
 						return (
@@ -55,7 +53,7 @@ const App = ( { currentUser, settings, authenticate, getAutoloadedSettings, ...p
 						);
 					})}
 				</Switch>
-			</React.Fragment>}
+			</React.Fragment> : loading() }
 		</BrowserRouter> 
 	)
 } 

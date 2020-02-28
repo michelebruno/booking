@@ -152,7 +152,7 @@ const EditableField = ( { label, noLabel, initialValue, method, name, onSuccess,
 
         }
         
-        return <Form.Control { ...props } value={ ( isImage ) ? undefined : value } onChange={ onChange } onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e } } { ...dynamicProps() }  />
+        return <Form.Control autoFocus { ...props } value={ ( isImage ) ? undefined : value } onChange={ onChange } onKeyPress={ e => { return e.charCode == 13 ? handleSubmit() : e } } { ...dynamicProps() }  />
     }
 
     return <FormGroup as={Row} controlId={name} >

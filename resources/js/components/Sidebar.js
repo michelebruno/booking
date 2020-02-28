@@ -70,8 +70,8 @@ const SideNavContent = ( { user } ) => {
             roles : [ "admin" , "account_manager" ]
         },
         {
-            label : "Esercenti",
-            pathname : "/esercenti",
+            label : "Fornitori",
+            pathname : "/fornitori",
             icon : <StorefrontIcon />,
             roles : [ "admin" , "account_manager" ]
         },
@@ -84,7 +84,7 @@ const SideNavContent = ( { user } ) => {
         {
             label : "Il mio profilo",
             icon : <i className="fas fa-user" />,
-            roles : [ "esercente" ],
+            roles : [ "fornitore" ],
         },
 
     ]

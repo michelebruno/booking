@@ -16,7 +16,7 @@ use Illuminate\Support\Arr;
  * @property string $codice
  * @property string $tipo
  * @property string|null $descrizione
- * @property int|null $esercente_id
+ * @property int|null $fornitore_id
  * @property string $stato
  * @property int|null $disponibili
  * @property int $iva
@@ -31,7 +31,6 @@ use Illuminate\Support\Arr;
  * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
  * @property-read int|null $tariffe_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto attivi()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereCodice($codice)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto newModelQuery()
@@ -44,7 +43,7 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDescrizione($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDisponibili($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereEsercenteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereFornitoreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereIva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereStato($value)
@@ -60,14 +59,19 @@ class Prodotto extends Model
 {
     use SoftDeletes;
 
-    const TIPO_DEAL = "deal";
+    const TIPO_DEAL = "deal"; 
 
-    const TIPO_SERVIZIO = "servizio";
+    const TIPO_FORNITURA = "fornitura";
     
+    const TIPI = [
+        self::TIPO_DEAL,
+        self::TIPO_FORNITURA,
+    ];
+
     protected $table = "prodotti";
 
     protected $hidden = [
-        'esercente_id', 'deleted_at', 'created_at', 'updated_at'
+        'fornitore_id', 'deleted_at', 'created_at', 'updated_at'
     ];
 
     protected $appends = [
@@ -121,7 +125,7 @@ class Prodotto extends Model
 
     public function setTariffeAttribute( $tariffe )
     {
-        if (! $tariffe ) return;
+        if ( ! $tariffe ) return;
 
         foreach ( $tariffe as $key => $value ) { 
 
@@ -178,7 +182,12 @@ class Prodotto extends Model
     {
         $array = parent::toArray();
 
-        $array["tariffe"] = $this->tariffe->keyBy('slug');
+        $tariffe = $this->tariffe->keyBy('slug');
+
+        /**
+         * Se non dovesse avere tariffe, deve comunque restituire un oggetto quando trasformato in json
+         */
+        $array["tariffe"] = count($tariffe) ? $tariffe : new \stdClass;
 
         return $array;
     }

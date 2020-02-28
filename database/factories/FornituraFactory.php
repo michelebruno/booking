@@ -2,15 +2,18 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Esercente;
-use App\Servizio;
+use App\Fornitore;
+use App\Fornitura;
 use Faker\Generator as Faker;
+
+// TODO usare Setting::progressivo("fornitori", $es, "forniture"); e poi aumentare
 $servizio_counter = 0;
-$factory->define(Servizio::class, function (Faker $faker)  {
+
+$factory->define(Fornitura::class, function (Faker $faker)  {
     global $servizio_counter;
     
-    $esercenti = Esercente::all(['id']);
-    $servizio_counter += 1;
+    $esercenti = Fornitore::all(['id']);
+    $servizio_counter++;
     $es = $faker->randomElement($esercenti);
     return [
         'codice' => 'S-'. $es->id . "-" . $servizio_counter,

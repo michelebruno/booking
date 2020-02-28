@@ -25,8 +25,8 @@ class StoreUser extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email', 'unique:users'],
-            'ruolo' => ['required', Rule::in(['admin', 'account_manager', 'esercente', 'cliente'])],
+            'email' => [ 'required', 'email', 'unique:users'],
+            'ruolo' => [ 'required', Rule::in( \App\User::RUOLI )],
             'password' => [ 'required' , 'confirmed' ],
             'meta.nome' => 'nullable',
             'meta.cognome' => 'nullable',

@@ -11,7 +11,7 @@ const Account = ( { currentUser , ...props }) => {
         return <React.Suspense>
             <UtentiProfilo { ...props } utente={currentUser} isCurrentUser />
         </React.Suspense>
-    } else  */if ( currentUser.ruolo == 'esercente') {
+    } else  */if ( currentUser.ruolo == 'fornitore') {
         return <React.Suspense>
             <EsercentiCrea { ...props } esercente={currentUser} isCurrentUser shouldBeReloaded />
         </React.Suspense>

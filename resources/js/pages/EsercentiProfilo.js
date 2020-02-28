@@ -96,7 +96,7 @@ const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
 
             const source = axios.CancelToken.source()
     
-            axios.get( "/esercenti/" +  id , { cancelToken: source.token } )
+            axios.get( "/fornitori/" +  id , { cancelToken: source.token } )
                 .then( res => {
                     return setApi({ willBeReloaded : false , status : res.statusText , esercente: res.data})
                 })
@@ -241,16 +241,16 @@ const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
                                 <h2></h2>
                                 
                                 <span>
-                                    { ! isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi un servizio</Button>}
+                                    { ! isCurrentUser && <Button variant="outline-secondary" size="sm" onClick={ () => setServizioModal({ isNew : true }) } >Aggiungi una fornitura</Button>}
                                 </span>
 
                                 { servizioModal !== false && <Modal show={true} onHide={ () => setServizioModal(false)} >
                                     <Modal.Header closeButton>
-                                        <Modal.Title>Aggiungi un nuovo servizio</Modal.Title>
+                                        <Modal.Title>Aggiungi una nuova fornitura</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
                                         <React.Suspense>
-                                            <ServizioForm { ...servizioModal } url={ esercente._links.servizi } onSuccess={ ( ) => { setTimeout(() => {
+                                            <ServizioForm { ...servizioModal } url={ esercente._links.forniture } onSuccess={ ( ) => { setTimeout(() => {
                                                 reloadApi()
                                                 setServizioModal(false)
                                             }, 3000); } } />
@@ -258,7 +258,7 @@ const EsercentiProfilo = ( { location , match , isCurrentUser, ...props } ) => {
                                     </Modal.Body>
                                 </Modal>  }
                             </div>
-                            { esercente.servizi && <ServiziTabella title="Servizi" servizi={ esercente.servizi } url={ esercente._links.servizi } esercente={esercente} editable={ ! isCurrentUser } />}
+                            { esercente.forniture && <ServiziTabella title="Forniture" servizi={ esercente.forniture } url={ esercente._links.forniture } esercente={esercente} editable={ ! isCurrentUser } />}
                         </Card.Body>
                     </Card>
                 </Col>

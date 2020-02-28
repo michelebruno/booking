@@ -38,16 +38,16 @@ class DealController extends Controller
 
         } 
         
-        if ( $notAttachedToServizi = $request->query('notAttachedToServizi', false ) ) { // Separati con la virgola
+        if ( $notAttachedToForniture = $request->query('notAttachedToForniture', false ) ) { // Separati con la virgola
 
-            if ( ! $query ) $query = Deal::whereDoesntHave('servizi' , function (Builder $query ) use ( $notAttachedToServizi )
+            if ( ! $query ) $query = Deal::whereDoesntHave('forniture' , function (Builder $query ) use ( $notAttachedToForniture )
             {
-                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToServizi ) );
+                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToForniture ) );
             });
 
-            else $query->whereDoesntHave('servizi' , function (Builder $query ) use ( $notAttachedToServizi )
+            else $query->whereDoesntHave('forniture' , function (Builder $query ) use ( $notAttachedToForniture )
             {
-                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToServizi ) );
+                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToForniture ) );
             });
 
         } 
@@ -91,7 +91,7 @@ class DealController extends Controller
 
         $prodotto->save();
 
-        return response( $prodotto->loadMissing('servizi') , 201);
+        return response( $prodotto->loadMissing('forniture') , 201);
     }
 
     /**
@@ -105,8 +105,8 @@ class DealController extends Controller
         $deal = Deal::withTrashed()->whereCodice($deal)->firstOrFail();
 
         $this->authorize( 'view', $deal );
-
-        return response( $deal->loadMissing('servizi') );
+        
+        return response( $deal->loadMissing( 'forniture' ) );
     }
 
     /**
@@ -133,7 +133,7 @@ class DealController extends Controller
         
         $deal->save();
 
-        return response($deal->loadMissing('servizi') );
+        return response($deal->loadMissing('forniture') );
     }
 
     /**
@@ -160,7 +160,7 @@ class DealController extends Controller
         $deal = Deal::onlyTrashed()->whereCodice($deal)->firstOrFail();
 
         if ( $deal->restore() ) {
-            return response( $deal->loadMissing('servizi') );
+            return response( $deal->loadMissing('forniture') );
         } else abort(500);
     }
 

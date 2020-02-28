@@ -22,11 +22,13 @@ const ServiziScheda = ( { location , ...props} ) => {
 
     const [ servizio, setServizio ] = useState(initialServizio)
 
-    const editable = typeof servizio.esercente !== 'undefined' ? ( servizio.esercente.id == props.currentUser.id  ? false : true ) : undefined ; 
+    const editable = typeof servizio.fornitore !== 'undefined' ? ( servizio.fornitore.id == props.currentUser.id  ? false : true ) : undefined ; 
 
-    const reloadResource = () => setServizio( s => Object.assign({ willBeReloaded : true }, s) )
+    const reloadResource = () => setServizio( s => Object.assign( { willBeReloaded : true } , s ) )
+
     useEffect( () => {
 
+        
         if ( ! servizio || servizio.willBeReloaded ) {
 
             const source = axios.CancelToken.source()
@@ -49,11 +51,10 @@ const ServiziScheda = ( { location , ...props} ) => {
     }, [location.pathname, servizio] )
 
     const { codice , titolo , descrizione , stato , tariffe , disponibili , iva } = servizio
-
+ 
     let disponibiliVariant = "success" 
 
     if ( disponibili < 10 ) disponibiliVariant = "danger"
-
 
     let editableFieldProps = (servizio && servizio._links) && { url : servizio._links.self , onSuccess : ( r ) => setServizio(r) , readOnly : ! editable }
 
@@ -95,7 +96,7 @@ const ServiziScheda = ( { location , ...props} ) => {
                 <Col xs="12" xl="6">
                     <Card>
                         <Card.Body>
-                            <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={ d => setServizio(d) } reloadResource={ reloadResource } iva={iva} ivaInclusa={false} editable={editable} />
+                            { tariffe ? <TariffeTabella tariffe={tariffe} url={servizio._links.tariffe} onSuccess={ d => setServizio(d) } reloadResource={ reloadResource } iva={iva} ivaInclusa={false} editable={editable} /> : <PreLoaderWidget /> }
                         </Card.Body>
                     </Card>
                 </Col>
@@ -109,4 +110,4 @@ const ServiziScheda = ( { location , ...props} ) => {
         </>
 }
 
-export default connect( state => { return { varianti : state.settings.varianti_tariffe , currentUser : state.currentUser } })(ServiziScheda);
+export default connect( state => ( { currentUser : state.currentUser } ) )(ServiziScheda);

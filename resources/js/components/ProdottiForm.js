@@ -76,7 +76,7 @@ const ProdottiForm = ( props ) => {
 
         axios({
             method: 'post',
-            url : props.url ? props.url : '/servizi' ,
+            url : props.url ? props.url : '/forniture' ,
             data,
             cancelToken: source.token
         })

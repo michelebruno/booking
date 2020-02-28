@@ -156,15 +156,15 @@ const DealsScheda = ( { varianti,  location , history, ...props } ) => {
             <Col xs="12" md="6">
                 <Card>
                     <Card.Body>
-                        <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ setDeal } editable={ ! deal.cestinato && props.currentUser.ruolo !== "esercente" } reloadResource={reloadDeal} /> 
+                        <TariffeTabella tariffe={ deal.tariffe } url={ deal._links && deal._links.tariffe } iva={ iva } onSuccess={ setDeal } editable={ ! deal.cestinato && props.currentUser.ruolo !== "fornitore" } reloadResource={reloadDeal} /> 
                     </Card.Body>
                 </Card>
             </Col>
         </Row>
-        { props.currentUser.ruolo !== "esercente" && <Card>
+        { props.currentUser.ruolo !== "fornitore" && <Card>
             <Card.Body>
-                <h2>Servizi collegati</h2>
-                <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={ !deal.cestinato} /> 
+                <h2>Forniture collegate</h2>
+                <ProdottiCollegati deal={ deal } onSuccess={ setDeal } editable={ !deal.cestinato } /> 
             </Card.Body>
         </Card>}
     </>

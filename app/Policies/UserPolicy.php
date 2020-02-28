@@ -17,7 +17,7 @@ class UserPolicy
     public function viewAny(User $user)
     { 
 
-        return in_array( $user->ruolo , [ 'admin' , 'account_manager'] ) ;
+        return $user->isAdmin();
     }
 
     /**
@@ -32,7 +32,7 @@ class UserPolicy
         if ( $model->trashed() ) {
             // ? chi può vedere i cestinati?
         }
-        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
+        return $user->isAdmin();
     }
 
     /**
@@ -43,7 +43,7 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        return in_array( $user->ruolo , [ 'admin' , 'account_manager' ] ) ;
+        return $user->isAdmin();
     }
 
     /**

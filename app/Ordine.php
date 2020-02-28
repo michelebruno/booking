@@ -9,15 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Ordine
  *
- * @property string  $stato
- *      - INIT se è in fase di creazione
- *      - APERTO quando deve essere pagato dal cliente
- *      - ELABORAZIONE se il pagamento è in stato di verifica
- *      - PAGATO se è stato pagato ma non sono stati generati i ticket
- *      - ELABORATO se i tickets stati generati e inviati
- *      - CHIUSO se tutti i tickets sono stati usati
- *      - RIMBORSATO se è stato rimborsato // ? Anche solo parzialmente?
  * @property string $id
+ * @property string $stato
  * @property float|null $imponibile
  * @property float|null $imposta
  * @property float|null $importo
@@ -49,7 +42,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine wherePaypalOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereStato($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ordine withAll()
  * @mixin \Eloquent
  */
 class Ordine extends Model
@@ -153,7 +145,6 @@ class Ordine extends Model
     public static function withAll( $query )
     {        
         return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
-
     }
 
 }

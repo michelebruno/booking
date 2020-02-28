@@ -9,11 +9,8 @@ use Illuminate\Support\Arr;
 /**
  * App\Ticket
  *
- * @property string $stato può essere:
- *      - APERTO
- *      - SCADUTO
- *      - CHIUSO
  * @property string $token
+ * @property string $stato
  * @property int $voce_ordine_id
  * @property int $prodotto_id
  * @property int $variante_tariffa_id

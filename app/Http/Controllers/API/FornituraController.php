@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Servizio;
+use App\Fornitura;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class ServizioController extends Controller
+class FornituraController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,21 +16,21 @@ class ServizioController extends Controller
      */
     public function index( Request $request )
     {
-        $this->authorize( 'viewAny' , Servizio::class );
+        $this->authorize( 'viewAny' , Fornitura::class );
 
         $query = false;
 
         if ( $s = $request->query('s', false ) ) {
 
             $s = urldecode($s);
-            $servizi = Servizio::where('titolo', 'LIKE', '%' . $s . '%' )->get();
+            $servizi = Fornitura::where('titolo', 'LIKE', '%' . $s . '%' )->get();
             $response = $servizi->loadMissing('deals');
 
         }
         
         if ( $notAttachedToDeals = $request->query('notAttachedToDeals', false ) ) { // Separati con la virgola
 
-            if ( ! $query ) $query = Servizio::whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
+            if ( ! $query ) $query = Fornitura::whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
             {
                 return $query->whereIn('padre' , explode(',' ,  $notAttachedToDeals ) );
             });
@@ -44,7 +44,7 @@ class ServizioController extends Controller
 
         if ( $query ) { 
             $response = $query->get(); 
-        } else $response = Servizio::all()->loadMissing('deals');
+        } else $response = Fornitura::all()->loadMissing('deals');
 
         return response( $response );
     }
@@ -63,24 +63,24 @@ class ServizioController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Servizio  $servizio
+     * @param  \App\Fornitura  $fornitura
      * @return \Illuminate\Http\Response
      */
-    public function show(Servizio $servizio)
+    public function show(Fornitura $fornitura)
     {
-        $this->authorize('view', $servizio);
+        $this->authorize('view', $fornitura);
 
-        return response( $servizio );
+        return response( $fornitura );
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Servizio  $servizio
+     * @param  \App\Fornitura  $fornitura
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Servizio $servizio)
+    public function update(Request $request, Fornitura $fornitura)
     {
         // TODO
     }
@@ -88,10 +88,10 @@ class ServizioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Servizio  $servizio
+     * @param  \App\Fornitura  $fornitura
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Servizio $servizio)
+    public function destroy(Fornitura $fornitura)
     {
         // TODO
     }

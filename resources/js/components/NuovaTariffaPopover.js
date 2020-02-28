@@ -12,9 +12,9 @@ import { Typography } from "@material-ui/core"
 
 const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess , anchorElement, iva , ivaInclusa } ) => {
     
-    const [disponibili, setDisponibili] = useState( Object.values(varianti) )
+    const [disponibili, setDisponibili] = useState( varianti ? Object.values(varianti) : [] )
 
-    const keys = Object.keys(tariffe)
+    const keys = tariffe ? Object.keys(tariffe) : []
 
     const firstOption = _.head( disponibili ) ? _.head( disponibili ).id : undefined
     const [variante, setVariante] = useState( firstOption )
@@ -55,12 +55,12 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
             })
     }
 
-
     if ( ! varianti ) return null;
 
     const open = Boolean(anchorElement)
 
     const id = open ? 'simple-popover' : undefined;
+
     return <Popover
         id={id}
         open={ open }
@@ -98,7 +98,7 @@ const NuovaTariffaPopover = ( {  url , tariffe, varianti , onClose , onSuccess ,
                 <div className="text-right">
                     <Button type="submit" variant="success" size="sm"><i className="fas fa-check mr-1" /> <span>Salva</span></Button>
                 </div>
-            </Form> : <Typography>Hai già impostato tutte le varianti di prezzo per questo servizio. </Typography>
+            </Form> : <Typography>Hai già impostato tutte le varianti di prezzo per questa fornitura. </Typography>
         }
     </Popover>
     

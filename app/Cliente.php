@@ -34,11 +34,12 @@ use Illuminate\Database\Eloquent\Builder;
  * @property-read int|null $ordini_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User email($email)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User esercente()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User admin()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User fornitori()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User superAdmin()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereApiToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereCf($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereCreatedAt($value)
@@ -54,7 +55,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereUsername($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User esercenti()
  */
 class Cliente extends User
 {

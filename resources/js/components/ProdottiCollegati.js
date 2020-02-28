@@ -29,7 +29,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
 
     const fromServizio = Boolean(servizio)
 
-    const prodotti = ( deal && deal.servizi ) ? deal.servizi : servizio.deals 
+    const prodotti = ( deal && deal.forniture ) ? deal.forniture : servizio.deals 
 
     return <div className="prodotti-collegati" >
         
@@ -41,8 +41,8 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
             } } 
             onHide={ () => { setSelectedDealToAdd(""); setShowAddAxios(false) }}
             method="post" 
-            data={ { servizio : selectedDealToAdd ? ( deal ? selectedDealToAdd.codice : self.codice ) : null } } 
-            show={showAddAxios} url={ deal ? self._links.servizi : selectedDealToAdd._links.servizi + "?from=servizio" } 
+            data={ { fornitura : selectedDealToAdd ? ( deal ? selectedDealToAdd.codice : self.codice ) : null } } 
+            show={showAddAxios} url={ deal ? self._links.forniture : selectedDealToAdd._links.forniture + "?from=fornitura" } 
             title="Confermi di voler aggiungere questo prodotto?"
             >
             { selectedDealToAdd.titolo }
@@ -62,7 +62,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                 } }
                 loadOptions={
                     ( inputValue , callback ) => {
-                        let url = servizio ? '/deals?notAttachedToServizi=' + self.id + '&s=' + inputValue  : "/servizi?notAttachedToDeals=" + self.id + "&s=" + inputValue
+                        let url = servizio ? '/deals?notAttachedToForniture=' + self.id + '&s=' + inputValue  : "/forniture?notAttachedToDeals=" + self.id + "&s=" + inputValue
                         axios.get( encodeURI( url ) )
                             .then( res => callback(res.data) )
                     }
@@ -84,8 +84,8 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                     name: 'titolo'
                 },
                 {
-                    label: 'Esercente',
-                    name: 'esercente.nome',
+                    label: 'Fornitore',
+                    name: 'fornitore.nome',
                     options : {
                         display : fromDeal,
                         viewColumns : fromDeal,
@@ -132,7 +132,7 @@ const ProdottiCollegati = ( { servizio , deal , onSuccess, editable , title } ) 
                                     url = deal._links.servizi + "/" + row.codice
                                     state = { servizio : row }
                                 } else if ( fromServizio && row._links ) {
-                                    url = row._links.servizi + "/" + servizio.codice + "?from=servizio"
+                                    url = row._links.servizi + "/" + servizio.codice + "?from=fornitura"
                                     state = { deal : row }
                                 }
                                 

@@ -68,8 +68,8 @@ const Utenti = ( { setTopbarButtons , unsetTopbarButtons } ) => {
                             url += "/clienti/"
                             break;
         
-                        case "esercente":
-                            url += "/esercenti/"
+                        case "fornitore":
+                            url += "/fornitori/"
                             break;
                     
                         default:

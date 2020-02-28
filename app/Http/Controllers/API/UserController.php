@@ -24,7 +24,7 @@ class UserController extends Controller
 
         $per_page = $request->query("per_page", 10);
 
-        $query = User::whereIn('ruolo', ['admin', 'account_manager']);
+        $query = User::admin();
 
         $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
         
@@ -94,7 +94,7 @@ class UserController extends Controller
     {
         $this->authorize('update', User::findOrFail($id) );
 
-        if ( $request->user()->ruolo !== 'admin' && $request->input( 'ruolo' ) == 'admin') abort(403);
+        if ( ! $request->user()->isSuperAdmin() && $request->input( 'ruolo' ) == 'admin' ) abort(403, 'Non hai i permessi per creare un amministratore.');
 
         $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
 

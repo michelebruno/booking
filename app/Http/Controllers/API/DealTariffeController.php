@@ -37,7 +37,7 @@ class DealTariffeController extends Controller
 
         $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'] , 'importo' => $dati['importo']]);
 
-        return response( $deal->loadMissing('servizi') , 201);
+        return response( $deal->loadMissing('forniture' ) , 201);
     }
 
     /**
@@ -79,7 +79,7 @@ class DealTariffeController extends Controller
 
         $tariffa->save();
         
-        return response( $deal->loadMissing('servizi') );
+        return response( $deal->loadMissing('forniture') );
     }
 
     /**
@@ -97,6 +97,6 @@ class DealTariffeController extends Controller
 
         $tariffa->forceDelete();
 
-        return response( $deal->loadMissing('servizi') );
+        return response( $deal->loadMissing('forniture') );
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 use App\Deal;
-use App\Servizio;
+use App\Fornitura;
 use App\Tariffa;
 use App\VarianteTariffa;
 use Illuminate\Database\Seeder;
@@ -38,13 +38,13 @@ class ProdottiTableSeeder extends Seeder
             'variante_tariffa_id' => $ridotto->id
         ]);
 
-        factory(Servizio::class, 3)
+        factory(Fornitura::class, 3)
             ->create()
-            ->each( function ( $servizio ) use ( $deal )
+            ->each( function ( $fornitura ) use ( $deal )
             {
-                $servizio->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
-                $servizio->tariffe()->save( factory( Tariffa::class )->make() ) ;
-                $deal->servizi()->attach($servizio);
+                $fornitura->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
+                $fornitura->tariffe()->save( factory( Tariffa::class )->make() ) ;
+                $deal->forniture()->attach($fornitura);
             });
 
         
@@ -62,13 +62,13 @@ class ProdottiTableSeeder extends Seeder
             'variante_tariffa_id' => $ridotto->id
         ]);
 
-        factory(Servizio::class, 3)
+        factory(Fornitura::class, 3)
             ->create()
-            ->each( function ( $servizio ) use ( $deal )
+            ->each( function ( $fornitura ) use ( $deal )
             {
-                $servizio->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
-                $servizio->tariffe()->save( factory( Tariffa::class )->make() ) ;
-                $deal->servizi()->attach($servizio);
+                $fornitura->tariffe()->save( factory( Tariffa::class , 'intero' )->make() ) ;
+                $fornitura->tariffe()->save( factory( Tariffa::class )->make() ) ;
+                $deal->forniture()->attach($fornitura);
             });
     }
 }

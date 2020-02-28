@@ -1,6 +1,6 @@
 <?php
 
-use App\Esercente;
+use App\Fornitore;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
         $admin->nome = 'Michele Bruno';
         $admin->email = 'bm.michelebruno@gmail.com';
         $admin->password = Hash::make('password'); 
-        $admin->ruolo = 'admin';
+        $admin->ruolo = User::RUOLO_ADMIN;
         $admin->save();
         $admin->markEmailAsVerified();
 
@@ -29,31 +29,31 @@ class UsersTableSeeder extends Seeder
         $account_manager->nome = 'Account manager';
         $account_manager->email = 'acmanager@example.com';
         $account_manager->password = Hash::make('password'); 
-        $account_manager->ruolo = 'account_manager';
+        $account_manager->ruolo = User::RUOLO_ADMIN;
         $account_manager->save();
         $account_manager->markEmailAsVerified();
 
-        $esercente = new Esercente();
-        $esercente->username = 'Esercente';
-        $esercente->nome = 'Esercente';
-        $esercente->email = 'esercente@example.com';
-        $esercente->password = Hash::make('password'); 
-        $esercente->ruolo = 'esercente';
-        $esercente->cf = 'CFESERCENTE2016L';
-        $esercente->piva = '12345678901';
-        $esercente->save();
-        $esercente->nome = "Esercente prova";
-        $esercente->pec = "pec@pec.example.com";
-        $esercente->sdi = "000000";
-        $esercente->indirizzo = [
+        $fornitore = new Fornitore();
+        $fornitore->username = 'Fornitore';
+        $fornitore->nome = 'Fornitore';
+        $fornitore->email = 'fornitore@example.com';
+        $fornitore->password = Hash::make('password'); 
+        $fornitore->ruolo = 'fornitore';
+        $fornitore->cf = 'CFFORNITORE2016L';
+        $fornitore->piva = '12345678901';
+        $fornitore->save();
+        $fornitore->nome = "Fornitore prova";
+        $fornitore->pec = "pec@pec.example.com";
+        $fornitore->sdi = "000000";
+        $fornitore->indirizzo = [
             "via" => "Via Marconi",
             "civico" => "24",
             "citta" => "Bologna",
             "cap" => "79865",
             "provincia" => "BO"
         ];
-        $esercente->save();
-        $esercente->markEmailAsVerified();
+        $fornitore->save();
+        $fornitore->markEmailAsVerified();
 
         $cliente = new User();
         $cliente->username = 'Cliente';
@@ -69,7 +69,7 @@ class UsersTableSeeder extends Seeder
             'nome' => 'Manuel Perre',
             'email' => 'perre.manuel33@gmail.com',
             'password' => Hash::make("password"),
-            'ruolo' => 'admin',
+            'ruolo' => User::RUOLO_ADMIN,
         ]);
         $manuel->save();
         $manuel->markEmailAsVerified();
@@ -79,7 +79,7 @@ class UsersTableSeeder extends Seeder
             'nome' => 'Federica Mari',
             'email' => 'federicamari1994@gmail.com',
             'password' => Hash::make("password"),
-            'ruolo' => 'admin',
+            'ruolo' => User::RUOLO_ADMIN,
         ]);
         $federica->save();
         $federica->markEmailAsVerified();

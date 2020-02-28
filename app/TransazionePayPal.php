@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $verificata
+ * @property-read \App\Ordine $ordine
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TransazionePayPal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TransazionePayPal newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TransazionePayPal query()
@@ -31,7 +32,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TransazionePayPal whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TransazionePayPal whereVerifiedByEventId($value)
  * @mixin \Eloquent
- * @property-read \App\Ordine $ordine
  */
 class TransazionePayPal extends \App\Transazione
 {

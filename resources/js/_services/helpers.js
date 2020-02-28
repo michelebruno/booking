@@ -79,7 +79,7 @@ const ordiniStato = ( stato ) => {
             break;
     
         default:
-            stato && console.log(stato)
+            stato && console.warn(stato)
             i = ({
                 raw: stato,
                 label : stato,
