@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\HaAttributiMeta;
 use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +54,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Ordine extends Model
 {
+
+    use HaAttributiMeta;
+    
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
     const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
@@ -121,7 +125,7 @@ class Ordine extends Model
 
     public function getMetaAttribute()
     {
-        $meta = $this->getRelation('meta');
+        $meta = $this->getRelationValue('meta');
         
         return $meta->mapWithKeys(function ($item) {
             return [ $item['chiave'] => $item["valore"] ];

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Deal;
 use App\Tariffa;
-use App\TariffaDeal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +28,7 @@ class DealTariffeController extends Controller
      */
     public function store(Request $request, Deal $deal)
     {  
-        $this->authorize('create', TariffaDeal::class);
+        $this->authorize('update', [ Tariffa::class , $deal ]);
 
         $dati = $request->validate([
             'variante' => [ 'required', 'exists:varianti_tariffa,id' , Rule::unique('tariffe' , 'variante_tariffa_id')->where('prodotto_id' , $deal->id )],
@@ -47,9 +46,9 @@ class DealTariffeController extends Controller
      * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
-    public function show(Deal $deal, TariffaDeal $tariffa)
+    public function show(Deal $deal, Tariffa $tariffa)
     {        
-        $this->authorize('show', $tariffa);
+        $this->authorize('show', [ $tariffa , $deal ]);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");
 
@@ -66,7 +65,7 @@ class DealTariffeController extends Controller
      */
     public function update(Request $request, Deal $deal, Tariffa $tariffa)
     {
-        $this->authorize('update', $tariffa);
+        $this->authorize('update', [ $tariffa , $deal ]);
 
         if ( $tariffa->prodotto_id !== $deal->id ) return abort( 404, "Il prodotto non è associato a questa tariffa.");
 
@@ -89,9 +88,9 @@ class DealTariffeController extends Controller
      * @param  \App\Deal  $deal
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Deal $deal, TariffaDeal $tariffa)
+    public function destroy(Deal $deal, Tariffa $tariffa)
     {
-        $this->authorize('delete', $tariffa);
+        $this->authorize('delete', [ $tariffa , $deal ]);
 
         if ( $tariffa->prodotto_id !== $deal->id ) 
             return abort( 404, "Il prodotto non è associato a questa tariffa tariffa.");

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Deal;
+use App\Deal; 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
