@@ -36,6 +36,6 @@ class PaymentCapture
         $this->verified = $verified;
         $this->notifica = $notificaDaPayPal;
         $this->transazione = $transazione;
-        $this->ordine = Ordine::findOrFail($this->transazione['invoice_id']); // TODO try e catch
+        $this->ordine = Ordine::findOrFail($this->transazione['invoice_id']);
     }
 }

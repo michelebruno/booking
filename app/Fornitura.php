@@ -31,7 +31,6 @@ use Illuminate\Support\Arr;
  * @property-read string $smart
  * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
  * @property-read int|null $tariffe_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto attivi()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Fornitura fornitoDa($id)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Fornitura newModelQuery()
@@ -54,6 +53,8 @@ use Illuminate\Support\Arr;
  */
 class Fornitura extends Prodotto
 {
+    const TIPO = self::TIPO_FORNITURA;
+
     protected $attributes = [
         'tipo' => self::TIPO_FORNITURA 
     ];

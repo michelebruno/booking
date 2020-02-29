@@ -51,30 +51,22 @@ class FornitoreFornituraController extends Controller
             'titolo' => 'required|string',
             'descrizione' => 'string',
             'disponibili' => 'integer',
-            'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
+            'codice' => 'sometimes|unique:prodotti',
             'iva' => 'integer|required',
             'tariffe' => 'array|bail',
             'tariffe.intero.imponibile' => 'required',
             'tariffe.*.imponibile' => 'required'
         ]);
 
- 
-        // TODO Creare un codice non random ma unico
-        //  ? Il valore di dafault deve essere true?
-
-        if ( $request->input( 'codice_personalizzato' , true ) ) $dati['codice'] = Str::random(10);
-
         $fornitura = new Fornitura($dati);
 
-        // TODO usare $fornitura->fornitore()->associate($fornitore->id);
-        $fornitura->fornitore_id = $fornitore->id;
+        $fornitura->fornitore()->associate($fornitore->id);
         
         $fornitura->save();
-
-        // TODO impostare 
+ 
         $fornitura->tariffe = $request->input('tariffe');
 
-        return response($fornitura->loadMissing([ 'deals' , 'fornitore']) , 201);
+        return response( $fornitura->loadMissing([ 'deals' , 'fornitore' ]) , 201 );
     }
 
     /**
@@ -86,7 +78,7 @@ class FornitoreFornituraController extends Controller
      */
     public function show(Fornitore $fornitore, Fornitura $fornitura)
     {
-        if ( $fornitore->id !== $fornitura->fornitore_id ) abort(404, 'Questo fornitura non è associato a questo fornitore.');
+        if ( $fornitore->id !== $fornitura->fornitore_id ) abort( 404, 'Questo fornitura non è associato a questo fornitore.' );
 
         $this->authorize('view' , $fornitura) ;
 
@@ -182,8 +174,7 @@ class FornitoreFornituraController extends Controller
         if ( $fornitore->id !== $fornitura->fornitore_id ) abort(404, 'Questo fornitura non è associato a questo fornitore.');
         if ( $tariffa->prodotto_id !== $fornitura->id ) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
 
-        $this->authorize('update' ,[ $fornitura , $fornitore ]);
-        // TODO $this->authorize('delete' , $tariffa );
+        $this->authorize('delete', [ $tariffa, $fornitura , $fornitore ]);
 
         $tariffa->delete();
         

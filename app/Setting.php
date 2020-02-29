@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
@@ -44,5 +45,27 @@ class Setting extends Model
          * TODO ->lockForUpdate()
          */
         return $query->firstOrCreate( [ 'chiave' => '_progressivo_' . $scope ] , [ 'valore' => 1 , 'autoload' => false] );
+    }
+
+    /**
+     * Funzione per i progressivi che potrebbero esssere sovrascritti dagli utenti.
+     *
+     * @param  Builder $query
+     * @param  Closure|array $mustBeFalseFunction
+     * @param  mixed $args
+     *
+     * @return void
+     */
+    public function scopeProgressivoSicuro( Builder $query , $DBprefix, array $mustHaveNoRes ,  ...$args)
+    {
+        $prefix = join('-', $args ) . '-';
+
+        $retr = Setting::progressivo($DBprefix, ...$args);
+
+        while ( ( call_user_func( $mustHaveNoRes,  $prefix . $retr->valore ) )->count() ) {            
+            $retr->increment('valore');
+        }
+
+        return $prefix . $retr->valore;
     }
 }

@@ -128,7 +128,8 @@ class OrdineController extends Controller
      */
     public function show(Ordine $ordine)
     {
-        // TODO $this->authorize('view', $ordine );
+        $this->authorize('view', $ordine );
+        
         return response( $ordine->completo() );
     }
 

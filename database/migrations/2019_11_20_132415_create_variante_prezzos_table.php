@@ -42,9 +42,8 @@ class CreateVariantePrezzosTable extends Migration
      */
     public function down()
     {
-        // TODO è giusto?
         Schema::table('tariffe', function (Blueprint $table) {
-            $table->dropForeign('tariffe_variante_prezzo_id_foreign');
+            $table->dropForeign(['variante_tariffa_id']);
         });
 
         Schema::dropIfExists('varianti_prezzo');

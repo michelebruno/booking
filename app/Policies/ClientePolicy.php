@@ -18,7 +18,7 @@ class ClientePolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -30,7 +30,7 @@ class ClientePolicy
      */
     public function view(User $user, Cliente $cliente)
     {
-        //
+        return $user->isAdmin() || $cliente->id == $user->id;
     }
 
     /**
@@ -41,7 +41,7 @@ class ClientePolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**

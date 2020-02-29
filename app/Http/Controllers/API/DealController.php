@@ -58,7 +58,6 @@ class DealController extends Controller
     /**
      * Store a newly created resource in storage.
      * 
-     * @todo  De
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -71,17 +70,12 @@ class DealController extends Controller
             'titolo' => 'required|string',
             'descrizione' => 'nullable|string',
             'disponibili' => 'integer',
-            'codice' => 'required_if:codice_personalizzato,false|unique:prodotti',
+            'codice' => 'sometimes|nullable|unique:prodotti',
             'iva' => 'integer|required',
             'tariffe' => 'array|required|bail',
             'tariffe.intero.imponibile' => 'sometimes|numeric',
             'tariffe.intero.importo' => 'required_if:tariffe.intero.imponibile,null|numeric'
         ]);
- 
-        // TODO Creare un codice non random ma unico
-        //  ? Il valore di dafault deve essere true?
-
-        if ( $request->input( 'codice_personalizzato' , true ) ) $dati['codice'] = Str::random(10);
 
         $prodotto = new Deal($dati);
         

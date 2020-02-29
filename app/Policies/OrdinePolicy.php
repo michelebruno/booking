@@ -18,7 +18,7 @@ class OrdinePolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -30,7 +30,7 @@ class OrdinePolicy
      */
     public function view(User $user, Ordine $ordine)
     {
-        //
+        return $user->isAdmin() || $user->id === $ordine->cliente_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class OrdinePolicy
      */
     public function update(User $user, Ordine $ordine)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -64,30 +64,6 @@ class OrdinePolicy
      * @return mixed
      */
     public function delete(User $user, Ordine $ordine)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the ordine.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Ordine  $ordine
-     * @return mixed
-     */
-    public function restore(User $user, Ordine $ordine)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the ordine.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Ordine  $ordine
-     * @return mixed
-     */
-    public function forceDelete(User $user, Ordine $ordine)
     {
         //
     }

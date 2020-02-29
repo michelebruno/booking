@@ -97,7 +97,6 @@ class DealFornituraController extends Controller
      */
     public function destroy(Request $request, Deal $deal, Fornitura $fornitura)
     {
-        // TODO verificare che 
         $this->authorize('delete-fornitura', [ $deal , $fornitura ]);
         
         $deal->forniture()->detach($fornitura);

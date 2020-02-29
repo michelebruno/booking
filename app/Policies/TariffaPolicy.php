@@ -65,34 +65,14 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function delete(User $user, Tariffa $tariffa)
+    public function delete(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura)
     {
         if ( $tariffa->slug == "intero") {
             return false;
-        } else return true;
-    }
+        } 
+        
 
-    /**
-     * Determine whether the user can restore the tariffa.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Tariffa  $tariffa
-     * @return mixed
-     */
-    public function restore(User $user, Tariffa $tariffa)
-    {
-        // non usa softdeletes
-    }
-
-    /**
-     * Determine whether the user can permanently delete the tariffa.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Tariffa  $tariffa
-     * @return mixed
-     */
-    public function forceDelete(User $user, Tariffa $tariffa)
-    {
-        // non usa softdeletes
+        return $user->isAdmin();
+        
     }
 }

@@ -41,15 +41,23 @@ class FornitoreController extends Controller
         $dati = $request->validate([
             'email' => ['required', 'email', 'unique:users'],
             'meta.*' => 'nullable',
-            'indirizzo.*' => 'nullable', // TODO cap numerico etc...
+            'indirizzo.cap' => 'nullable|numeric|digits:5',
+            'indirizzo.via' => 'nullable|string',
+            'indirizzo.civico' => 'nullable|string',
+            'indirizzo.provincia' => 'nullable|string',
+            'indirizzo.citta' => 'nullable|string',
+            'sede_legale.cap' => 'required|numeric|digits:5',
+            'sede_legale.via' => 'required|string',
+            'sede_legale.civico' => 'required|string',
+            'sede_legale.provincia' => 'required|string',
+            'sede_legale.citta' => 'required|string',
             'username' => [ 'required', 'unique:users'],
             'piva' => ['required', 'digits:11', 'unique:users'],
-            'cf' => ['required', 'max:16', 'unique:users'], // TODO verificare il formato,
+            'cf' => ['required', 'max:16', 'unique:users'], // ? TODO verificare il formato
             'nome' => 'string|required',
             'sdi' => 'sometimes|nullable|max:7',
             'pec' => 'sometimes|nullable|email',
-            'sede_legale' => 'required|sometimes', // Formato?
-            'ragione_sociale' => 'required|sometimes' // Formato?
+            'ragione_sociale' => 'required|sometimes|string'
         ]);
 
         $user = new Fornitore($dati);
@@ -138,7 +146,7 @@ class FornitoreController extends Controller
             'pec' => 'sometimes|nullable|email'
         ]);
 
-        $fornitore->fill($dati); // TODO: quanto è sicuro? L'attributo fillable come è impostato?
+        $fornitore->fill($dati); // ? TODO: quanto è sicuro? L'attributo fillable come è impostato?
 
         $fornitore->nome = $request->input('nome', false) ;
 

@@ -29,7 +29,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @property-read string $smart
  * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
  * @property-read int|null $tariffe_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto attivi()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Deal newQuery()
@@ -51,6 +50,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Deal extends Prodotto
 {
+
+    const TIPO = self::TIPO_DEAL;
+    
     protected $attributes = [
         'tipo' => self::TIPO_DEAL
     ];
@@ -69,7 +71,6 @@ class Deal extends Prodotto
         });
     }
 
-    
     public function forniture()
     {
         return $this->belongsToMany(Fornitura::class, 'prodotti_pivot', 'padre', 'figlio');

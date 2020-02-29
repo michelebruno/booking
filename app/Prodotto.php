@@ -30,7 +30,6 @@ use Illuminate\Support\Arr;
  * @property-read string $smart
  * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
  * @property-read int|null $tariffe_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto attivi()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto newModelQuery()
@@ -78,6 +77,17 @@ class Prodotto extends Model
         'condensato', 'cestinato' , '_links' 
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($prodotto)
+        {
+            if ( ! $prodotto->codice ) {
+                $prodotto->codice = $prodotto::progressivo();
+            }
+        });
+    }
     public function getRouteKeyName()
     {
         return 'codice';
@@ -172,12 +182,6 @@ class Prodotto extends Model
         return $query->where('disponibili', '>', $more_than);
     }
 
-    public function scopeAttivi($query)
-    {
-        // TODO usare le costanti di classe.
-        return $query->whereIn('stato' , [ 'pubblico' , 'privato' ] );
-    }
-
     public function toArray()
     {
         $array = parent::toArray();
@@ -190,5 +194,12 @@ class Prodotto extends Model
         $array["tariffe"] = count($tariffe) ? $tariffe : new \stdClass;
 
         return $array;
+    }
+
+    public static function progressivo(...$args)
+    {
+        $childClass = get_called_class();
+
+        return Setting::progressivoSicuro( $childClass::TIPO, [ Prodotto::class , 'whereCodice' ] , strtoupper($childClass::TIPO[0]), ...$args );
     }
 }
