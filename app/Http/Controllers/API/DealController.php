@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Deal; 
+use App\Deal;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request )
+    public function index(Request $request)
     {
         $request->validate([
             'per_page' => 'int',
@@ -26,33 +26,29 @@ class DealController extends Controller
 
         $per_page = (int) $request->query('per_page', 10);
 
-        $query =  Deal::with( [] );
+        $query =  Deal::with([]);
 
-        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
+        $query->orderBy($request->input('order_by', 'created_at'), $request->input('order', 'desc'));
 
-        if ( $s = $request->query('s', false ) ) {
+        if ($s = $request->query('s', false)) {
 
             $s = urldecode($s);
 
-            $query = $query->where('titolo', 'LIKE', '%' . $s . '%' )->orWhere( 'codice', 'LIKE', '%' . $s . '%' );
+            $query = $query->where('titolo', 'LIKE', '%' . $s . '%')->orWhere('codice', 'LIKE', '%' . $s . '%');
+        }
 
-        } 
-        
-        if ( $notAttachedToForniture = $request->query('notAttachedToForniture', false ) ) { // Separati con la virgola
+        if ($notAttachedToForniture = $request->query('notAttachedToForniture', false)) { // Separati con la virgola
 
-            if ( ! $query ) $query = Deal::whereDoesntHave('forniture' , function (Builder $query ) use ( $notAttachedToForniture )
-            {
-                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToForniture ) );
+            if (!$query) $query = Deal::whereDoesntHave('forniture', function (Builder $query) use ($notAttachedToForniture) {
+                return $query->whereIn('figlio', explode(',',  $notAttachedToForniture));
             });
 
-            else $query->whereDoesntHave('forniture' , function (Builder $query ) use ( $notAttachedToForniture )
-            {
-                return $query->whereIn('figlio' , explode(',' ,  $notAttachedToForniture ) );
+            else $query->whereDoesntHave('forniture', function (Builder $query) use ($notAttachedToForniture) {
+                return $query->whereIn('figlio', explode(',',  $notAttachedToForniture));
             });
+        }
 
-        } 
- 
-        return response( $query->paginate($per_page) );
+        return response($query->paginate($per_page));
     }
 
     /**
@@ -63,7 +59,7 @@ class DealController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Deal::class );
+        $this->authorize('create', Deal::class);
 
         $dati = $request->validate([
             'stato' => 'required|string|in:pubblico,privato,bozza',
@@ -78,14 +74,14 @@ class DealController extends Controller
         ]);
 
         $prodotto = new Deal($dati);
-        
+
         $prodotto->save();
 
         $prodotto->tariffe = $dati['tariffe'];
 
         $prodotto->save();
 
-        return response( $prodotto->loadMissing('forniture') , 201);
+        return response($prodotto->loadMissing('forniture'), 201);
     }
 
     /**
@@ -98,9 +94,9 @@ class DealController extends Controller
     {
         $deal = Deal::withTrashed()->whereCodice($deal)->firstOrFail();
 
-        $this->authorize( 'view', $deal );
-        
-        return response( $deal->loadMissing( 'forniture' ) );
+        $this->authorize('view', $deal);
+
+        return response($deal->loadMissing('forniture'));
     }
 
     /**
@@ -112,7 +108,7 @@ class DealController extends Controller
      */
     public function update(Request $request, Deal $deal)
     {
-        $this->authorize('update', $deal); 
+        $this->authorize('update', $deal);
 
         $dati = $request->validate([
             'stato' => 'string|in:pubblico,privato,bozza',
@@ -124,10 +120,10 @@ class DealController extends Controller
         ]);
 
         $deal->fill($dati);
-        
+
         $deal->save();
 
-        return response($deal->loadMissing('forniture') );
+        return response($deal->loadMissing('forniture'));
     }
 
     /**
@@ -140,10 +136,10 @@ class DealController extends Controller
     {
         $this->authorize('delete', $deal);
 
-        if ( $deal->delete() ) {
+        dd($deal);
+        if ($deal->delete()) {
 
-            return response( $deal );
-            
+            return response($deal);
         }
     }
 
@@ -153,9 +149,8 @@ class DealController extends Controller
 
         $deal = Deal::onlyTrashed()->whereCodice($deal)->firstOrFail();
 
-        if ( $deal->restore() ) {
-            return response( $deal->loadMissing('forniture') );
+        if ($deal->restore()) {
+            return response($deal->loadMissing('forniture'));
         } else abort(500);
     }
-
 }

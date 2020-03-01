@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('Prodotti', function ($app)
         {
-            return \App\Prodotto::all();
+            return \App\Prodotto::withTrashed()->get();
         });
         $this->app->singleton(\PayPal\Rest\ApiContext::class, function ( $app )
         {

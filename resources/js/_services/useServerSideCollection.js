@@ -1,7 +1,7 @@
-import React, { useState , useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import localization from './localization';
 import PreLoaderWidget from '../components/Loader';
-import Tooltip  from "@material-ui/core/Tooltip"
+import Tooltip from "@material-ui/core/Tooltip"
 import { IconButton } from '@material-ui/core';
 
 /**
@@ -10,200 +10,200 @@ import { IconButton } from '@material-ui/core';
  * @param {object} defaultFilter 
  * @returns { Array[ collection , filter,  setFilter , datatableOptions , reload ]}
  */
-export default function useServerSideCollection( baseUrl , defaultFilter ) {
-    
-    const [ collection , setCollection ] = useState({ loading: true , page : 0 , total : 0, data: []})
+export default function useServerSideCollection(baseUrl, defaultFilter) {
 
-    const [ searchInput , setSearchInput ] = useState()
+    const [collection, setCollection] = useState({ loading: true, page: 0, total: 0, data: [] })
+
+    const [searchInput, setSearchInput] = useState()
 
     const [filter, _setFilter] = useState(defaultFilter)
 
     useEffect(() => {
 
-        if (typeof searchInput === "undefined" ) {
+        if (typeof searchInput === "undefined") {
             return;
         }
-        const t = setTimeout( () => {
-            setFilter({s: searchInput})
-        }, 1500 )
+        const t = setTimeout(() => {
+            setFilter({ s: searchInput })
+        }, 1500)
 
-        return () => {            
+        return () => {
             clearTimeout(t)
         }
 
-    }, [ searchInput ])
+    }, [searchInput])
 
 
-    const getSordDirectionByName = n => {
-        if ( filter && filter.orderBy && filter.orderBy === n) {
+    const getSortDirectionByName = n => {
+        if (filter && filter.orderBy && filter.orderBy === n) {
             return filter.order || "none"
         }
     }
 
-    const setFilter = ( addFilter ) => {
+    const setFilter = (addFilter) => {
 
         if (typeof addFilter === "function") {
             _setFilter(addFilter)
             return;
-        } else if ( typeof addFilter === "boolean" && ! addFilter ) {
-            _setFilter( {} ) 
+        } else if (typeof addFilter === "boolean" && !addFilter) {
+            _setFilter({})
             return
         }
 
-        _setFilter( prevFilter => {
+        _setFilter(prevFilter => {
 
-            const nextFilter = Object.assign( {}, prevFilter)
+            const nextFilter = Object.assign({}, prevFilter)
 
-            Object.entries(addFilter).map( ( [ key , value ] ) =>{
-                if ( Array.isArray(value) ) { // Bisogna impostare la proprietà
+            Object.entries(addFilter).map(([key, value]) => {
+                if (Array.isArray(value)) { // Bisogna impostare la proprietà
                     nextFilter[key] = value
-                } else if ( value ) {
-                    nextFilter[key] = [ value ]
+                } else if (value) {
+                    nextFilter[key] = [value]
                 } else {
-                    if ( _.has( nextFilter , key ) ) {
-                        _.unset( nextFilter , key )
+                    if (_.has(nextFilter, key)) {
+                        _.unset(nextFilter, key)
                     }
                 }
-            } )            
+            })
 
             return nextFilter
         });
     }
 
-    const makeURLQuery = useCallback( tempFilter => {
+    const makeURLQuery = useCallback(tempFilter => {
 
-        let url = baseUrl 
+        let url = baseUrl
 
         let query = []
 
         let f = tempFilter ? Object.assign({}, filter, tempFilter) : filter
 
-        for ( let d in f ) {
-            query.push( encodeURIComponent( _.snakeCase(d) ) + "=" + encodeURIComponent( f[d] ) )
+        for (let d in f) {
+            query.push(encodeURIComponent(_.snakeCase(d)) + "=" + encodeURIComponent(f[d]))
         }
 
-        if ( query.length ) {
+        if (query.length) {
             url += "?" + query.join("&");
         }
 
         return url
-    }, [ baseUrl , filter ])
+    }, [baseUrl, filter])
 
-    const loadApi = useCallback( ( tempFilter ) => {
-    
-        const source = axios.CancelToken.source() 
+    const loadApi = useCallback((tempFilter) => {
+
+        const source = axios.CancelToken.source()
 
         const url = makeURLQuery(tempFilter)
 
-        axios.get( url , { cancelToken : source.token } )
-            .then( response => setCollection( response.data ) )
-            .catch( e => {
+        axios.get(url, { cancelToken: source.token })
+            .then(response => setCollection(response.data))
+            .catch(e => {
 
-                if ( axios.isCancel(e) ) return;
+                if (axios.isCancel(e)) return;
 
                 if (e.response) {
-                    setCollection( prev => Object.assign({}, prev, { data : [] , error : e.response.data.message }) )
+                    setCollection(prev => Object.assign({}, prev, { data: [], error: e.response.data.message }))
                 } else console.warn("Errore axios inaspettato: ", e);
-                
+
             })
 
         return source.cancel
-    }, [ makeURLQuery ])
+    }, [makeURLQuery])
 
-    useEffect( () => {
-        setCollection( prev => Object.assign({} , prev , { loading : true } ) )
+    useEffect(() => {
+        setCollection(previous => Object.assign({}, previous, { loading: true }))
         return loadApi()
-    }, [ filter , loadApi ] )    
+    }, [filter, loadApi])
 
-    const datatableOptions = useCallback( ( columns , customData ) => {
+    const datatableOptions = useCallback((columns, customData) => {
 
-        const cNames =  columns.map( c => c.name )
-        
-        const cLabels =  columns.map( c => c.label ) 
+        const cNames = columns.map(c => c.name)
+
+        const cLabels = columns.map(c => c.label)
 
         let labels = localization.it.MUIDatatableLabels
 
-        if ( collection.loading ) {
+        if (collection.loading) {
             labels.body.noMatch = <div className="py-5"><PreLoaderWidget /></div>
-        } else if ( customData && customData.errorMessage ) {
+        } else if (customData && customData.errorMessage) {
             labels.body.noMatch = customData.errorMessage
-        } 
-        
+        }
+
         const options = {
 
-            serverSide : true,
+            serverSide: true,
 
-            onChangePage : page => _setFilter( filter => Object.assign( {}, filter , { page : page + 1 } ) ),
+            onChangePage: page => _setFilter(filter => Object.assign({}, filter, { page: page + 1 })),
 
-            onChangeRowsPerPage : per_page => _setFilter( ( p ) => Object.assign( {}, p, { per_page , page : 1 } ) ),
+            onChangeRowsPerPage: per_page => _setFilter((p) => Object.assign({}, p, { per_page, page: 1 })),
 
-            onSearchChange : setSearchInput,
+            onSearchChange: setSearchInput,
 
-            onSearchClose : () => searchInput && setSearchInput(),
+            onSearchClose: () => searchInput && setSearchInput(),
 
-            searchText : searchInput,
+            searchText: searchInput,
 
-            onFilterChange : ( changedCol , filterList , context ) => {
+            onFilterChange: (changedCol, filterList, context) => {
 
-                if ( context == "reset" ) {
+                if (context == "reset") {
 
-                    setFilter( prev => prev.per_page ? { per_page : prev.per_page } : {} )
+                    setFilter(prev => prev.per_page ? { per_page: prev.per_page } : {})
 
-                } else if ( context === "chip" ) {
+                } else if (context === "chip") {
 
-                    setFilter( prev => _.omit(prev, changedCol) )
+                    setFilter(prev => _.omit(prev, changedCol))
 
                 } else {
 
-                    const index = cNames.findIndex( ( c ) => c === changedCol )
+                    const index = cNames.findIndex((c) => c === changedCol)
 
-                    if ( typeof cNames[index] !== "undefined" ) {
+                    if (typeof cNames[index] !== "undefined") {
 
                         let nome = cNames[index]
 
-                        setFilter({ [nome] : filterList[index] })
+                        setFilter({ [nome]: filterList[index] })
 
                     }
 
                 }
 
-            }, 
+            },
 
-            onRowsDelete : console.log,            
+            onRowsDelete: console.log,
 
-            selectableRowsHeader : false,
+            selectableRowsHeader: false,
 
-            customToolbar : collection.loading ? () => <Tooltip title="Loading..." >
+            customToolbar: collection.loading ? () => <Tooltip title="Loading..." >
                 <IconButton className="fas fa-spinner fa-spin" />
             </Tooltip> : undefined,
 
-            onColumnSortChange : ( changedCol , direction ) => _setFilter( prev => Object.assign( {} , prev, { order : (direction === "descending") ? "desc" : "asc" , orderBy :changedCol } ) ) ,
+            onColumnSortChange: (changedCol, direction) => _setFilter(prev => Object.assign({}, prev, { order: (direction === "descending") ? "desc" : "asc", orderBy: changedCol })),
 
-            serverSideFilterList : cNames ? cNames.map( (name , index ) => {
+            serverSideFilterList: cNames ? cNames.map((name, index) => {
                 let a = _.get(filter, name)
-                return a ? [ cLabels[index] + ": " + a ] : []
-            } ) : undefined ,
+                return a ? [cLabels[index] + ": " + a] : []
+            }) : undefined,
 
-            elevation : 0, // il box-shadow
+            elevation: 0, // il box-shadow
 
-            print : false,
+            print: false,
 
-            download : false,
+            download: false,
 
-            page : collection && collection.current_page ? collection.current_page - 1 : undefined,
+            page: collection && collection.current_page ? collection.current_page - 1 : undefined,
 
-            count : collection && collection.total ? collection.total : undefined,
+            count: collection && collection.total ? collection.total : undefined,
 
-            textLabels : { ... labels },
-        } 
-        
+            textLabels: { ...labels },
+        }
+
         return options
 
-    }, [ collection , filter , searchInput ] )
+    }, [collection, filter, searchInput])
 
-    
-    const reload = () => _setFilter( filter )
 
-    return [ collection , datatableOptions , { filter , setFilter , reload , setCollection , getSordDirectionByName } ]
+    const reload = () => _setFilter(filter)
+
+    return [collection, datatableOptions, { filter, setFilter, reload, setCollection, getSortDirectionByName }]
 
 }

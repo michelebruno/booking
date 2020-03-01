@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -15,17 +16,20 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request )
+    public function index()
     {
         $settings = Cache::get('autoloaded_settings', function () {
+
             return Cache::rememberForever('autoloaded_settings', function () {
-                    
+
                 $settings = Setting::autoloaded()->get();
-        
-                $array = [];
-        
-                foreach ($settings as $setting ) {
-                    $array[$setting->chiave] = $setting->valore;
+
+                $array = $settings->mapWithKeys(function ($setting) {
+                    return [$setting->chiave => $setting->valore];
+                })->toArray();
+
+                foreach (Setting::PUBLIC_DOTENV_VAR_KEYS as $chiave) {
+                    $array[$chiave] = env($chiave, null);
                 }
 
                 return $array;
@@ -35,22 +39,20 @@ class SettingController extends Controller
 
         $varianti = Cache::get('varianti_tariffe', function () {
 
-            return Cache::rememberForever('varianti_tariffe', function ()
-            {
+            return Cache::rememberForever('varianti_tariffe', function () {
                 $array = [];
-    
+
                 $varianti = app('VariantiTariffe');
-    
+
                 foreach ($varianti as $variante) {
                     $array['varianti_tariffe'][$variante->slug] = $variante;
                 }
-                
+
                 return $array;
             });
-
         });
 
-        return response( array_merge($settings , $varianti) );
+        return response(array_merge($settings, $varianti));
     }
 
     /**
@@ -84,34 +86,56 @@ class SettingController extends Controller
      */
     public function update(Request $request, $setting)
     {
+
+        if ($request->user()->ruolo !== \App\User::RUOLO_ADMIN) {
+            return abort(403, "Solo un admin può cambiare le impostazioni.");
+        }
+
         switch ($setting) {
-            case "favicon" : 
+
+            case key_exists($setting, Setting::EDITABLE_DOTENV_VAR):
+                $data = $request->validate([
+                    $setting =>  array_merge(['required'], Setting::EDITABLE_DOTENV_VAR[$setting]['validation_rules'])
+                ]);
+
+                Setting::editEnvVariable($setting, $data[$setting]);
+
+                break;
+
+            case "favicon":
                 $request->validate([
                     "favicon" => "required|file|mimetypes:image/x-icon"
                 ]);
-                
-                if ( $file = $request->file('favicon') ) {
 
-                    $path = $file->storeAs('public', 'favicon.ico' );
+                if ($file = $request->file('favicon')) {
 
-                    Setting::updateOrCreate(["chiave" => "favicon" ], [ "valore" => "storage/favicon.jpg" ]);
+                    $path = $file->storeAs('public', 'favicon.ico');
+
+                    Setting::updateOrCreate(["chiave" => "favicon"], ["valore" => "storage/favicon.jpg"]);
                     Cache::delete('autoloaded_settings');
                     return $this->index($request);
-                        
                 } else {
-                    Log::error('Nessun file trovato', [ "request" => $request ]);
+                    Log::error('Nessun file trovato', ["request" => $request]);
                     abort(500, 'Non è stato mandato il file.');
                 }
                 break;
 
             default:
-                Cache::forget('autoloaded_settings');
-                Setting::updateOrCreate( [ "chiave" => $setting ] , [ 'valore' => $request->input($setting) , 'autoload' => true ] );
-                return $this->index($request);
+                abort(404);
                 break;
         }
+
+
+        Cache::forget('autoloaded_settings');
+        return $this->index();
     }
-    
+
+
+    private function updateSetting(Request $request, $setting)
+    {
+        // TODO una funzione che esegua lo switch presete in $this->update()
+    }
+
 
     /**
      * Remove the specified resource from storage.

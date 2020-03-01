@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -35,9 +36,17 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Request $request )
     {
         $this->middleware('guest');
+
+        $validated = $request->validate([
+            'redirect_to' => 'sometimes|nullable|url'
+        ]);
+
+        if ( array_key_exists('redirect_to', $validated) && $redirectTo = $validated['redirect_to'] ) {
+            $this->redirectTo = $redirectTo;
+        }
     }
 
     /**
@@ -49,8 +58,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name' => ['required', 'string', 'max:191' ],
+            'email' => ['required', 'string', 'email', 'max:191', 'unique:users', 'confirmed'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -67,10 +76,10 @@ class RegisterController extends Controller
             'username' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'ruolo' => 'cliente'
+            'ruolo' => User::RUOLO_CLIENTE
         ]);
         
-        //$user->sendEmailVerificationNotification();
+        $user->sendEmailVerificationNotification();
 
         return $user;
     }

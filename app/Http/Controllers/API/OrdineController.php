@@ -63,7 +63,9 @@ class OrdineController extends Controller
      */
     public function store(StoreOrdineRequest $request)
     {
+        // TODO authorize
         $request->authorize();
+
         $dati = $request->validated();
 
         if ( in_array( $request->user()->ruolo , [ User::RUOLO_ACCOUNT , User::RUOLO_ADMIN ] ) ) {
@@ -102,17 +104,7 @@ class OrdineController extends Controller
 
         $ordine->voci()->saveMany( $voci );
 
-        $ordine->importo = $ordine->voci()->sum( 'importo' );
-
-        $ordine->dovuto = $ordine->voci()->sum( 'importo' );
-
-        $ordine->imponibile = round( $ordine->voci()->sum( 'imponibile' ), 2);
-
-        $ordine->imposta = round( $ordine->voci()->sum( 'imposta' ) , 2 );
-
-        $ordine->stato = Ordine::APERTO;
-
-        $ordine->data = date("Y-m-d");
+        $ordine->calcola();
 
         $ordine->saveOrFail();
 

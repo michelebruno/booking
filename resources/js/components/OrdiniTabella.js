@@ -14,7 +14,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
 
     const [ ordini, setOrdini ] = useState()  
 
-    const [ collection, serverSideOptions, { filter , getSordDirectionByName }  ] = useServerSideCollection( url , defaultFilter )
+    const [ collection, serverSideOptions, { filter , getSortDirectionByName }  ] = useServerSideCollection( url , defaultFilter )
 
     useEffect( () => {
 
@@ -70,7 +70,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             _filterName : "id",
             options : {
                 filter : false,
-                sortDirection : getSordDirectionByName('id'),
+                sortDirection : getSortDirectionByName('id'),
             }
         },
         {
@@ -93,7 +93,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             name : "created_at",
             label : "Data",
             options : {
-                sortDirection : getSordDirectionByName('created_at'),
+                sortDirection : getSortDirectionByName('created_at'),
                 filter : false,
             }
         },
@@ -101,7 +101,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             name : "importo",
             label : "Totale",
             options :{ 
-                sortDirection : getSordDirectionByName('importo'),
+                sortDirection : getSortDirectionByName('importo'),
                 filter : false
             }
         },
@@ -109,7 +109,7 @@ const OrdiniTabella = ( { url , defaultFilter } ) => {
             name : "imponibile",
             label : "Imponibile",
             options : { 
-                sortDirection : getSordDirectionByName('imponibile'),
+                sortDirection : getSortDirectionByName('imponibile'),
                 filter : false,
                 display : false,
             }

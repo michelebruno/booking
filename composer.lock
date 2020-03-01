@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "823548758139af7df6b503f5b7331a07",
+    "content-hash": "c14df8d36077e5ee6c9eb7361f644cad",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -2988,6 +2988,63 @@
                 "uuid"
             ],
             "time": "2020-02-21T04:36:14+00:00"
+        },
+        {
+            "name": "schuppo/password-strength",
+            "version": "v1.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/schuppo/PasswordStrengthPackage.git",
+                "reference": "b1deef216f27461d7184ae5f136cec7ec821bc3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/schuppo/PasswordStrengthPackage/zipball/b1deef216f27461d7184ae5f136cec7ec821bc3e",
+                "reference": "b1deef216f27461d7184ae5f136cec7ec821bc3e",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0|6.*",
+                "illuminate/translation": "^5.1|6.*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/validation": "~5.0|6.*",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Schuppo\\PasswordStrength\\PasswordStrengthServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Schuppo\\PasswordStrength": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Schupp",
+                    "email": "oliver.schupp@yahoo.de"
+                }
+            ],
+            "description": "This package provides a validator for ensuring strong passwords in Laravel 4 applications.",
+            "keywords": [
+                "laravel",
+                "laravel 5",
+                "laravel5",
+                "password",
+                "password strength",
+                "validation"
+            ],
+            "time": "2020-02-24T12:17:19+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

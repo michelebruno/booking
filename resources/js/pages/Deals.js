@@ -11,7 +11,7 @@ import useServerSideCollection from '../_services/useServerSideCollection'
  
 const Deals = ( ) => {
 
-    const [ collection, serverSideOptions , { reload : reloadApi , getSordDirectionByName } ] = useServerSideCollection( "/deals" )
+    const [ collection, serverSideOptions , { reload : reloadApi , getSortDirectionByName } ] = useServerSideCollection( "/deals" )
 
     const deals = collection && collection.data
 
@@ -21,7 +21,7 @@ const Deals = ( ) => {
             name: 'codice',
             options : {
                 filter : false,
-                sortDirection : getSordDirectionByName("codice")
+                sortDirection : getSortDirectionByName("codice")
             }
         },
         {
@@ -29,7 +29,7 @@ const Deals = ( ) => {
             name: 'titolo',
             options : {
                 filter : false,
-                sortDirection : getSordDirectionByName("titolo")
+                sortDirection : getSortDirectionByName("titolo")
             }
         },
         {
@@ -53,7 +53,7 @@ const Deals = ( ) => {
             label: 'Disponibiiltà',
             name: 'disponibili', 
             options: {
-                sortDirection : getSordDirectionByName("disponibili")
+                sortDirection : getSortDirectionByName("disponibili")
             }
         },
         {

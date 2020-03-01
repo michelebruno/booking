@@ -115,23 +115,12 @@ class Ordine extends Model
         ];
     }
 
-    public function getMetaAttribute()
-    {
-        $meta = $this->getRelationValue('meta');
-        
-        return $meta->mapWithKeys(function ($item) {
-            return [ $item['chiave'] => $item["valore"] ];
-        });
-    }
-
     /**
      * @deprecated  Use loadAll instead.
      */
     public function completo()
     {
-        $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets']);
-
-        $this->append('meta');
+        $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets', 'meta' ]);
 
         return $this;
 
@@ -145,6 +134,21 @@ class Ordine extends Model
     public static function withAll( $query )
     {        
         return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
+    }
+
+    public function calcola( $setAperto = true )
+    {
+        $this->importo = $this->voci->sum( 'importo' );
+
+        $this->dovuto = $this->voci->sum( 'importo' );
+
+        $this->imponibile = round( $this->voci->sum( 'imponibile' ), 2);
+
+        $this->imposta = round( $this->voci->sum( 'imposta' ) , 2 );
+
+        if ($setAperto) {
+            $this->stato = Ordine::APERTO;
+        }
     }
 
 }

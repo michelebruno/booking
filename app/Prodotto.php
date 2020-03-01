@@ -1,12 +1,12 @@
 <?php
- 
+
 namespace App;
 
 use App\VarianteTariffa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-
+use Illuminate\Support\Facades\App;
 
 /**
  * App\Prodotto
@@ -58,10 +58,10 @@ class Prodotto extends Model
 {
     use SoftDeletes;
 
-    const TIPO_DEAL = "deal"; 
+    const TIPO_DEAL = "deal";
 
     const TIPO_FORNITURA = "fornitura";
-    
+
     const TIPI = [
         self::TIPO_DEAL,
         self::TIPO_FORNITURA,
@@ -74,18 +74,29 @@ class Prodotto extends Model
     ];
 
     protected $appends = [
-        'condensato', 'cestinato' , '_links' 
+        'condensato', 'cestinato', '_links'
     ];
 
     public static function boot()
     {
         parent::boot();
 
-        self::creating(function ($prodotto)
-        {
-            if ( ! $prodotto->codice ) {
+        self::creating(function ($prodotto) {
+            if (!$prodotto->codice) {
                 $prodotto->codice = $prodotto::progressivo();
             }
+        });
+
+        self::created(function () {
+            App::forgetInstance('Prodotti');
+        });
+
+        self::updated(function () {
+            App::forgetInstance('Prodotti');
+        });
+
+        self::deleted(function () {
+            App::forgetInstance('Prodotti');
         });
     }
     public function getRouteKeyName()
@@ -95,14 +106,14 @@ class Prodotto extends Model
 
     public function tariffe()
     {
-        return $this->hasMany( 'App\Tariffa', 'prodotto_id' );
+        return $this->hasMany('App\Tariffa', 'prodotto_id');
     }
 
     /**
      * 
      * @param  int  $quantità La quantità di cui ridurre la disponibiltà del prodotto.
      */
-    public function riduciDisponibili(int $quantità, bool $salva = true )
+    public function riduciDisponibili(int $quantità, bool $salva = true)
     {
         // TODO controllare che ce ne siano abbastanza...
         $this->disponibili -= $quantità;
@@ -127,22 +138,21 @@ class Prodotto extends Model
         return [];
     }
 
-    public function setCodiceAttribute( $value )
+    public function setCodiceAttribute($value)
     {
-        $value = preg_replace( '/\s+/', '-', $value );
-        return $this->attributes[ 'codice' ] = strtoupper( $value );
+        $value = preg_replace('/\s+/', '-', $value);
+        return $this->attributes['codice'] = strtoupper($value);
     }
 
-    public function setTariffeAttribute( $tariffe )
+    public function setTariffeAttribute($tariffe)
     {
-        if ( ! $tariffe ) return;
+        if (!$tariffe) return;
 
-        foreach ( $tariffe as $key => $value ) { 
+        foreach ($tariffe as $key => $value) {
 
             $etichetta = app('VariantiTariffe')[$key];
 
-            $this->tariffe()->updateOrCreate( [ 'variante_tariffa_id' => $etichetta->id ] , $value );
-
+            $this->tariffe()->updateOrCreate(['variante_tariffa_id' => $etichetta->id], $value);
         }
     }
 
@@ -159,11 +169,11 @@ class Prodotto extends Model
 
     public function getCondensatoAttribute()
     {
-        $intero = $this->tariffe->firstWhere('slug', 'intero' );
-        
-        $euro = $intero ? " | " . " €" . $intero->imponibile : '' ;
+        $intero = $this->tariffe->firstWhere('slug', 'intero');
 
-        return $this->codice . " - " . $this->titolo . $euro ;
+        $euro = $intero ? " | " . " €" . $intero->imponibile : '';
+
+        return $this->codice . " - " . $this->titolo . $euro;
     }
 
     public function getCestinatoAttribute()
@@ -200,6 +210,6 @@ class Prodotto extends Model
     {
         $childClass = get_called_class();
 
-        return Setting::progressivoSicuro( $childClass::TIPO, [ Prodotto::class , 'whereCodice' ] , strtoupper($childClass::TIPO[0]), ...$args );
+        return Setting::progressivoSicuro($childClass::TIPO, [Prodotto::class, 'whereCodice'], strtoupper($childClass::TIPO[0]), ...$args);
     }
 }
