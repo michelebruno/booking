@@ -52,22 +52,21 @@ class Deal extends Prodotto
 {
 
     const TIPO = self::TIPO_DEAL;
-    
+
     protected $attributes = [
         'tipo' => self::TIPO_DEAL
     ];
 
     protected $fillable = [
-        'titolo' , 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
+        'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
     ];
 
     public static function boot()
     {
         parent::boot();
 
-        static::addGlobalScope('tipo_deal', function (Builder $builder)
-        {
-            return $builder->whereTipo( self::TIPO_DEAL );
+        static::addGlobalScope('tipo_deal', function (Builder $builder) {
+            return $builder->whereTipo(self::TIPO_DEAL);
         });
     }
 
@@ -78,11 +77,17 @@ class Deal extends Prodotto
 
     public function getLinksAttribute()
     {
-        return [
+
+        $links = [
             'self' => '/deals/' . $this->codice,
-            'restore' => '/deals/' . $this->codice . '/restore',
             'tariffe' => '/deals/' . $this->codice . '/tariffe',
             'forniture' => '/deals/' . $this->codice . '/forniture',
         ];
+
+        if ($this->trashed()) {
+            $links['restore'] = '/deals/' . $this->codice . '/restore';
+        }
+
+        return $links;
     }
 }

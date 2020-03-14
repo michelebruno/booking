@@ -56,20 +56,19 @@ class Fornitura extends Prodotto
     const TIPO = self::TIPO_FORNITURA;
 
     protected $attributes = [
-        'tipo' => self::TIPO_FORNITURA 
+        'tipo' => self::TIPO_FORNITURA
     ];
 
     protected $fillable = [
-        'titolo' , 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
+        'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
     ];
 
     public static function boot()
     {
         parent::boot();
 
-        static::addGlobalScope('TIPO_FORNITURA', function (Builder $builder)
-        {
-            return $builder->where('tipo', self::TIPO_FORNITURA );
+        static::addGlobalScope('TIPO_FORNITURA', function (Builder $builder) {
+            return $builder->where('tipo', self::TIPO_FORNITURA);
         });
     }
 
@@ -80,7 +79,7 @@ class Fornitura extends Prodotto
     public function deals()
     {
         return $this->belongsToMany('App\Deal', 'prodotti_pivot', 'figlio', 'padre');
-    } 
+    }
 
     public function fornitore()
     {
@@ -89,25 +88,24 @@ class Fornitura extends Prodotto
 
     public function getCondensatoAttribute()
     {
-        $euro = Arr::exists( $this->tariffe, 'intero' ) ? " | " . " €" . $this->tariffe['intero']->imponibile : '' ;
+        $euro = Arr::exists($this->tariffe, 'intero') ? " | " . " €" . $this->tariffe['intero']->imponibile : '';
 
-        return $this->fornitore->nome . " - " . $this->codice . " - " . $this->titolo . $euro ;
+        return $this->fornitore->nome . " - " . $this->codice . " - " . $this->titolo . $euro;
     }
 
     public function scopeFornitoDa($query, $id)
     {
-        return $query->where( 'fornitore_id' , $id );
+        return $query->where('fornitore_id', $id);
     }
 
     public function getLinksAttribute()
     {
-        $a = [
-            'self' => "/fornitori/" . $this->fornitore_id . "/forniture/" . $this->codice,
-            'tariffe' => "/fornitori/" . $this->fornitore_id . "/forniture/" . $this->codice . '/tariffe' ,
-        ];
+        $links['self'] = "/fornitori/" . $this->fornitore_id . "/forniture/" . $this->codice;
 
-        if ( $this->trashed() ) $a['restore'] = $a['self'] . "/restore";
+        $links['tariffe'] = $links["self"] . '/tariffe';
 
-        return $a;
+        if ($this->trashed()) $links['restore'] = $links['self'] . "/restore";
+
+        return $links;
     }
 }

@@ -1,150 +1,120 @@
 /* eslint-disable react/prop-types */
-import React, { useState , useEffect } from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom';
 
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility'
-import MUIDataTable from 'mui-datatables';
 
-import PreLoaderWidget from './Loader';
-import useServerSideCollection from '../_services/useServerSideCollection';
 import Helpers, { prezziFormatter } from '../_services/helpers';
- 
-const OrdiniTabella = ( { url , defaultFilter } ) => {
+import ServerDataTable from './ServerDataTable';
 
-    const [ ordini, setOrdini ] = useState()  
+const OrdiniTabella = ({ url, defaultFilter }) => {
 
-    const [ collection, serverSideOptions, { filter , getSortDirectionByName }  ] = useServerSideCollection( url , defaultFilter )
+    const ref = useRef()
 
-    useEffect( () => {
+    return <ServerDataTable
+        ref={ref}
+        url={url}
+        columns={[
+            {
+                name: "stato",
+                label: "Stato",
+                options: {
+                    sort: false,
+                    filterOptions: {
+                        names: ["Aperti", "Pagati"],
+                    },
+                    customBodyRender: cell => {
 
-        if ( ! collection || ! collection.data ) return
+                        const stato = Helpers.ordini.stato(cell);
 
-        const x = collection.data.map( o => Object.assign({}, o, {
-            importo : prezziFormatter(o.importo),
-            imponibile : prezziFormatter(o.imponibile),
-            imposta : prezziFormatter(o.imposta),
-            voci : o.voci.length == 0 ? "-" : o.voci.map( v => {
-                    if ( v.descrizione && v.descrizione !== null ) return v.descrizione } 
-                )
-                .filter( v => { if ( v ) return true; })
-                .join(', '),
-            })
-        )
+                        let className = "fas fa-circle ";
 
-        setOrdini(x)
+                        // eslint-disable-next-line react/prop-types
+                        if (stato.waiting) {
+                            className = "fas fa-spinner fa-spin "
+                        }
 
-    }, [ collection ] )
-
-    if ( ! ordini ) return <PreLoaderWidget />
-
-    const colonne = [
-        {
-            name : "stato",
-            label : "Stato",
-            options : {
-                sort : false, 
-                filterList : filter.stato ,
-                filterOptions: {
-                  names: ["Aperti", "Pagati"]
+                        // eslint-disable-next-line react/prop-types
+                        return <i className={className + stato.colorClass} />
+                    },
                 },
-                customBodyRender : cell => {
-
-                    const stato = Helpers.ordini.stato(cell);
-
-                    let className = "fas fa-circle ";
-
-                    // eslint-disable-next-line react/prop-types
-                    if (stato.waiting) {
-                        className = "fas fa-spinner fa-spin "
-                    }
-
-                    // eslint-disable-next-line react/prop-types
-                    return <i className={ className + stato.colorClass } />
-                }
-            }
-        },
-        {
-            name: 'id',
-            label : "#",
-            _filterName : "id",
-            options : {
-                filter : false,
-                sortDirection : getSortDirectionByName('id'),
-            }
-        },
-        {
-            name: 'cliente.email',
-            label : "Cliente",
-            options : {
-                sort : false,
-                filter : false,
-            }
-        },
-        {
-            name : "voci",
-            label : "Prodotti",
-            options : {
-                sort : false,
-                filter : false
-            }
-        },
-        {
-            name : "created_at",
-            label : "Data",
-            options : {
-                sortDirection : getSortDirectionByName('created_at'),
-                filter : false,
-            }
-        },
-        {
-            name : "importo",
-            label : "Totale",
-            options :{ 
-                sortDirection : getSortDirectionByName('importo'),
-                filter : false
-            }
-        },
-        {
-            name : "imponibile",
-            label : "Imponibile",
-            options : { 
-                sortDirection : getSortDirectionByName('imponibile'),
-                filter : false,
-                display : false,
-            }
-        },
-        {
-            name : "_links",
-            label: " ",
-            options : {
-                sort : false, 
-                filter : false,
-                download : false,
-                print : false,
-                customBodyRender : ( cell , { rowIndex } ) => <>
-                    <IconButton size="small" component={ Link } to={ { pathname : cell.self , state : { ordine : collection.data[rowIndex] } }} >
-                        <VisibilityIcon />
-                    </IconButton>
-                </>
-            }
-        }
-    ] 
-
-    return <MUIDataTable
-        data={ordini}
-        columns={colonne}
-        options={{
-            ...serverSideOptions( colonne , { errorMessage : collection.error || undefined} ), 
-            selectableRows : 'none',
-            print : false,
-        }}
-        />
+            },
+            {
+                name: 'id',
+                label: "#",
+                _filterName: "id",
+                options: {
+                    filter: false,
+                },
+            },
+            {
+                name: 'cliente.email',
+                label: "Cliente",
+                options: {
+                    sort: false,
+                    filter: false,
+                },
+            },
+            {
+                name: "voci",
+                label: "Prodotti",
+                options: {
+                    sort: false,
+                    filter: false,
+                    customBodyRender: voce => voce.length == 0 ? "-" : voce.map(v => {
+                        if (v.descrizione && v.descrizione !== null) return v.descrizione
+                    })
+                        .filter(v => { if (v) return true; })
+                        .join(', '),
+                },
+            },
+            {
+                name: "created_at",
+                label: "Data",
+                options: {
+                    filter: false,
+                },
+            },
+            {
+                name: "importo",
+                label: "Totale",
+                options: {
+                    filter: false,
+                    customBodyRender: (value) => prezziFormatter(value),
+                },
+            },
+            {
+                name: "imponibile",
+                label: "Imponibile",
+                options: {
+                    filter: false,
+                    display: "false",
+                    customBodyRender: (value) => prezziFormatter(value),
+                },
+            },
+            {
+                name: "_links",
+                label: " ",
+                options: {
+                    sort: false,
+                    filter: false,
+                    download: false,
+                    print: false,
+                    customBodyRender: (cell, { rowIndex }) => <>
+                        <IconButton size="small" component={Link} to={{ pathname: cell.self, state: { ordine: ref.current.getRow(rowIndex) } }} >
+                            <VisibilityIcon />
+                        </IconButton>
+                    </>,
+                },
+            },
+        ]}
+    />
 
 }
 
 OrdiniTabella.defaultProps = {
-    url : "/ordini",
-    defaultFilter : { stato : [ "Pagati" ] }
+    url: "/ordini",
+    defaultFilter: { stato: ["Pagati"] },
 }
 export default OrdiniTabella;

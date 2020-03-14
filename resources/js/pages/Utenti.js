@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 
@@ -11,77 +11,17 @@ import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
 import AddIcon from '@material-ui/icons/Add';
 
-import MUIDataTable from "mui-datatables"
 
 import { setTopbarButtons, unsetTopbarButtons } from "../_actions"
-import useServerSideCollection from '../_services/useServerSideCollection'
 import UtenteForm from "../components/UtenteForm"
-import PreLoaderWidget from "../components/Loader"
+import ServerDataTable from "../components/ServerDataTable"
 
 
 const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
 
-    const [collection, serverSideOptions, { reload, getSortDirectionByName }] = useServerSideCollection("/users")
-
     const [aggiungiModal, setAggiungiModal] = useState(false)
 
-    const utenti = collection && collection.data
-
-    const columns = [
-        {
-            name: 'email',
-            label: 'Email',
-            options: {
-                sortDirection: getSortDirectionByName('email')
-            }
-        },
-        {
-            name: 'username',
-            label: 'Username',
-            options: {
-                sortDirection: getSortDirectionByName('username')
-            },
-        },
-        {
-            name: 'ruolo',
-            label: 'Tipo',
-            options: {
-                sortDirection: getSortDirectionByName('ruolo')
-            },
-        },
-        {
-            name: 'meta',
-            label: ' ',
-            options: {
-                sort: false,
-                filter: false,
-                download: false,
-                print: false,
-                customBodyRenderer: (_cell, { rowIndex }) => {
-
-                    const row = utenti[rowIndex]
-
-                    let url = ""
-
-                    switch (row.ruolo) {
-                        case "cliente":
-                            url += "/clienti/"
-                            break;
-
-                        case "fornitore":
-                            url += "/fornitori/"
-                            break;
-
-                        default:
-                            url += "/utenti/"
-                            break;
-                    }
-
-                    return <Button size="sm" as={Link} to={{ pathname: url + row.id, state: { utente: row } }} ><i className="fas fa-edit" /></Button>
-                }
-            }
-        }
-    ]
+    const tableRef = useRef()
 
     useEffect(() => {
         setTopbarButtons(() => <ButtonToolbar className="d-inline-block align-self-center" >
@@ -100,26 +40,86 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <UtenteForm onSuccess={reload} />
+                        <UtenteForm onSuccess={() => tableRef.current.reload()} />
                     </Modal.Body>
                 </Modal>
+                <ServerDataTable
+                    ref={tableRef}
+                    url="/users"
+                    columns={[
+                        {
+                            name: 'email',
+                            label: 'Email',
+                        },
+                        {
+                            name: 'username',
+                            label: 'Username',
+                        },
+                        {
+                            name: 'ruolo',
+                            label: 'Tipo',
+                            options: {
+                                customBodyRender: cell => {
+                                    switch (cell) {
+                                        case "admin":
+                                            return "Admin"
+                                            break;
+                                        case "account_manager":
+                                            return "Account Manager"
+                                            break;
 
-                {typeof utenti == "undefined" ? <PreLoaderWidget /> :
-                    <MUIDataTable
-                        columns={columns}
-                        data={utenti}
-                        options={{
-                            ...serverSideOptions(columns),
-                            customToolbar: () => <Tooltip title="Crea nuovo utente">
-                                <IconButton onClick={() => setAggiungiModal(true)} >
-                                    <AddIcon />
-                                </IconButton>
-                            </Tooltip>
-                        }}
-                    />
-                }
+                                        case "fornitore":
+                                            return "Fornitore"
+                                            break;
+
+                                        default:
+                                            return cell
+                                            break;
+                                    }
+                                },
+                            },
+                        },
+                        {
+                            name: '_links',
+                            label: ' ',
+                            options: {
+                                sort: false,
+                                filter: false,
+                                download: false,
+                                print: false,
+                                customBodyRender: (cell, { rowData }) => {
+
+                                    let url = ""
+
+                                    switch (cell) {
+                                        case "cliente":
+                                            url += "/clienti/"
+                                            break;
+
+                                        case "fornitore":
+                                            url += "/fornitori/"
+                                            break;
+
+                                        default:
+                                            url += "/utenti/"
+                                            break;
+                                    }
+
+                                    return <Button size="sm" as={Link} to={{ pathname: cell.self }} ><i className="fas fa-edit" /></Button>
+                                },
+                            },
+                        },
+                    ]}
+                    options={{
+                        customToolbar: () => <Tooltip title="Crea nuovo utente">
+                            <IconButton onClick={() => setAggiungiModal(true)} >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>,
+                    }}
+                />
             </Card.Body>
-        </Card>
+        </Card >
     )
 }
 

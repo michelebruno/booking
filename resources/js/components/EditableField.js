@@ -31,11 +31,22 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
 
         let dynamic = {};
 
-        dynamic.readOnly = dynamic.disabled = dynamic.plaintext = !editing
 
-        if (props.type === "password" && !editing) {
-            dynamic.value = "*********"
+        if (!editing) {
+            dynamic.readOnly = true
+            dynamic.disabled = true
+            dynamic.plaintext = true
+
+            if (props.type === "password") {
+                dynamic.value = "*********"
+                // eslint-disable-next-line react/prop-types
+            } else if (props.rows) {
+                delete dynamic.plaintext
+            } else console.log("Sad story");
+
         }
+
+        console.log(dynamic);
 
         if (errors) dynamic.isInvalid = true
 
@@ -48,7 +59,7 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
             <Form.Control.Feedback type="invalid">
                 <ul>
                     {errors[name].map((error, i) =>
-                        <li key={i}>{error}</li>
+                        <li key={i}>{error}</li>,
                     )}
                 </ul>
             </Form.Control.Feedback>
@@ -78,7 +89,7 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
             actual_method = "POST"
 
             headers = {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
             }
 
         } else data = dot.str(name, value, {});
@@ -88,7 +99,7 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
             url,
             data,
             headers,
-            cancelToken: source.token
+            cancelToken: source.token,
         })
             .then((res) => {
 
@@ -156,7 +167,14 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
 
         }
 
-        return <Form.Control autoFocus {...props} value={(isImage) ? undefined : value} onChange={onChange} onKeyPress={e => { return e.charCode == 13 ? handleSubmit() : e }} {...dynamicProps()} />
+        return <Form.Control
+            autoFocus
+            {...props}
+            value={(isImage) ? undefined : value}
+            onChange={onChange}
+            onKeyPress={e => { return e.charCode == 13 ? handleSubmit() : e }}
+            {...dynamicProps()}
+        />
     }
 
     return <FormGroup as={Row} controlId={name} >
@@ -193,14 +211,14 @@ const EditableField = ({ label, noLabel, initialValue, method, name, onSuccess, 
 EditableField.propTypes = {
     append: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number
+        PropTypes.number,
     ]),
     children: PropTypes.node,
     isFile: PropTypes.bool,
     isImage: PropTypes.bool,
     initialValue: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number
+        PropTypes.number,
     ]),
     name: PropTypes.string,
     label: PropTypes.string,
@@ -209,19 +227,19 @@ EditableField.propTypes = {
     onSuccess: PropTypes.func,
     prepend: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number
+        PropTypes.number,
     ]),
     readOnly: PropTypes.bool,
     textMutator: PropTypes.func,
     type: PropTypes.string,
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
 }
 
 EditableField.defaultProps = {
     textMutator: str => str,
     method: "PUT",
     append: "",
-    prepend: ""
+    prepend: "",
 }
 
 

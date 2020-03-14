@@ -1,23 +1,19 @@
 /* eslint-disable react/prop-types */
-import React , { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
 
-import { Row , Col , Card, Button  } from 'react-bootstrap';
+import { Row, Col, Card, Button } from 'react-bootstrap';
 import MUIDataTable from 'mui-datatables';
 
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 import PreLoaderWidget from '../components/Loader';
-import useServerSideCollection from '../_services/useServerSideCollection';
+import ServerDataTable from '../components/ServerDataTable';
 
-const Esercenti = ( props ) => {
-
-    const [ collection, serverSideOptions ] = useServerSideCollection( "/fornitori" )
-
-    const esercenti = collection && collection.data
+const Fornitori = (props) => {
 
     useEffect(() => {
-        props.setTopbarButtons( () => {
+        props.setTopbarButtons(() => {
             return <Button size="sm" as={Link} to="/fornitori/crea">Nuovo</Button>
         })
         return () => {
@@ -25,32 +21,9 @@ const Esercenti = ( props ) => {
         };
     }, [])
 
-    const columns = [
-        {
-            name: 'username',
-            label: "Username",
-            
-            options : {
-                customBodyRender : ( cell , { rowIndex } ) => {
-                    const row = esercenti[rowIndex]
-                    return <Link to={{ pathname : "/fornitori/" + row.id , state : { esercente : row }} } >{cell}</Link>
-                }
-            }
+    const ref = useRef()
 
-        },
-        {
-            name: 'stato',
-            label: ' ',
-            options : {
-                customBodyRender : ( cell , { rowIndex } ) => {
-                    const row = esercenti[rowIndex]
-                    return row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
-                }
-            }
-        }
-    ]
-
-    return(
+    return (
         <React.Fragment>
             { /* preloader */}
             {props.loading && <div className="px-5"><PreLoaderWidget /></div>}
@@ -78,14 +51,36 @@ const Esercenti = ( props ) => {
                 <Col lg="9">
                     <Card>
                         <Card.Body>
-                            { esercenti && <MUIDataTable 
-                                data={esercenti}
-                                columns={columns}
+                            <ServerDataTable
+                                ref={ref}
+                                url="/fornitori"
+                                columns={[
+                                    {
+                                        name: 'username',
+                                        label: "Username",
+                                        options: {
+                                            customBodyRender: (cell, { rowIndex }) => {
+                                                const row = ref.current.getRow(rowIndex)
+                                                return <Link to={{ pathname: row._links.self, state: { esercente: row } }} >{cell}</Link>
+                                            },
+                                        },
+
+                                    },
+                                    {
+                                        name: 'stato',
+                                        label: ' ',
+                                        options: {
+                                            customBodyRender: (cell, { rowIndex }) => {
+                                                const row = esercenti[rowIndex]
+                                                return row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
+                                            },
+                                        },
+                                    },
+                                ]}
                                 options={{
-                                    ...serverSideOptions(columns),
-                                    selectableRows : "none"
+                                    selectableRows: "none",
                                 }}
-                                /> }
+                            />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -96,4 +91,4 @@ const Esercenti = ( props ) => {
 }
 
 
-export default connect(null, { setTopbarButtons, unsetTopbarButtons })(Esercenti);
+export default connect(null, { setTopbarButtons, unsetTopbarButtons })(Fornitori);

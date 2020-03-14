@@ -4,37 +4,24 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { Card } from 'react-bootstrap'
-import MUIDataTable from 'mui-datatables'
-
-import useServerSideCollection from '../_services/useServerSideCollection'
+import ServerDataTable from '../components/ServerDataTable'
 
 const Clienti = () => {
 
-    const [ collection, serverSideOptions ] = useServerSideCollection( "/clienti", ) 
-    const clienti =  collection && collection.data
-
-    let columns 
     return <Card>
         <Card.Body>
-            { clienti && clienti && <MUIDataTable 
-                data={ clienti }
-                columns={ columns = [
+            <ServerDataTable
+                url="/clienti"
+                columns={[
                     {
                         name: "email",
-                        label : "Email",
-                        options :{ 
-                            customBodyRender : ( cell , { rowIndex } ) => {
-                                const row = clienti[rowIndex]
-                                return <Link to={ row._links.self }>{ cell }</Link>
-                            },
-                        }
-                    }
-                ] }
+                        label: "Email",
+                    },
+                ]}
                 options={{
-                    ...serverSideOptions( columns ),
-                    selectableRows : "none"
+                    selectableRows: "none",
                 }}
-                />}
+            />
         </Card.Body>
     </Card>
 

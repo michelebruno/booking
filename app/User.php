@@ -80,7 +80,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const RUOLO_ACCOUNT = "account_manager";
 
-    const RUOLO_CLIENTE = "cliente"; 
+    const RUOLO_CLIENTE = "cliente";
 
     const RUOLO_FORNITORE = "fornitore";
 
@@ -93,12 +93,12 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'cf', 
-        'email', 
-        'username', 
-        'password', 
-        'piva', 
-        'ruolo', 
+        'cf',
+        'email',
+        'username',
+        'password',
+        'piva',
+        'ruolo',
         'nome'
     ];
 
@@ -109,11 +109,11 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
-        'remember_token' 
+        'remember_token'
     ];
 
     protected $appends = [
-        'abilitato', 
+        'abilitato',
         '_links'
     ];
 
@@ -125,42 +125,63 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+
     /* 
      *
      * SCOPES
      * 
      */
 
-    public function scopeSuperAdmin(Builder $query )
+    public function scopeSuperAdmin(Builder $query)
     {
-        return $query->where( 'ruolo', self::RUOLO_ADMIN );
+        return $query->where('ruolo', self::RUOLO_ADMIN);
     }
 
     public function scopeAdmin(Builder $query)
     {
-        return $query->whereIn( 'ruolo', [ 'admin', 'account_manager' ] );
+        return $query->whereIn('ruolo', ['admin', 'account_manager']);
     }
 
 
     public function scopeFornitori(Builder $query)
     {
-        return $query->where('ruolo', self::RUOLO_FORNITORE );
+        return $query->where('ruolo', self::RUOLO_FORNITORE);
     }
-    
+
     public function meta()
     {
-        return $this->hasMany(UserMeta::class, 'user_id' );
+        return $this->hasMany(UserMeta::class, 'user_id');
     }
 
     public function getLinksAttribute()
     {
-        return [];
+        $url_prefix = "";
+
+        switch ($this->ruolo) {
+            case self::RUOLO_ACCOUNT:
+            case self::RUOLO_ADMIN:
+                $url_prefix = "/utenti";
+                break;
+
+            case self::RUOLO_FORNITORE:
+                $url_prefix = "/fornitore";
+                break;
+
+            default:
+                $url_prefix = "/users";
+                break;
+        }
+
+        $links = [
+            "self" => $url_prefix . "/" . $this->id
+        ];
+
+        return $links;
     }
 
     public function getAbilitatoAttribute()
     {
-        return $this->attributes['abilitato'] = ! $this->trashed();
+        return $this->attributes['abilitato'] = !$this->trashed();
     }
     /**
      * * CUSTOM FUNCTIONS
@@ -170,7 +191,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->ruolo === self::RUOLO_ADMIN;
     }
-    
+
     /**
      * Verifica se l'utente è un gestore del sistema.
      * 
@@ -180,7 +201,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isAdmin()
     {
-        return in_array( $this->ruolo , [ self::RUOLO_ACCOUNT , self::RUOLO_ADMIN ]);
+        return in_array($this->ruolo, [self::RUOLO_ACCOUNT, self::RUOLO_ADMIN]);
     }
 
     /**
@@ -197,6 +218,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->ruolo === self::RUOLO_FORNITORE;
     }
-
-
 }

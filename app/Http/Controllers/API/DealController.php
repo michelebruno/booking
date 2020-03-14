@@ -62,20 +62,29 @@ class DealController extends Controller
         $this->authorize('create', Deal::class);
 
         $dati = $request->validate([
-            'stato' => 'required|string|in:pubblico,privato,bozza',
-            'titolo' => 'required|string',
-            'descrizione' => 'nullable|string',
-            'disponibili' => 'integer',
-            'codice' => 'sometimes|nullable|unique:prodotti',
-            'iva' => 'integer|required',
-            'tariffe' => 'array|required|bail',
-            'tariffe.intero.imponibile' => 'sometimes|numeric',
-            'tariffe.intero.importo' => 'required_if:tariffe.intero.imponibile,null|numeric'
+            'stato' => ['required', 'string', 'in:pubblico,privato,bozza'],
+            'titolo' => ['required', 'string'],
+            'descrizione' => ['nullable', 'string'],
+            'disponibili' => ['integer'],
+            'codice' => ['sometimes', 'nullable', 'unique:prodotti'],
+            'iva' => ['integer', 'required', 'gte:0'],
+            'importo' => [Rule::requiredIf(is_null($request->input('tariffe.intero.importo'))), 'numeric', 'gte:0', 'nullable'],
+            'tariffe' => [Rule::requiredIf(is_null($request->importo)), 'array', 'nullable', 'bail'],
+            'tariffe.intero' => ['required_if:importo,null', 'array', 'gte:0', 'nullable'],
+            'tariffe.*.importo' => ['required_if:tariffe.*.imponibile,null', 'numeric', 'gte:0'],
+            'tariffe.*.imponibile' => ['required_if:tariffe.*.importo,null', 'numeric', 'gte:0'],
         ]);
 
         $prodotto = new Deal($dati);
 
         $prodotto->save();
+
+        if (array_key_exists("importo", $dati) && !is_null($dati["importo"])) {
+            if (!array_key_exists("tariffe", $dati)) {
+                $dati["tariffe"] = [];
+            }
+            $dati["tariffe"]["intero"]["importo"] = $dati["importo"];
+        }
 
         $prodotto->tariffe = $dati['tariffe'];
 
@@ -136,7 +145,6 @@ class DealController extends Controller
     {
         $this->authorize('delete', $deal);
 
-        dd($deal);
         if ($deal->delete()) {
 
             return response($deal);

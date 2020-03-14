@@ -43,31 +43,34 @@ export default function useServerSideCollection(baseUrl, defaultFilter) {
     const setFilter = (addFilter) => {
 
         if (typeof addFilter === "function") {
+
             _setFilter(addFilter)
-            return;
+
         } else if (typeof addFilter === "boolean" && !addFilter) {
+
             _setFilter({})
-            return
-        }
 
-        _setFilter(prevFilter => {
+        } else {
+            _setFilter(prevFilter => {
 
-            const nextFilter = Object.assign({}, prevFilter)
+                const nextFilter = Object.assign({}, prevFilter)
 
-            Object.entries(addFilter).map(([key, value]) => {
-                if (Array.isArray(value)) { // Bisogna impostare la proprietà
-                    nextFilter[key] = value
-                } else if (value) {
-                    nextFilter[key] = [value]
-                } else {
-                    if (_.has(nextFilter, key)) {
-                        _.unset(nextFilter, key)
+                Object.entries(addFilter).map(([key, value]) => {
+                    if (Array.isArray(value)) { // Bisogna impostare la proprietà
+                        nextFilter[key] = value
+                    } else if (value) {
+                        nextFilter[key] = [value]
+                    } else {
+                        if (_.has(nextFilter, key)) {
+                            _.unset(nextFilter, key)
+                        }
                     }
-                }
-            })
+                })
 
-            return nextFilter
-        });
+                return nextFilter
+            });
+
+        }
     }
 
     const makeURLQuery = useCallback(tempFilter => {

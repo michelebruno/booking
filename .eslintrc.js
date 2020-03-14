@@ -8,14 +8,14 @@ module.exports = {
         "plugin:react/recommended"
     ],
     "globals": {
-        "_" : "readonly",
+        "_": "readonly",
         "Atomics": "readonly",
         "axios": "readonly",
         "SharedArrayBuffer": "readonly",
-        "process" : "readonly",
-        "uppercase" : "readonly",
+        "process": "readonly",
+        "uppercase": "readonly",
     },
-    "parser" : "babel-eslint",
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -28,8 +28,12 @@ module.exports = {
         "react-hooks"
     ],
     "rules": {
-        "react/display-name" : "off",    
+        "react/display-name": "off",
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        "comma-dangle": ["error", "always-multiline"],
+        "comma-style": ["error", "last"],
+        "no-else-return": "error",
+        "no-useless-return": "error",
+        "no-empty": "error",
     }
 };

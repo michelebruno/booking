@@ -18,7 +18,7 @@ class CreateProdottosTable extends Migration
             $table->string('titolo');
             $table->string('codice')->unique();
             $table->string('tipo');
-            $table->string('descrizione')
+            $table->longText('descrizione')
                 ->nullable()
                 ->default(null);
             $table->bigInteger('esercente_id')
@@ -32,7 +32,7 @@ class CreateProdottosTable extends Migration
             $table->tinyInteger('iva', false, true);
             $table->integer('wp', false, true)
                 ->nullable()
-                ->default(null);           
+                ->default(null);
             $table->softDeletes();
             $table->timestamps();
 
@@ -43,7 +43,7 @@ class CreateProdottosTable extends Migration
         });
 
         Schema::create('prodotti_meta', function (Blueprint $table) {
-                        
+
             $table->bigIncrements('id');
             $table->bigInteger('prodotto_id')
                 ->unsigned();
