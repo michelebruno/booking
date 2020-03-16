@@ -59,7 +59,7 @@ const routes = [
   { path: '/ordini/:ordine_id', exact: true, component: OrdiniScheda, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Dettagli ordine' },
   { path: '/ordini', exact: true, component: Ordini, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Ordini' },
   { path: '/deals/:deal', component: DealsScheda, route: PrivateRoute, roles: ['admin', 'account_manager', 'fornitore'], title: 'Scheda deal' },
-  { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin'], title: 'Deals' },
+  { path: '/deals', exact: true, component: Deals, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Deals' },
   { path: '/forniture/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda fornitura' },
   { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },
   { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Scheda deal' },
@@ -73,5 +73,6 @@ const routes = [
     route: PrivateRoute,
   },
 ]
+
 
 export { routes, PrivateRoute };

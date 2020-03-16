@@ -77,7 +77,7 @@ const SideNavContent = ({ user }) => {
             label: "Impostazioni",
             pathname: "/settings",
             icon: <SettingsIcon />,
-            roles: ["admin", "account_manager"],
+            roles: ["admin"],
         },
         {
             label: "Il mio profilo",
