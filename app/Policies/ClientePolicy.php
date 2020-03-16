@@ -53,7 +53,7 @@ class ClientePolicy
      */
     public function update(User $user, Cliente $cliente)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -65,7 +65,7 @@ class ClientePolicy
      */
     public function delete(User $user, Cliente $cliente)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -77,7 +77,7 @@ class ClientePolicy
      */
     public function restore(User $user, Cliente $cliente)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -89,6 +89,6 @@ class ClientePolicy
      */
     public function forceDelete(User $user, Cliente $cliente)
     {
-        //
+        return $user->isAdmin();
     }
 }

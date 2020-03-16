@@ -15,6 +15,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { setTopbarButtons, unsetTopbarButtons } from "../_actions"
 import UtenteForm from "../components/UtenteForm"
 import ServerDataTable from "../components/ServerDataTable"
+import Helpers from "../_services/helpers"
 
 
 const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
@@ -59,24 +60,11 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
                             name: 'ruolo',
                             label: 'Tipo',
                             options: {
-                                customBodyRender: cell => {
-                                    switch (cell) {
-                                        case "admin":
-                                            return "Admin"
-                                            break;
-                                        case "account_manager":
-                                            return "Account Manager"
-                                            break;
-
-                                        case "fornitore":
-                                            return "Fornitore"
-                                            break;
-
-                                        default:
-                                            return cell
-                                            break;
-                                    }
-                                },
+                                /**
+                                 * TODO fare in modo che nella query il ruolo sia inviato come raw e non come label
+                                 */
+                                filter: false,
+                                customBodyRender: Helpers.utenti.ruoli.getLabel,
                             },
                         },
                         {

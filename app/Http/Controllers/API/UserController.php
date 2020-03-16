@@ -10,26 +10,38 @@ use App\UserMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @todo Impostare i filtri
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request )
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
 
+        $request->validate([
+            "per_page" => ["integer", "nullable"],
+            "order" => ["nullable", "in:asc,desc"],
+            "order_by" => ["nullable", "string"],
+            "ruolo" => ["nullable", Rule::in(User::RUOLI)],
+        ]);
+
         $per_page = $request->query("per_page", 10);
 
-        $query = User::admin();
+        if ($ruolo = $request->query("ruolo", false)) {
+            $query = User::whereRuolo($ruolo);
+        } else {
+            $query = User::admin();
+        }
 
-        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
-        
-        return response( $query->paginate($per_page) );
+        $query->orderBy($request->input('order_by', 'created_at'), $request->input('order', 'desc'));
 
+        return response($query->paginate($per_page));
     }
 
     /**
@@ -38,22 +50,34 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUser $request)
+    public function store(Request $request)
     {
         $this->authorize('create', User::class);
 
-        $dati = $request->validated();
+        $dati = $request->validate([
+            'email' => ['required', 'email', 'unique:users'],
+            'ruolo' => ['required', Rule::in(\App\User::RUOLI)],
+            'password' => ['required', 'confirmed'],
+            'nome' => 'nullable',
+            'cognome' => 'nullable',
+            'username' => ['required', 'unique:users', 'not_regex:/^.+@.+$/i']
+        ]);
+
+        if (
+            $request->input('ruolo') == 'admin' &&
+            !$request->user()->isSuperAdmin()
+        ) abort(403, 'Non hai i permessi per creare un amministratore.');
 
         $user = new User($dati);
 
         try {
-            
+
             $user->password = Hash::make($request->input('password'));
-            
+
             $user->saveOrFail();
 
             // $metas = [];
-            
+
             // foreach($dati['meta'] as $key => $value) {
             //     if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
             // }
@@ -63,7 +87,7 @@ class UserController extends Controller
             $user->markEmailAsVerified();
 
             return response(new UserResource($user));
-        } catch ( \Throwable $e ) {
+        } catch (\Throwable $e) {
             abort(500, $e->getMessage());
         }
     }
@@ -80,7 +104,7 @@ class UserController extends Controller
 
         $this->authorize('view', $user);
 
-        return response(new UserResource( $user ) );
+        return response(new UserResource($user));
     }
 
     /**
@@ -92,20 +116,18 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorize('update', User::findOrFail($id) );
+        $this->authorize('update', User::findOrFail($id));
 
-        if ( ! $request->user()->isSuperAdmin() && $request->input( 'ruolo' ) == 'admin' ) abort(403, 'Non hai i permessi per creare un amministratore.');
+        if (!$request->user()->isSuperAdmin() && $request->input('ruolo') == 'admin') abort(403, 'Non hai i permessi per creare un amministratore.');
 
-        $user = User::updateOrCreate( ["id" => $id], $request->only( ( new User() )->getFillable() ));
+        $user = User::updateOrCreate(["id" => $id], $request->only((new User())->getFillable()));
 
-        $user->nome = $request->input('nome', false);
-
-/*         if ( $request->has('meta') ) {
+        /*         if ( $request->has('meta') ) {
             foreach ($request->input('meta') as $chiave => $valore) {
                 $user->meta()->updateOrCreate(["chiave" => $chiave], ["valore" => $valore]);
             }
         }  */
-        return response( new UserResource($user) );
+        return response(new UserResource($user));
     }
 
     /**
@@ -116,7 +138,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if ( $user = User::findOrFail($id)) {
+        if ($user = User::findOrFail($id)) {
             $user->delete();
             return response()->json(['message' => 'Eliminato']);
         }

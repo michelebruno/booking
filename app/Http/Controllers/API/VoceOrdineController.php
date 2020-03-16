@@ -16,6 +16,8 @@ class VoceOrdineController extends Controller
      */
     public function index(Ordine $ordine)
     {
+        $this->authorize('viewAny', $ordine);
+
         return $ordine->voci;
     }
 
@@ -27,7 +29,7 @@ class VoceOrdineController extends Controller
      */
     public function store(Request $request, Ordine $ordine)
     {
-        //
+        $this->authorize('create', $ordine);
     }
 
     /**
@@ -36,9 +38,9 @@ class VoceOrdineController extends Controller
      * @param  \App\VoceOrdine  $voce 
      * @return \Illuminate\Http\Response
      */
-    public function show(Ordine $ordine, VoceOrdine $voce )
+    public function show(Ordine $ordine, VoceOrdine $voce)
     {
-        //
+        $this->authorize('viewAny', $ordine);
     }
 
     /**
@@ -48,9 +50,9 @@ class VoceOrdineController extends Controller
      * @param  \App\VoceOrdine  $voce 
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ordine $ordine, VoceOrdine $voce )
+    public function update(Request $request, Ordine $ordine, VoceOrdine $voce)
     {
-        //
+        $this->authorize('update', $ordine);
     }
 
     /**
@@ -59,8 +61,8 @@ class VoceOrdineController extends Controller
      * @param  \App\VoceOrdine  $voce 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ordine $ordine, VoceOrdine $voce )
+    public function destroy(Ordine $ordine, VoceOrdine $voce)
     {
-        //
+        $this->authorize('destroy', $ordine);
     }
 }
