@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux'
 
-import { setTopbarButtons , unsetTopbarButtons } from '../_actions';
+import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
 import { Card } from 'react-bootstrap';
 import Button from '@material-ui/core/Button'
@@ -12,18 +12,19 @@ import OrdiniTabella from '../components/OrdiniTabella'
 import { Link } from 'react-router-dom';
 
 
-const Ordini = ( props ) => {
+const Ordini = (/* { setTopbarButtons, unsetTopbarButtons } */) => {
 
+    // eslint-disable-next-line no-unused-vars
     const TopbarButtons = () => {
-        return <Button variant="contained" color="primary" startIcon={ <AddIcon /> } component={Link} to="/ordini/crea">Nuovo</Button>
+        return <Button variant="contained" color="primary" startIcon={<AddIcon />} component={Link} to="/ordini/crea">Nuovo</Button>
     }
 
-    useEffect( () => {
-        props.setTopbarButtons( TopbarButtons )
-        return props.unsetTopbarButtons
-    }, [] )
+    // useEffect( () => {
+    //     setTopbarButtons( TopbarButtons )
+    //     return unsetTopbarButtons
+    // }, [] )
 
-    return(
+    return (
         <React.Fragment>
             <Card>
                 <Card.Body>
@@ -35,4 +36,4 @@ const Ordini = ( props ) => {
     )
 }
 
-export default connect( null , { setTopbarButtons, unsetTopbarButtons } )( Ordini )
+export default connect(null, { setTopbarButtons, unsetTopbarButtons })(Ordini)

@@ -93,6 +93,15 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
                         url="/deals"
                         columns={[
                             {
+                                name: 'stato',
+                                label: "Stato",
+                                options: {
+                                    display: "excluded",
+                                    filterOptions: ["Pubblico", "Privato", "Cestinato"],
+
+                                },
+                            },
+                            {
                                 label: 'Cod.',
                                 name: 'codice',
                                 options: {
@@ -112,6 +121,7 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
                                 options: {
                                     customBodyRender: (cell) => cell ? prezziFormatter(cell) : "-",
                                     sort: false,
+                                    filter: false,
                                 },
                             },
                             {
@@ -120,12 +130,32 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
                                 options: {
                                     customBodyRender: (cell) => cell ? prezziFormatter(cell) : "-",
                                     sort: false,
+                                    filter: false,
                                     display: "false",
                                 },
                             },
                             {
                                 label: 'Disponibiiltà',
                                 name: 'disponibili',
+                                options: {
+                                    filter: false,
+                                },
+                            },
+                            {
+                                label: 'Disponibili più di',
+                                name: 'disponibili_gte',
+                                options: {
+                                    display: "excluded",
+                                    filterType: "textField",
+                                },
+                            },
+                            {
+                                label: 'Disponibili meno di',
+                                name: 'disponibili_lte',
+                                options: {
+                                    display: "excluded",
+                                    filterType: "textField",
+                                },
                             },
                             {
                                 label: " ",
@@ -165,9 +195,9 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
                         ]}
                         options={{
                             elevation: 0, // il box-shadow
-                            filter: false,
                             print: false,
                             selectableRows: 'none',
+                            serverSideFiterList: ["Cestinati: cestinati"],
                         }}
                     />
                 </Card.Body>

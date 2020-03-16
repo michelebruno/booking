@@ -21,7 +21,7 @@ class OrdineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request )
+    public function index(Request $request)
     {
         $request->validate([
             'per_page' => 'int',
@@ -31,28 +31,27 @@ class OrdineController extends Controller
 
         $per_page = $request->query('per_page', 10);
 
-        $query = Ordine::with([ 'cliente' , 'voci', 'transazioni' ]);
+        $query = Ordine::with(['cliente', 'voci', 'transazioni']);
 
-        $query->orderBy( $request->input('order_by', 'created_at') , $request->input('order', 'desc') );
+        $query->orderBy($request->input('order_by', 'created_at'), $request->input('order', 'desc'));
 
-        switch ( strtoupper( $request->query('stato', false ) ) ) {
+        switch (strtoupper($request->query('stato', false))) {
             case 'PAGATI':
-                $query->whereIn("stato", [ Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO ]);
+                $query->whereIn("stato", [Ordine::ELABORAZIONE, Ordine::PAGATO, Ordine::ELABORATO]);
                 break;
 
             case 'APERTI':
-                $query->where("stato", Ordine::APERTO );
+                $query->where("stato", Ordine::APERTO);
                 break;
-            default: 
+            default:
                 break;
         }
 
-        if ( !$per_page ) {
-            return response( $query->get() );
+        if (!$per_page) {
+            return response($query->get());
         }
 
-        return response( $query->paginate($per_page) );
-
+        return response($query->paginate($per_page));
     }
 
     /**
@@ -68,9 +67,11 @@ class OrdineController extends Controller
 
         $dati = $request->validated();
 
-        if ( in_array( $request->user()->ruolo , [ User::RUOLO_ACCOUNT , User::RUOLO_ADMIN ] ) ) {
+        if (in_array($request->user()->ruolo, [User::RUOLO_ACCOUNT, User::RUOLO_ADMIN])) {
+
             try {
-                $cliente = Cliente::whereEmail( $dati["cliente"]["email"] )->firstOrFail();
+
+                $cliente = Cliente::whereEmail($dati["cliente"]["email"])->firstOrFail();
             } catch (\Throwable $th) {
                 $cliente = new Cliente($dati['cliente']);
                 $cliente->save();
@@ -83,17 +84,17 @@ class OrdineController extends Controller
 
             $tariffa = Tariffa::findOrFail($voce['tariffa_id']);
 
-            if ( $tariffa->prodotto->disponibili < $voce["qta"] ) {
+            if ($tariffa->prodotto->disponibili < $voce["qta"]) {
                 throw new \Exception("Il prodotto non è più disponibile."); //TODO ?
             }
 
             $v = new VoceOrdine();
 
             $v->tariffa_id = $voce['tariffa_id'];
+
             $v->quantita = $voce["qta"];
 
             $voci[] = $v;
-
         }
 
         $ordine = new Ordine();
@@ -102,14 +103,13 @@ class OrdineController extends Controller
 
         $ordine->save();
 
-        $ordine->voci()->saveMany( $voci );
+        $ordine->voci()->saveMany($voci);
 
         $ordine->calcola();
 
         $ordine->saveOrFail();
 
-        return response( $ordine->fresh()->completo(), 201 );
-
+        return response($ordine->fresh()->completo(), 201);
     }
 
     /**
@@ -120,9 +120,9 @@ class OrdineController extends Controller
      */
     public function show(Ordine $ordine)
     {
-        $this->authorize('view', $ordine );
-        
-        return response( $ordine->completo() );
+        $this->authorize('view', $ordine);
+
+        return response($ordine->completo());
     }
 
     /**

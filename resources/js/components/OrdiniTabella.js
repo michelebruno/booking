@@ -13,6 +13,7 @@ const OrdiniTabella = ({ url, defaultFilter }) => {
     const ref = useRef()
 
     return <ServerDataTable
+        defaultFilter={defaultFilter}
         ref={ref}
         url={url}
         columns={[

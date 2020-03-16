@@ -21,14 +21,25 @@ class DealController extends Controller
         $request->validate([
             'per_page' => 'int',
             'order' => 'in:asc,desc',
-            'order_by' => 'in:created_at,updated_at,codice,titolo,disponibili'
+            'order_by' => 'in:created_at,updated_at,codice,titolo,disponibili',
+            'stato' => "in:cestinato,pubblico,privato,bozza|nullable",
         ]);
 
         $per_page = (int) $request->query('per_page', 10);
 
-        $query =  Deal::with([]);
+        $query =  Deal::query();
 
-        $query->orderBy($request->input('order_by', 'created_at'), $request->input('order', 'desc'));
+        /**
+         * Filtro dello stato. 
+         * "Cestinato" è uno stato fittizio
+         */
+        if ($request->query("stato") == "cestinato") {
+            $query->onlyTrashed();
+        } elseif ($stato = $request->query("stato", null)) {
+            $request->wherStato($stato);
+        }
+
+        $query->orderBy($request->query('order_by', 'created_at'), $request->query('order', 'desc'));
 
         if ($s = $request->query('s', false)) {
 

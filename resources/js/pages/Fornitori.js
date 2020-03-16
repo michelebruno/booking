@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
 
 import { Row, Col, Card, Button } from 'react-bootstrap';
-import MUIDataTable from 'mui-datatables';
 
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 import PreLoaderWidget from '../components/Loader';
@@ -21,7 +20,7 @@ const Fornitori = (props) => {
         };
     }, [])
 
-    const ref = useRef()
+    const [collection, setCollection] = useState()
 
     return (
         <React.Fragment>
@@ -52,7 +51,8 @@ const Fornitori = (props) => {
                     <Card>
                         <Card.Body>
                             <ServerDataTable
-                                ref={ref}
+                                onCollectionChange={setCollection}
+                                title="Fornitori"
                                 url="/fornitori"
                                 columns={[
                                     {
@@ -60,8 +60,8 @@ const Fornitori = (props) => {
                                         label: "Username",
                                         options: {
                                             customBodyRender: (cell, { rowIndex }) => {
-                                                const row = ref.current.getRow(rowIndex)
-                                                return <Link to={{ pathname: row._links.self, state: { esercente: row } }} >{cell}</Link>
+                                                const row = collection && collection.data[rowIndex]
+                                                return row ? <Link to={{ pathname: row._links.self, state: { esercente: row } }} >{cell}</Link> : cell
                                             },
                                         },
 
@@ -71,8 +71,8 @@ const Fornitori = (props) => {
                                         label: ' ',
                                         options: {
                                             customBodyRender: (cell, { rowIndex }) => {
-                                                const row = esercenti[rowIndex]
-                                                return row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
+                                                const row = collection && collection.data[rowIndex]
+                                                return row && row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
                                             },
                                         },
                                     },

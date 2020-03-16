@@ -7,7 +7,7 @@ import { Tooltip, IconButton } from '@material-ui/core';
 import PreLoaderWidget from './Loader';
 
 
-const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, options, editable, title, onCollectionChange, ...props }, ref) {
+const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url, columns, options, editable, title, onCollectionChange }, ref) {
 
     /**
      * * React Hooks
@@ -23,7 +23,25 @@ const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, opti
      */
     const [searchInput, setSearchInput] = useState()
 
-    const [filter, setFilter] = useState(/* defaultFilter */)
+    const [filter, setFilter] = useState(defaultFilter)
+
+    const [timeoutFilter, setTimeoutFilter] = useState()
+
+    useEffect(() => {
+
+        if (typeof timeoutFilter === "undefined") {
+            return;
+        }
+        const t = setTimeout(() => {
+            setFilter(f => ({ ...f, ...timeoutFilter }))
+            setTimeoutFilter()
+        }, 1000)
+
+        return () => {
+            clearTimeout(t)
+        }
+
+    }, [timeoutFilter])
 
     useEffect(() => {
 
@@ -87,11 +105,15 @@ const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, opti
         return loadApi()
     }, [filter])
 
+
+    const getRow = useCallback((index) => collection.data[index], [collection])
+    // const getCollection = useCallback(() => collection, [collection])
+
     useImperativeHandle(
         ref,
         () => ({
             reload: () => loadApi(),
-            getRow: (index) => collection.data[index],
+            getRow,
         }),
         [loadApi],
     )
@@ -115,7 +137,7 @@ const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, opti
 
             if (filter && filter[colonna.name]) {
 
-                colonna.options.filterList = filter[colonna.name]
+                colonna.options.filterList = (timeoutFilter && timeoutFilter[colonna.name]) || filter[colonna.name]
             }
 
             return colonna
@@ -163,11 +185,20 @@ const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, opti
 
                 const index = cNames.findIndex((c) => c === changedCol)
 
-                if (typeof cNames[index] !== "undefined") {
+                if (typeof _columns[index] !== "undefined") {
+                    const colonna = _columns[index]
+                    let nome = colonna.name
 
-                    let nome = cNames[index]
+                    let value = filterList[index]
 
-                    setFilter(f => ({ ...f, [nome]: filterList[index] }))
+                    if (!value || !value.length || value == "") { // Se il valore è nullo, elimina la proprietà dell'oggetto.
+                        setFilter(prev => _.omit(prev, changedCol))
+                    } else if (colonna.options && colonna) {
+                        setTimeoutFilter({ [nome]: value })
+                    } else {
+                        setFilter(f => ({ ...f, [nome]: value }))
+                    }
+
 
                 }
 
@@ -213,7 +244,7 @@ const ServerDataTable = forwardRef(function ServerDataTable({ url, columns, opti
         title={title}
         data={collection.data}
         columns={_columns}
-        options={Object.assign(_options, options)}
+        options={{ ..._options, options }}
     />
 })
 
@@ -225,6 +256,8 @@ ServerDataTable.propTypes = {
 
     url: PropTypes.string.isRequired,
     onCollectionChange: PropTypes.func,
+    defaultFilter: PropTypes.object,
+    editable: PropTypes.bool,
     /** 
      * 
      * MUIDataTable.propTypes from https://github.com/gregnb/mui-datatables/blob/master/src/MUIDataTable.js 

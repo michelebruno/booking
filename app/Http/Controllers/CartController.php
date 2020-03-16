@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Deal;
-use App\Ordine;
-use App\VoceOrdine;
+use App\{Deal, Ordine, VoceOrdine};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\{Rule, ValidationException};
 
 class CartController extends Controller
 {
@@ -18,10 +15,13 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
+        /**
+         * Il massimo acquistabile dovrebbe essere dinamico
+         */
         $dati = $request->validate([
-            'tariffa' => 'required|exists:varianti_tariffa,slug',
-            'quantita' => 'integer|required|min:1|max:20',
-            'prodotto' => 'required|exists:prodotti,codice',
+            'prodotto' => ['required', 'bail', 'exists:prodotti,codice'],
+            'tariffa' => ['required', 'exists:varianti_tariffa,slug'],
+            'quantita' => ['integer', 'required', 'min:1', 'max:20'],
         ]);
 
         $prodotto = Deal::whereCodice($dati['prodotto'])->firstOrFail();
@@ -41,10 +41,9 @@ class CartController extends Controller
 
     public function chiudi(Request $request)
     {
-        /**
-         * TODO Validare il numero di disponibili
-         */
-        if ($voci = session('carrello', false)) {
+        if ($voci = session('carrello', [])) {
+
+            $this->validaDisponibili($voci);
 
             $ordine = new Ordine;
 
@@ -60,7 +59,55 @@ class CartController extends Controller
 
             return redirect(route('cart.payment', ['ordine' => $ordine->id]));
         } else {
-            abort(400, 'Non hai nessun elemento nel carrello.');
+            /**
+             * ? Un'array vuota porta soddisfa la condizione per arrivare qui?
+             */
+            throw ValidationException::withMessages(["carrello" => "Non hai alcun prodotto nel carrello."]);
+        }
+    }
+
+    /**
+     * Controlla se c'è la disponibilità dei prodotti richiesti.
+     *
+     * @param  \App\VoceOrdine[]  $voci
+     * @return  void
+     * 
+     * @throws  \Illuminate\Validation\ValidationException
+     */
+    public function validaDisponibili(array $voci)
+    {
+
+        $richiesti = [];
+
+        foreach ($voci as $voce) {
+            if (array_key_exists($voce->prodotto->id, $richiesti)) {
+                $richiesti[$voce->prodotto->id] += $voce->quantita;
+            } else {
+                $richiesti[$voce->prodotto->id] = $voce->quantita;
+            }
+        }
+
+        $prodotti = Deal::findOrFail(array_keys($richiesti));
+
+        $nonDisponibili = [];
+
+        /**
+         * Esegui il controllo.
+         */
+        foreach ($richiesti as $prodottoId => $quantità) {
+            $prodotto = $prodotti->find($prodottoId);
+
+            if ($prodotto->disponibili < $quantità) {
+                $nonDisponibili[$prodotto->codice] = "Siamo spiacenti, non abbiamo abbastanza prodotti in magazzino.";
+            }
+        }
+
+        /**
+         * Aggiungi l'errore e chiudi il processo
+         */
+
+        if (count($nonDisponibili)) {
+            throw ValidationException::withMessages($nonDisponibili);
         }
     }
 
@@ -71,7 +118,11 @@ class CartController extends Controller
 
     public function deleteIndex(Request $request, int $index)
     {
-        $request->session()->forget("carrello.$index");
+        $resetIndex = $request->session()->forget("carrello.$index");
+
+        $resetIndex = array_values($request->session()->get("carrello"));
+
+        $request->session()->put("carrello", $resetIndex);
 
         return back();
     }
