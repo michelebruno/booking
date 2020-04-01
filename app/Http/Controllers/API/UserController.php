@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Fornitore;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUser;
 use App\Http\Resources\UserResource;
@@ -105,6 +106,18 @@ class UserController extends Controller
         $this->authorize('view', $user);
 
         return response(new UserResource($user));
+    }
+
+    public function showCurrent()
+    {
+
+        $user = request()->user();
+
+        if ($user->ruolo == User::RUOLO_FORNITORE) {
+            return response(Fornitore::findOrFail($user->id));
+        }
+
+        return response($user);
     }
 
     /**
