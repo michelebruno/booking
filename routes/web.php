@@ -19,7 +19,7 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/{a?}/{b?}/{c?}/{d?}', 'GeneralController@returApp');
 });
 
-Route::get('/', 'GeneralController@returApp');
+Route::get('/', 'GeneralController@returnApp');
 
 Route::get('cart', 'CartController@index')->name('cart');
 Route::post('cart/checkout', 'CartController@chiudi')->name('cart.checkout');
