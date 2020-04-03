@@ -201,6 +201,42 @@ class Setting extends Model
         return $query->where('autoload', $true);
     }
 
+    public static function getInstalledFeaturesKey(string $feature)
+    {
+
+        return "__installed_feature_" . preg_replace("/([\"'\s\t\n\r]+)/", "_", $feature);
+    }
+
+    /**
+     * Imposta la funzionalità come installata.
+     *
+     * @param string $feature
+     * @param boolean $returnModel
+     * @return bool|self|string
+     */
+    public static function isFeatureInstalled(string $feature, bool $returnModel = false)
+    {
+        $key = self::getInstalledFeaturesKey($feature);
+
+        try {
+            $s = Setting::whereChiave($key)->firstOrFail();
+            return $returnModel ? $s : $s->valore;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+            return false;
+        }
+    }
+
+    public static function setFeatureAsInstalled(string $feature)
+    {
+        $key = self::getInstalledFeaturesKey($feature);
+
+        return (new self([
+            "chiave" => $key,
+            "valore" => true,
+            "autoload" => false
+        ]))->saveOrFail();
+    }
+
     /**
      * Ritrova il progressivo nel formato _progressivo_ . join( "_" , $args )
      *
