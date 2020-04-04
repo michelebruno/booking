@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\User;
 use Illuminate\Console\Command;
 
-class RegisterUser extends Command
+class AddUser extends Command
 {
     /**
      * The name and signature of the console command.

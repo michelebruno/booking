@@ -2,8 +2,6 @@
 
 namespace Deployer;
 
-use function GuzzleHttp\Promise\task;
-
 require 'recipe/laravel.php';
 
 set('ssh_type', 'native');
@@ -40,15 +38,10 @@ host('ec2-private')
     ->stage('dev');
 
 
-// Tasks
+// Tasks 
 
-task('build', function () {
-    run('cd {{release_path}} && build');
-});
-
-desc("Aggiorna il sistema e installa il necessario.");
 task("booking:install", function () {
-    run('php {{release_path}}/artisan booing:install');
+    run('php {{release_path}}/artisan booking:install');
 });
 
 // [Optional] if deploy fails automatically unlock.
