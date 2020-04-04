@@ -46,7 +46,7 @@ task('build', function () {
     run('cd {{release_path}} && build');
 });
 
-
+desc("Aggiorna il sistema e installa il necessario.");
 task("booking:install", function () {
     run('php {{release_path}}/artisan booing:install');
 });
@@ -61,6 +61,5 @@ before('deploy:symlink', 'artisan:migrate');
 before('artisan:migrate', 'artisan:down');
 
 after('deploy:symlink', 'artisan:up');
-
 
 after("artisan:migrate", "booking:install");

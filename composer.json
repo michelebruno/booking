@@ -19,6 +19,7 @@
         "laravel/ui": "^1.1",
         "paypal/paypal-checkout-sdk": "^1.0",
         "paypal/rest-api-sdk-php": "*",
+        "predis/predis": "^1.1",
         "schuppo/password-strength": "~1.5"
     },
     "require-dev": {
