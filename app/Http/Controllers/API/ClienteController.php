@@ -17,11 +17,11 @@ class ClienteController extends Controller
     {
         // $this->authorize('viewAny', Cliente::class);
 
-        $per_page = $request->query("per_page" , 10);
+        $per_page = $request->query("per_page", 10);
 
         $query = Cliente::with([]);
-        
-        return response( $query->paginate($per_page) );
+
+        return response($query->paginate($per_page));
     }
 
     /**
@@ -50,12 +50,14 @@ class ClienteController extends Controller
     {
         // TODO $this->authorize();
 
-        return response( $cliente->loadMissing('ordini') );
+        return response($cliente->loadMissing('ordini'));
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * * Non deve essere possibile cambiare il campo ruolo.
+     * 
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
@@ -74,7 +76,7 @@ class ClienteController extends Controller
     public function destroy(Cliente $cliente)
     {
         // todo
-        
+
     }
 
     public function forceDelete(Cliente $cliente)

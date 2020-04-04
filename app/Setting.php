@@ -196,14 +196,18 @@ class Setting extends Model
      * @param  bool  $true
      * @return \Illuminate\Database\Eloquent\Model|static 
      */
-    public function scopeAutoloaded($query, bool $true = true)
+    public function scopeAutoloaded(\Illuminate\Database\Eloquent\Builder $query, bool $true = true)
     {
         return $query->where('autoload', $true);
     }
 
+    public function scopeInstalledFeature(\Illuminate\Database\Eloquent\Builder  $query, string $feature)
+    {
+        return $query->where("chiave", self::getInstalledFeaturesKey($feature));
+    }
+
     public static function getInstalledFeaturesKey(string $feature)
     {
-
         return "__installed_feature_" . preg_replace("/([\"'\s\t\n\r]+)/", "_", $feature);
     }
 
@@ -216,10 +220,8 @@ class Setting extends Model
      */
     public static function isFeatureInstalled(string $feature, bool $returnModel = false)
     {
-        $key = self::getInstalledFeaturesKey($feature);
-
         try {
-            $s = Setting::whereChiave($key)->firstOrFail();
+            $s = Setting::installedFeature($feature)->firstOrFail();
             return $returnModel ? $s : $s->valore;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
             return false;
@@ -240,10 +242,9 @@ class Setting extends Model
     /**
      * Ritrova il progressivo nel formato _progressivo_ . join( "_" , $args )
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Model|static 
      */
-    public function scopeProgressivo($query, ...$args)
+    public function progressivo($query, ...$args)
     {
         $scope = join("_", $args);
 
@@ -256,13 +257,12 @@ class Setting extends Model
     /**
      * Funzione per i progressivi che potrebbero esssere sovrascritti dagli utenti.
      *
-     * @param  Builder $query
      * @param  Closure|array $mustBeFalseFunction
      * @param  mixed $args
      *
      * @return void
      */
-    public function scopeProgressivoSicuro(Builder $query, $DBprefix, array $mustHaveNoRes,  ...$args)
+    public static function progressivoSicuro($DBprefix, array $mustHaveNoRes,  ...$args)
     {
         $prefix = join('-', $args) . '-';
 

@@ -110,7 +110,6 @@ class UserController extends Controller
 
     public function showCurrent()
     {
-
         $user = request()->user();
 
         if ($user->ruolo == User::RUOLO_FORNITORE) {
@@ -135,11 +134,13 @@ class UserController extends Controller
 
         $user = User::updateOrCreate(["id" => $id], $request->only((new User())->getFillable()));
 
-        /*         if ( $request->has('meta') ) {
+        /*
+        if ( $request->has('meta') ) {
             foreach ($request->input('meta') as $chiave => $valore) {
                 $user->meta()->updateOrCreate(["chiave" => $chiave], ["valore" => $valore]);
             }
-        }  */
+        } 
+        */
         return response(new UserResource($user));
     }
 

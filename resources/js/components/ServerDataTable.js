@@ -136,14 +136,17 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
             }
 
             if (filter && filter[colonna.name]) {
-
                 colonna.options.filterList = (timeoutFilter && timeoutFilter[colonna.name]) || filter[colonna.name]
+            }
+
+            if (colonna.customBodyRender) {
+                colonna.customBodyRender = (a, b) => colonna.customBodyRender(a, { ...b, row: collection.data[b.rowIndex] })
             }
 
             return colonna
         })
         setColumns(colonne)
-    }, [filter, collection])
+    }, [filter, collection, collection.data])
 
     /**
      * 

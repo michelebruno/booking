@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Policies;
+
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -15,8 +16,7 @@ class UserPolicy
      * @return mixed
      */
     public function viewAny(User $user)
-    { 
-
+    {
         return $user->isAdmin();
     }
 
@@ -28,8 +28,8 @@ class UserPolicy
      * @return mixed
      */
     public function view(User $user, User $model)
-    {  
-        if ( $model->trashed() ) {
+    {
+        if ($model->trashed()) {
             // ? chi può vedere i cestinati?
         }
         return $user->isAdmin();
@@ -57,18 +57,14 @@ class UserPolicy
     {
 
         // Gli admin possono modificare tutto.
-        if ( $user->ruolo === "admin" ) return true;
-        
-        // Chi non è admin non può modificare gli admin.
-        if ( $model->ruolo === "admin" ) return false;
+        if ($user->isSuperAdmin()) return true;
 
         // Un utente può modificare se stesso.
-        if ( $user->id === $model->id ) return true;
+        if ($user->id === $model->id) return true;
 
-        if ( $user->ruolo !== "account_manager" ) return false;
+        if ($user->ruolo !== "account_manager") return false;
 
         return true;
-
     }
 
     /**
