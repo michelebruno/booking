@@ -44,8 +44,8 @@ class BookingInstall extends Command
         $artisanCommands = array_keys(Artisan::all());
 
         if (!env("APP_KEY", false)) {
-            if (array_key_exists("key:generate", $artisanCommands)) {
-                Artisan::call("key::generate");
+            if (in_array("key:generate", $artisanCommands)) {
+                Artisan::call("key:generate");
                 $this->info("Chiave segreta generata.");
             } else $this->error("Non ho trovato il comando key:generate. Impossibile creare un app key.");
         } else $this->line("Esiste già una chiave per l'applicazione.", null, 'vvv');
@@ -62,7 +62,6 @@ class BookingInstall extends Command
         } else {
             $this->comment('Esiste già un admin. Non verrà ne verrà creato uno nuovo.', 'v');
         }
-
 
         if (in_array("passport:install", $artisanCommands)) {
             if (!Setting::isFeatureInstalled("laravel/passport")) {
