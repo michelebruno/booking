@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 
-class BookingSetUp extends Command
+class BookingInstall extends Command
 {
     /**
      * The name and signature of the console command.
