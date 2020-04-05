@@ -39,6 +39,10 @@ host('ec2-private')
 
 
 // Tasks 
+task("build", function () {
+    run("cd {{release_path}} && yarn install && yarn prod");
+});
+
 
 task("booking:install", function () {
     run('php {{release_path}}/artisan booking:install');
@@ -56,3 +60,5 @@ before('artisan:migrate', 'artisan:down');
 after('deploy:symlink', 'artisan:up');
 
 after("artisan:migrate", "booking:install");
+
+after("booking:install", "build");
