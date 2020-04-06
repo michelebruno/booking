@@ -45,7 +45,7 @@ host('ec2-private')
 // Tasks 
 task("build", function () {
     run("yarn install && yarn prod");
-})->local();
+});
 
 
 task("booking:install", function () {

@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Fornitore;
-use App\User;
 
 /*
 |--------------------------------------------------------------------------

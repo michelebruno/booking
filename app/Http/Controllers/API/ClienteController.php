@@ -64,7 +64,6 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
-        //
     }
 
     /**

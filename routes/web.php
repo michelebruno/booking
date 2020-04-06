@@ -15,11 +15,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
-
-    Route::get('/{a?}/{b?}/{c?}/{d?}', 'GeneralController@returApp');
+    Route::get('/{a?}/{b?}/{c?}/{d?}', 'GeneralController@returnApp');
 });
 
-Route::get('/', 'GeneralController@returnApp');
+Route::get('/', 'GeneralController@redirectToLogin');
 
 Route::get('cart', 'CartController@index')->name('cart');
 Route::post('cart/checkout', 'CartController@chiudi')->name('cart.checkout');
