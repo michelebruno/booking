@@ -43,25 +43,36 @@ class BookingInstall extends Command
     {
         $artisanCommands = array_keys(Artisan::all());
 
-        if (!env("APP_KEY", false)) {
-            if (in_array("key:generate", $artisanCommands)) {
-                Artisan::call("key:generate");
-                $this->info("Chiave segreta generata.");
-            } else $this->error("Non ho trovato il comando key:generate. Impossibile creare un app key.");
-        } else $this->line("Esiste già una chiave per l'applicazione.", null, 'vvv');
+        if (in_array("optimize", $artisanCommands)) {
+            Artisan::call("optimize");
+        }
 
-        if (!User::whereRuolo('admin')->count() && !Setting::isFeatureInstalled('admin_created')) {
-            if (!$webmaster_email = env("BOOKING_WEBMASTER_EMAIL", false)) {
-                $this->error("Nessuna email del webmaster impostata nel file .env. Non posso creare l'account.");
-            } else {
+        if ($key = config('app.key')) {
+            $this->line("Esiste già una chiave per l'applicazione: $key", null, 'vvv');
+        } else {
+            if (in_array("key:generate", $artisanCommands)) {
+                $key = Artisan::call("key:generate");
+                $this->info("Chiave segreta generata: $key");
+            } else $this->error("Non ho trovato il comando key:generate. Impossibile creare un app key.");
+        }
+
+        $this->info('Controllo se esiste un utente admin.', 'vvv');
+        if (!User::whereRuolo('admin')->count()) {
+            $this->info('Controllo se è impostata l\'email del webmaster in .env.', 'vvv');
+
+            if ($webmaster_email = env("BOOKING_WEBMASTER_EMAIL", false) && in_array('add:user', $artisanCommands)) {
                 Artisan::call("add:user", [
                     "-a",
-                    "email" => env("BOOKING_WEBMASTER_EMAIL")
+                    "email" => $webmaster_email
                 ]);
+            } else {
+                $this->error("Nessuna email del webmaster impostata nel file .env. Non posso creare l'account.");
             }
         } else {
             $this->comment('Esiste già un admin. Non verrà ne verrà creato uno nuovo.', 'v');
         }
+
+        $this->info('Provo ad installare Laravel Passport.', 'vvv');
 
         if (in_array("passport:install", $artisanCommands)) {
             if (!Setting::isFeatureInstalled("laravel/passport")) {
@@ -70,6 +81,13 @@ class BookingInstall extends Command
                 $this->comment("Il comando passport:install è già stato eseguito.", 'vv');
             }
         }
+
+        $this->info('Eseguo optimize.', 'vvv');
+
+        if (in_array("optimize", $artisanCommands)) {
+            Artisan::call("optimize");
+        }
+
 
         $this->info("Fine del setup.");
     }
