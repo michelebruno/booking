@@ -43,16 +43,14 @@ class BookingInstall extends Command
     {
         $artisanCommands = array_keys(Artisan::all());
 
-        if (in_array("optimize", $artisanCommands)) {
-            Artisan::call("optimize");
-        }
+        $this->line('<pre>' . json_encode($this->arguments()) . "</pre>", null, "vvv");
 
         if ($key = config('app.key')) {
-            $this->line("Esiste già una chiave per l'applicazione: $key", null, 'vvv');
+            $this->line("Esiste già una chiave per l'applicazione.", null, 'vvv');
         } else {
             if (in_array("key:generate", $artisanCommands)) {
                 $key = Artisan::call("key:generate");
-                $this->info("Chiave segreta generata: $key");
+                $this->info("Chiave segreta generata.");
             } else $this->error("Non ho trovato il comando key:generate. Impossibile creare un app key.");
         }
 
@@ -60,11 +58,14 @@ class BookingInstall extends Command
         if (!User::whereRuolo('admin')->count()) {
             $this->info('Controllo se è impostata l\'email del webmaster in .env.', 'vvv');
 
-            if ($webmaster_email = env("BOOKING_WEBMASTER_EMAIL", false) && in_array('add:user', $artisanCommands)) {
+            if (in_array('add:user', $artisanCommands) && $webmaster_email = config("booking.webmaster.email", false)) {
+                $this->info($webmaster_email, 'vvv');
+
+                // NON FUNZIONA!
                 Artisan::call("add:user", [
-                    "-a",
-                    "email" => $webmaster_email
-                ]);
+                    "--admin" => true,
+                    "email" => $webmaster_email,
+                ], $this->getOutput());
             } else {
                 $this->error("Nessuna email del webmaster impostata nel file .env. Non posso creare l'account.");
             }
@@ -77,6 +78,7 @@ class BookingInstall extends Command
         if (in_array("passport:install", $artisanCommands)) {
             if (!Setting::isFeatureInstalled("laravel/passport")) {
                 Artisan::call("passport:install");
+                Setting::setFeatureAsInstalled("laravel/passport");
             } else {
                 $this->comment("Il comando passport:install è già stato eseguito.", 'vv');
             }
