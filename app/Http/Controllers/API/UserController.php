@@ -66,6 +66,9 @@ class UserController extends Controller
 
         $user = new User($dati);
 
+        /**
+         * ? ha senso questo catch?
+         */
         try {
             $user->saveOrFail();
 

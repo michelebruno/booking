@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
 
@@ -21,6 +21,7 @@ const Fornitori = (props) => {
     }, [])
 
     const [collection, setCollection] = useState()
+
 
     return (
         <React.Fragment>
@@ -59,10 +60,14 @@ const Fornitori = (props) => {
                                         name: 'username',
                                         label: "Username",
                                         options: {
-                                            customBodyRender: (cell, { rowIndex }) => {
-                                                const row = collection && collection.data[rowIndex]
-                                                return row ? <Link to={{ pathname: row._links.self, state: { esercente: row } }} >{cell}</Link> : cell
+                                            customBodyRender: useCallback((cell, { rowData }) => {
+                                                const _links = rowData[3]
+                                                const email = rowData[2]
+                                                // TODO passare l'utente come stato.
+                                                return <Link to={{ pathname: _links.self }} >{cell && cell !== "" && cell !== null ? cell : email}</Link>
                                             },
+
+                                            ),
                                         },
 
                                     },
@@ -74,6 +79,25 @@ const Fornitori = (props) => {
                                                 const row = collection && collection.data[rowIndex]
                                                 return row && row.abilitato && <span className="text-success"><i className="fas fa-circle" title="Abilitato" /></span>
                                             },
+                                            viewColumns: false,
+                                        },
+                                    },
+                                    {
+                                        name: 'email',
+                                        options: {
+                                            display: 'excluded',
+                                            download: false,
+                                            print: false,
+                                            filter: false,
+                                        },
+                                    },
+                                    {
+                                        name: '_links',
+                                        options: {
+                                            display: 'excluded',
+                                            download: false,
+                                            print: false,
+                                            filter: false,
                                         },
                                     },
                                 ]}

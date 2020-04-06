@@ -19,6 +19,7 @@ mix.disableNotifications()
          target: "https://localhost",
       },
       https: true,
+      open: false,
    })
    .react('resources/js/index.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')

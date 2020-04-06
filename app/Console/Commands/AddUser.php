@@ -65,11 +65,18 @@ class AddUser extends Command
 
         $user->email = $email;
 
+        /**
+         * Si può creare solo un utente admin. Clienti e fornitori hanno troppe informazioni aggiuntive che non si possono omettere.
+         */
         if ($this->option("admin")) {
             $ruolo = User::RUOLO_ADMIN;
         } else {
-            $ruolo = $this->choice("Con che ruolo vuoi creare l'utente?", User::RUOLI);
+            $ruolo = $this->choice("Con che ruolo vuoi creare l'utente?", [
+                User::RUOLO_ADMIN,
+                User::RUOLO_ACCOUNT,
+            ], 0);
         }
+
         $user->ruolo = $ruolo;
 
         $user->saveOrFail();

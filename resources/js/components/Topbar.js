@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { connect } from "react-redux"
 
 import ProfileDropdown from './ProfileDropdown';
-import logoSm from '../../images/logo-sm.png'; 
+// import logoSm from '../../images/logo-sm.png'; 
 
-const Topbar = ( { TopbarButtons , ...props }) => { 
+const Topbar = ({ TopbarButtons, ...props }) => {
 
-  	return (
+	return (
 		<>
 			<div className="navbar-custom">
 				<ul className="list-unstyled topnav-menu float-right mb-0">
@@ -31,7 +31,7 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 							<img src="https://www.turismo.bologna.it/wp-content/uploads/2019/03/OSCARD-Turismo-Bologna-Logo_Landscape_-Png.png" alt="" height="16" />
 						</span>
 						<span className="logo-sm">
-							<img src={logoSm} alt="" height="24" />
+							{/* <img src={logoSm} alt="" height="24" /> */}
 						</span>
 					</Link>
 				</div>
@@ -46,16 +46,16 @@ const Topbar = ( { TopbarButtons , ...props }) => {
 					<li>
 						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
 						<div className="d-none d-md-inline-block p-2 p-md-0">
-							<TopbarButtons/>
+							<TopbarButtons />
 						</div>
 					</li>
 				</ul>
-				
+
 			</div>
 		</ >
 	);
 }
 
 
-export default connect( state => { return { TopbarButtons : state.TopbarButtons } } )( Topbar );
+export default connect(state => { return { TopbarButtons: state.TopbarButtons } })(Topbar);
 

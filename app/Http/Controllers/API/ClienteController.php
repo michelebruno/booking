@@ -19,7 +19,7 @@ class ClienteController extends Controller
 
         $per_page = $request->query("per_page", 10);
 
-        $query = Cliente::with([]);
+        $query = Cliente::query();
 
         return response($query->paginate($per_page));
     }

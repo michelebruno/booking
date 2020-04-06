@@ -291,7 +291,7 @@ class Setting extends Model
 
         $prevEnv = file_get_contents($envPath);
 
-        $newEnv = preg_replace("/$key=(\"[^\"]*\"|'[^']*'|.*)/g", "$key=$value", $prevEnv);
+        $newEnv = preg_replace("/$key=(\"[^\"]*\"|'[^']*'|.*)/", "$key=$value", $prevEnv);
 
         return file_put_contents($envPath, $newEnv);
     }

@@ -88,12 +88,8 @@ class SettingController extends Controller
      */
     public function update(Request $request, $setting)
     {
-        if ($request->user()->isSuperAdmin())
+        if (!$request->user()->isSuperAdmin())
             throw new AuthorizationException("Solo un admin può cambiare le impostazioni.");
-
-        $request->validate([
-            "favicon" => ["sometimes", "file"],
-        ]);
 
         switch ($setting) {
 

@@ -124,6 +124,13 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
      * 
      */
 
+    const customBodyRender = useCallback(
+        (a, b, customBodyRender) => {
+            customBodyRender(a, { ...b, row: collection.data[b.rowIndex] })
+        },
+        [collection],
+    )
+
     useEffect(() => {
         let colonne = columns.map(colonna => {
 
@@ -140,12 +147,14 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
             }
 
             if (colonna.customBodyRender) {
-                colonna.customBodyRender = (a, b) => colonna.customBodyRender(a, { ...b, row: collection.data[b.rowIndex] })
+                colonna.customBodyRender = (a, b) => customBodyRender(a, b, colonna.customBodyRender)
             }
 
             return colonna
         })
+
         setColumns(colonne)
+
     }, [filter, collection, collection.data])
 
     /**
