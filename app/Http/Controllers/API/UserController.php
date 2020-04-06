@@ -4,13 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Fornitore;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUser;
 use App\Http\Resources\UserResource;
+use App\Notifications\Welcome;
 use App\User;
-use App\UserMeta;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -58,34 +56,22 @@ class UserController extends Controller
         $dati = $request->validate([
             'email' => ['required', 'email', 'unique:users'],
             'ruolo' => ['required', Rule::in(\App\User::RUOLI)],
-            'password' => ['required', 'confirmed'],
             'nome' => 'nullable',
             'cognome' => 'nullable',
             'username' => ['required', 'unique:users', 'not_regex:/^.+@.+$/i']
         ]);
 
-        if (
-            $request->input('ruolo') == 'admin' &&
-            !$request->user()->isSuperAdmin()
-        ) abort(403, 'Non hai i permessi per creare un amministratore.');
+        if ($request->input('ruolo') == 'admin' && !$request->user()->isSuperAdmin())
+            throw new AuthorizationException("Non hai i permessi per creare un amministratore.");
 
         $user = new User($dati);
 
         try {
-
-            $user->password = Hash::make($request->input('password'));
-
             $user->saveOrFail();
 
-            // $metas = [];
-
-            // foreach($dati['meta'] as $key => $value) {
-            //     if ( $value ) $metas[] = new UserMeta(["chiave" => $key, "valore" => $value]);
-            // }
-
-            // if ( count($metas) ) $user->meta()->saveMany($metas);
-
             $user->markEmailAsVerified();
+
+            $user->notify(new Welcome(true));
 
             return response(new UserResource($user));
         } catch (\Throwable $e) {
@@ -130,7 +116,8 @@ class UserController extends Controller
     {
         $this->authorize('update', User::findOrFail($id));
 
-        if (!$request->user()->isSuperAdmin() && $request->input('ruolo') == 'admin') abort(403, 'Non hai i permessi per creare un amministratore.');
+        if ($request->input('ruolo') == 'admin' && !$request->user()->isSuperAdmin())
+            throw new AuthorizationException("Non hai i permessi per creare un amministratore.");
 
         $user = User::updateOrCreate(["id" => $id], $request->only((new User())->getFillable()));
 

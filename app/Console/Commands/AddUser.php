@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\Welcome;
 use App\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 
 class AddUser extends Command
 {
@@ -12,7 +14,7 @@ class AddUser extends Command
      *
      * @var string
      */
-    protected $signature = 'add:user {email} {--p|password=?} {--A|admin} ';
+    protected $signature = 'add:user {email} {--p|password=?} {--A|admin} {--dont-confirm-input} ';
 
     /**
      * The console command description.
@@ -42,10 +44,23 @@ class AddUser extends Command
 
         $email = $this->argument('email');
 
+        if (!app()->environment(['local']) && !$this->option('dont-confirm-input')) {
+
+            $confirmed_email = "";
+
+            while ($confirmed_email !== $email) {
+                if (!$confirmed_email) {
+                    $this->error("L'email non corrisponde. Riprova.");
+                }
+                $confirmed_email = $this->question("Per sicurezza, conferma l'indirizzo email.");
+            }
+        }
+
         if (User::whereEmail($email)->count()) {
             $this->error("L'indirizzo email è già associato ad un altro account.");
             exit();
         }
+
         $user = new User();
 
         $user->email = $email;
@@ -59,7 +74,11 @@ class AddUser extends Command
 
         $user->saveOrFail();
 
-        $user->sendEmailVerificationNotification();
+        // Non ha senso inviare l'email se è stata inserita dal backend.
+
+        $user->markEmailAsVerified();
+
+        $user->notify(new Welcome(true));
 
         $this->info("L'account è stato creato. Controlla la mail $user->email per verificare l'indirizzo.");
     }

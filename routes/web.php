@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/{a?}/{b?}/{c?}/{d?}', 'GeneralController@returnApp');
+    Route::get('/logout', 'Auth\LoginController@logout');
 });
 
 Route::get('/', 'GeneralController@redirectToLogin');

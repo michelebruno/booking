@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Setting;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SettingController extends Controller
 {
@@ -86,10 +88,12 @@ class SettingController extends Controller
      */
     public function update(Request $request, $setting)
     {
+        if ($request->user()->isSuperAdmin())
+            throw new AuthorizationException("Solo un admin può cambiare le impostazioni.");
 
-        if ($request->user()->ruolo !== \App\User::RUOLO_ADMIN) {
-            return abort(403, "Solo un admin può cambiare le impostazioni.");
-        }
+        $request->validate([
+            "favicon" => ["sometimes", "file"],
+        ]);
 
         switch ($setting) {
 
@@ -112,19 +116,20 @@ class SettingController extends Controller
                     $path = $file->storeAs('public', 'favicon.ico');
 
                     Setting::updateOrCreate(["chiave" => "favicon"], ["valore" => "storage/favicon.jpg"]);
+
                     Cache::delete('autoloaded_settings');
+
                     return $this->index($request);
                 } else {
                     Log::error('Nessun file trovato', ["request" => $request]);
-                    abort(500, 'Non è stato mandato il file.');
+                    abort(400, 'Non è stato mandato il file.');
                 }
                 break;
 
             default:
-                abort(404);
+                throw new NotFoundHttpException();
                 break;
         }
-
 
         Cache::forget('autoloaded_settings');
         return $this->index();
