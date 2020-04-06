@@ -43,12 +43,17 @@ class BookingInstall extends Command
     {
         $artisanCommands = array_keys(Artisan::all());
 
-        if (!env("APP_KEY", false)) {
+        if (in_array("optimize", $artisanCommands)) {
+            Artisan::call("optimize");
+        }
+
+        if ($key = config('app.key')) $this->line("Esiste già una chiave per l'applicazione: $key", null, 'vvv');
+        else {
             if (in_array("key:generate", $artisanCommands)) {
-                Artisan::call("key:generate");
-                $this->info("Chiave segreta generata.");
+                $key = Artisan::call("key:generate");
+                $this->info("Chiave segreta generata: $key");
             } else $this->error("Non ho trovato il comando key:generate. Impossibile creare un app key.");
-        } else $this->line("Esiste già una chiave per l'applicazione.", null, 'vvv');
+        }
 
         if (!User::whereRuolo('admin')->count() && !Setting::isFeatureInstalled('admin_created')) {
             if (!$webmaster_email = env("BOOKING_WEBMASTER_EMAIL", false)) {
@@ -56,7 +61,7 @@ class BookingInstall extends Command
             } else {
                 Artisan::call("add:user", [
                     "-a",
-                    "email" => env("BOOKING_WEBMASTER_EMAIL")
+                    "email" => $webmaster_email
                 ]);
             }
         } else {
@@ -70,6 +75,11 @@ class BookingInstall extends Command
                 $this->comment("Il comando passport:install è già stato eseguito.", 'vv');
             }
         }
+
+        if (in_array("optimize", $artisanCommands)) {
+            Artisan::call("optimize");
+        }
+
 
         $this->info("Fine del setup.");
     }

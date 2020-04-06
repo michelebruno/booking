@@ -29,19 +29,23 @@ set('repository', 'git@github.com:michelebruno/booking.git');
 // Hosts
 
 host('ec2-private')
-    ->set('deploy_path', '/var/www/html/booking')
+    ->set('deploy_path', '/var/www/html')
     ->port(22)
     ->configFile('C:/Users/utente/.ssh/config')
     ->identityFile('C:/Users/utente/.ssh/laravel-booking.pem')
-    ->forwardAgent()
+    ->forwardAgent(true)
     ->user('ec2-user')
+    ->set("keep_releases", 2)
+    ->set("writable_use_sudo", false)
+    ->set("http_user", "ec2-user")
+    ->roles('build')
     ->stage('dev');
 
 
 // Tasks 
 task("build", function () {
-    run("cd {{release_path}} && yarn install && yarn prod");
-});
+    run("yarn install && yarn prod");
+})->local();
 
 
 task("booking:install", function () {
@@ -61,4 +65,4 @@ after('deploy:symlink', 'artisan:up');
 
 after("artisan:migrate", "booking:install");
 
-after("booking:install", "build");
+before("artisan:down", "build");
