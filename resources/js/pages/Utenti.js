@@ -11,8 +11,9 @@ import Button from "@material-ui/core/Button"
 import Modal from "react-bootstrap/Modal"
 import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
-import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+
 
 
 import { setTopbarButtons, unsetTopbarButtons } from "../_actions"
@@ -29,7 +30,7 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
 
     useEffect(() => {
         setTopbarButtons(() =>
-            <Button variant="contained" color="primary" size="small" onClick={() => setAggiungiModal(true)} startIcon={<AddIcon />} >Aggiungi utente</Button>,
+            <Button variant="contained" color="primary" size="small" onClick={() => setAggiungiModal(true)} startIcon={<PersonAddIcon />} >Aggiungi utente</Button>,
         )
         return unsetTopbarButtons
     }, [setTopbarButtons, unsetTopbarButtons])
@@ -78,33 +79,14 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
                                 filter: false,
                                 download: false,
                                 print: false,
-                                customBodyRender: (cell, { rowData }) => {
-
-                                    let url = ""
-
-                                    switch (cell) {
-                                        case "cliente":
-                                            url += "/clienti/"
-                                            break;
-
-                                        case "fornitore":
-                                            url += "/fornitori/"
-                                            break;
-
-                                        default:
-                                            url += "/utenti/"
-                                            break;
-                                    }
-
-                                    return <IconButton color="primary" component={Link} to={{ pathname: cell.self }} ><EditIcon /></IconButton>
-                                },
+                                customBodyRender: (cell) => <IconButton color="primary" component={Link} to={{ pathname: cell.self }} ><EditIcon /></IconButton>,
                             },
                         },
                     ]}
                     options={{
                         customToolbar: () => <Tooltip title="Crea nuovo utente">
                             <IconButton onClick={() => setAggiungiModal(true)} >
-                                <AddIcon />
+                                <PersonAddIcon />
                             </IconButton>
                         </Tooltip>,
                     }}

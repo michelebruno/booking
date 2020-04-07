@@ -15,9 +15,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import Person from '@material-ui/icons/Person';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import StorefrontIcon from '@material-ui/icons/Storefront';
+import StoreIcon from '@material-ui/icons/Store';
 import SettingsIcon from '@material-ui/icons/Settings';
+import PeopleIcon from '@material-ui/icons/People';
+
+
 
 const SideNavContent = ({ user }) => {
 
@@ -38,16 +43,19 @@ const SideNavContent = ({ user }) => {
             pathname: "/dashboard",
         },
         {
-            label: "Deals",
-            icon: <i className="fas fa-shopping-cart " />,
-            pathname: "/deals",
+            label: "Prodotti",
+            icon: <StoreIcon />,
             roles: ['admin', 'account_manager'],
-            //    subItems: [
-            //        {
-            //            pathname: "/deals/d-2",
-            //            label: "Scheda deal",
-            //        },
-            //    ],
+            subItems: [
+                {
+                    pathname: "/deals",
+                    label: "Deals",
+                },
+                {
+                    pathname: "/tariffe/",
+                    label: "Tariffe",
+                },
+            ],
         },
         {
             label: "Ordini",
@@ -64,7 +72,7 @@ const SideNavContent = ({ user }) => {
         {
             label: "Clienti",
             pathname: "/clienti",
-            icon: <SupervisorAccountIcon />,
+            icon: <PeopleIcon />,
             roles: ["admin", "account_manager"],
         },
         {
@@ -81,7 +89,7 @@ const SideNavContent = ({ user }) => {
         },
         {
             label: "Il mio profilo",
-            icon: <i className="fas fa-user" />,
+            icon: <Person />,
             roles: ["fornitore"],
         },
 
@@ -108,6 +116,9 @@ const SideNavContent = ({ user }) => {
             }
         }, [match])
 
+        /**
+         * TODO Se la tendina è aperta perché siamo nella pagina corrispondente, non deve essere possibile chiuderla.
+         */
         const SidebarSubItem = ({ label, pathname, icon, roles }) => {
 
             const renderLink = React.useMemo(
@@ -177,50 +188,6 @@ const SideNavContent = ({ user }) => {
     </>
 }
 
-
-/* const UserProfile = ( { user } ) => {
-    const profilePic = ( typeof user.links !== 'undefined' && typeof user.links.avatar !== 'undefined' ) ? user.links.avatar : false;
-    return <React.Fragment>
-        <div className="user-box text-center">
-            { profilePic && <img src={profilePic} alt="user-img" title="Amministratore" className="rounded-circle img-thumbnail avatar-lg" /> }
-            { !profilePic && <div className="d-inline-block rounded-circle" ><i className="fas fa-user h-100 w-100 d-block" /> </div> }
-            <Dropdown>
-                <Dropdown.Toggle variant="link" className="text-dark dropdown-toggle h5 mt-2 mb-1 d-inline-block">
-                    { user.username }
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="user-pro-dropdown">
-                    <Dropdown.Item as={Link} to="/account" >
-                        <i className="fe-user mr-1"></i>
-                        <span>Il mio account</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/account" >
-                        <i className="fe-settings mr-1"></i>
-                        <span>Impostazioni</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item href="/logout">
-                        <i className="fe-log-out mr-1"></i>
-                        <span>Logout</span>
-                    </Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown> 
-
-            <ul className="list-inline">
-                <li className="list-inline-item">
-                    <Link to="/" className="text-muted">
-                        <i className="mdi mdi-settings"></i>
-                    </Link>
-                </li>
-
-                <li className="list-inline-item">
-                    <a href="/logout" className="text-custom">
-                        <i className="mdi mdi-power"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </React.Fragment>
-}
- */
 const Sidebar = ({ currentUser, ...props }) => {
 
     if (!props.isCondensed) {

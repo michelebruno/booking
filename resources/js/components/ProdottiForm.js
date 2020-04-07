@@ -9,11 +9,10 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
-const ProdottiForm = ({ url, onSuccess, spacing, xs, sm, md, lg, xl, ivaInclusa }) => {
+const ProdottiForm = ({ url, onSuccess, spacing, xs, sm, md, lg, xl }) => {
 
     const [api, setApi] = useState()
 
@@ -197,21 +196,6 @@ const ProdottiForm = ({ url, onSuccess, spacing, xs, sm, md, lg, xl, ivaInclusa 
                     </MenuItem>)}
                 </TextField>
             </Grid>
-
-            <Grid item {...gridItemsProps} >
-                <TextField
-                    label="Importo"
-                    type="number"
-                    min="0"
-                    multiline
-                    required
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                    }}
-                    helperText="Iva inclusa"
-                    {...dynamicProps("importo")}
-                />
-            </Grid>
             <Grid item {...gridItemsProps} >
                 <TextField
                     label="Iva"
@@ -261,11 +245,11 @@ ProdottiForm.defaultProps = {
 ProdottiForm.propTypes = {
     url: PropTypes.string,
     onSuccess: PropTypes.func,
-    xs : PropTypes.number,
-    sm : PropTypes.number,
-    md : PropTypes.number,
-    lg : PropTypes.number,
-    xl : PropTypes.number,
+    xs: PropTypes.number,
+    sm: PropTypes.number,
+    md: PropTypes.number,
+    lg: PropTypes.number,
+    xl: PropTypes.number,
 }
 
 export default ProdottiForm;
