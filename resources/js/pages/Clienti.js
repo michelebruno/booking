@@ -1,17 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Link } from 'react-router-dom'
-
-import { Card } from 'react-bootstrap'
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import ServerDataTable from '../components/ServerDataTable'
 
 const Clienti = () => {
 
     return <Card>
-        <Card.Body>
+        <CardContent>
             <ServerDataTable
                 url="/clienti"
+                title="Clienti"
                 columns={[
                     {
                         name: "email",
@@ -22,7 +22,7 @@ const Clienti = () => {
                     selectableRows: "none",
                 }}
             />
-        </Card.Body>
+        </CardContent>
     </Card>
 
 }

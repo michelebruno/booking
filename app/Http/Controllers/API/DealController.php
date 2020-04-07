@@ -90,6 +90,12 @@ class DealController extends Controller
 
         $prodotto->save();
 
+        /**
+         * TODO sistemare. Al momento non funziona
+         * 
+         * Probabilmente è necessario scegliere come inserire le tariffe.
+         */
+
         if (array_key_exists("importo", $dati) && !is_null($dati["importo"])) {
             if (!array_key_exists("tariffe", $dati)) {
                 $dati["tariffe"] = [];

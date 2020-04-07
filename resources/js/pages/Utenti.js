@@ -3,13 +3,16 @@ import React, { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 
-import Card from "react-bootstrap/Card"
-import Button from "react-bootstrap/Button"
-import ButtonToolbar from "react-bootstrap/ButtonToolbar"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
+
+import Button from "@material-ui/core/Button"
+
 import Modal from "react-bootstrap/Modal"
 import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 
 
 import { setTopbarButtons, unsetTopbarButtons } from "../_actions"
@@ -25,15 +28,15 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
     const tableRef = useRef()
 
     useEffect(() => {
-        setTopbarButtons(() => <ButtonToolbar className="d-inline-block align-self-center" >
-            <Button onClick={() => setAggiungiModal(true)} >Aggiungi utente</Button>
-        </ButtonToolbar>)
+        setTopbarButtons(() =>
+            <Button variant="contained" color="primary" size="small" onClick={() => setAggiungiModal(true)} startIcon={<AddIcon />} >Aggiungi utente</Button>,
+        )
         return unsetTopbarButtons
     }, [setTopbarButtons, unsetTopbarButtons])
 
     return (
         <Card>
-            <Card.Body>
+            <CardContent>
                 <Modal show={aggiungiModal} onHide={() => setAggiungiModal(false)}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -93,7 +96,7 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
                                             break;
                                     }
 
-                                    return <Button size="sm" as={Link} to={{ pathname: cell.self }} ><i className="fas fa-edit" /></Button>
+                                    return <IconButton color="primary" component={Link} to={{ pathname: cell.self }} ><EditIcon /></IconButton>
                                 },
                             },
                         },
@@ -106,7 +109,7 @@ const Utenti = ({ setTopbarButtons, unsetTopbarButtons }) => {
                         </Tooltip>,
                     }}
                 />
-            </Card.Body>
+            </CardContent>
         </Card >
     )
 }

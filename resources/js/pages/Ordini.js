@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
-import { Card } from 'react-bootstrap';
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import Button from '@material-ui/core/Button'
 import AddIcon from '@material-ui/icons/Add';
 
@@ -27,9 +28,9 @@ const Ordini = (/* { setTopbarButtons, unsetTopbarButtons } */) => {
     return (
         <React.Fragment>
             <Card>
-                <Card.Body>
+                <CardContent>
                     <OrdiniTabella />
-                </Card.Body>
+                </CardContent>
             </Card>
         </React.Fragment>
 

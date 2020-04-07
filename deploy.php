@@ -44,7 +44,7 @@ host('ec2-private')
 
 // Tasks 
 task("build", function () {
-    run("yarn install && yarn prod");
+    run("cd {{release_path}} && yarn install && yarn prod");
 });
 
 

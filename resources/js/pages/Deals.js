@@ -3,19 +3,22 @@ import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { Card } from 'react-bootstrap'
-
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
+
 import EditIcon from "@material-ui/icons/Edit"
 import DeleteIcon from "@material-ui/icons/Delete"
 import UndoIcon from "@material-ui/icons/Undo"
-const DialogDealForm = React.lazy(() => import("../components/DialogDealForm"))
+
 import { prezziFormatter } from '../_services/helpers'
 import ServerDataTable from '../components/ServerDataTable'
 import AxiosConfirmModal from '../components/AxiosConfirmModal';
+
+const DialogDealForm = React.lazy(() => import("../components/DialogDealForm"))
 
 const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
 
@@ -86,7 +89,7 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
     return (
         <React.Fragment>
             <Card>
-                <Card.Body>
+                <CardContent>
                     <ServerDataTable
                         ref={tableRef}
                         title="Deals"
@@ -200,7 +203,7 @@ const Deals = ({ setTopbarButtons, unsetTopbarButtons }) => {
                             serverSideFiterList: ["Cestinati: cestinati"],
                         }}
                     />
-                </Card.Body>
+                </CardContent>
             </Card>
         </React.Fragment>
     )

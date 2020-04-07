@@ -8,157 +8,54 @@ use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
-    const PUBLIC_DOTENV_VAR_KEYS = [
-        'APP_NAME',
-        'APP_ENV',
-        'APP_DEBUG',
-        'APP_URL',
-        'LOG_CHANNEL',
 
-        'MAIL_FROM_ADDRESS',
-        'MAIL_FROM_NAME',
-
-        'AWS_ACCESS_KEY_ID',
-        'AWS_DEFAULT_REGION',
-        'AWS_BUCKET',
-
-        'PAYPAL_CLIENT_ID',
-
-        'TELESCOPE_ENABLED',
-    ];
-
-    const EDITABLE_DOTENV_VAR = [
-        'APP_NAME' => [
-            'validation_rules' => ['string']
+    const CONFIG_SETTINGS = [
+        'app.name' => [
+            'public' => true,
+            'editable' => true,
+            'validation_rules' => ['string'],
+            'env_key' => 'APP_NAME'
         ],
-        'APP_ENV' => [
-            'validation_rules' => []
+        'app.env' => [
+            'public' => true,
+            'editable' => true,
+            'validation_rules' => [],
+            'env_key' => 'APP_ENV',
         ],
-        'APP_DEBUG' => [
-            'validation_rules' => []
+        'app.debug' => [
+            'public' => true,
+            'editable' => true,
+            'validation_rules' => [],
+            'env_key' => 'APP_DEBUG',
         ],
-        'APP_URL' => [
-            'validation_rules' => []
+        'app.url' => [
+            'public' => true,
+            'validation_rules' => [],
+            'env_key' => 'APP_URL',
         ],
-        'LOG_CHANNEL' => [
-            'validation_rules' => []
+        'log.default' => [
+            'validation_rules' => [],
+            'env.key' => 'LOG_CHANNEL',
         ],
 
-        'DB_CONNECTION' => [
-            'validation_rules' => []
+        'booking.paypal.client.id' => [
+            'public' => true,
+            'editable' => true,
+            'validation_rules' => ['string'],
+            'env_key' => 'PAYPAL_CLIENT_ID',
         ],
-        'DB_HOST' => [
-            'validation_rules' => []
-        ],
-        'DB_PORT' => [
-            'validation_rules' => []
-        ],
-        'DB_DATABASE' => [
-            'validation_rules' => []
-        ],
-        'DB_USERNAME' => [
-            'validation_rules' => []
-        ],
-        'DB_PASSWORD' => [
-            'validation_rules' => []
+        'booking.paypal.client.secret' => [
+            'editable' => true,
+            'validation_rules' => ['string'],
+            'env_key' => 'PAYPAL_CLIENT_SECRET',
         ],
 
-        'BROADCAST_DRIVER' => [
-            'validation_rules' => []
+        'telescope.enabled' => [
+            'public' => true,
+            'editable' => true,
+            'validation_rules' => ['boolean'],
+            'env_key' => 'TELESCOPE_ENABLED',
         ],
-        'CACHE_DRIVER' => [
-            'validation_rules' => []
-        ],
-        'QUEUE_CONNECTION' => [
-            'validation_rules' => []
-        ],
-        'SESSION_DRIVER' => [
-            'validation_rules' => []
-        ],
-        'SESSION_LIFETIME' => [
-            'validation_rules' => []
-        ],
-
-        'REDIS_HOST' => [
-            'validation_rules' => []
-        ],
-        'REDIS_PASSWORD' => [
-            'validation_rules' => []
-        ],
-        'REDIS_PORT' => [
-            'validation_rules' => []
-        ],
-
-        'MAIL_DRIVER' => [
-            'validation_rules' => []
-        ],
-        'MAIL_HOST' => [
-            'validation_rules' => []
-        ],
-        'MAIL_PORT' => [
-            'validation_rules' => []
-        ],
-        'MAIL_USERNAME' => [
-            'validation_rules' => []
-        ],
-        'MAIL_PASSWORD' => [
-            'validation_rules' => []
-        ],
-        'MAIL_ENCRYPTION' => [
-            'validation_rules' => []
-        ],
-
-        'MAIL_FROM_ADDRESS' => [
-            'validation_rules' => []
-        ],
-        'MAIL_FROM_NAME' => [
-            'validation_rules' => []
-        ],
-
-        'AWS_ACCESS_KEY_ID' => [
-            'validation_rules' => []
-        ],
-        'AWS_SECRET_ACCESS_KEY' => [
-            'validation_rules' => []
-        ],
-        'AWS_DEFAULT_REGION' => [
-            'validation_rules' => []
-        ],
-        'AWS_BUCKET' => [
-            'validation_rules' => []
-        ],
-
-        'PUSHER_APP_ID' => [
-            'validation_rules' => []
-        ],
-        'PUSHER_APP_KEY' => [
-            'validation_rules' => []
-        ],
-        'PUSHER_APP_SECRET' => [
-            'validation_rules' => []
-        ],
-        'PUSHER_APP_CLUSTER' => [
-            'validation_rules' => []
-        ],
-
-        'MIX_PUSHER_APP_KEY' => [
-            'validation_rules' => []
-        ],
-        'MIX_PUSHER_APP_CLUSTER' => [
-            'validation_rules' => []
-        ],
-
-        'PAYPAL_CLIENT_ID' => [
-            'validation_rules' => ['string']
-        ],
-        'PAYPAL_CLIENT_SECRET' => [
-            'validation_rules' => ['string']
-        ],
-
-        'TELESCOPE_ENABLED' => [
-            'validation_rules' => ['boolean']
-        ],
-
     ];
 
     protected $fillable = [
@@ -244,14 +141,14 @@ class Setting extends Model
      *
      * @return \Illuminate\Database\Eloquent\Model|static 
      */
-    public function progressivo($query, ...$args)
+    public static function progressivo(...$args)
     {
         $scope = join("_", $args);
 
         /**
          * TODO ->lockForUpdate()
          */
-        return $query->firstOrCreate(['chiave' => '_progressivo_' . $scope], ['valore' => 1, 'autoload' => false]);
+        return self::firstOrCreate(['chiave' => '_progressivo_' . $scope], ['valore' => 1, 'autoload' => false]);
     }
 
     /**
@@ -273,6 +170,25 @@ class Setting extends Model
         }
 
         return $prefix . $retr->valore;
+    }
+
+    public static function getEditableConfig(string $chiave)
+    {
+
+        $editable_config = array_filter(Setting::CONFIG_SETTINGS, function ($item) {
+            return array_key_exists("editable", $item) && $item["editable"];
+        });
+
+        if (array_key_exists($chiave, $editable_config))
+            return $editable_config[$chiave];
+
+        $corretto = str_replace("_", ".", $chiave);
+
+        if (array_key_exists($corretto, $editable_config))
+            return $editable_config[$corretto];
+
+        dd($corretto);
+        return false;
     }
 
     public static function editEnvVariable(string $key, string $value)

@@ -5,7 +5,9 @@ import { connect } from "react-redux"
 
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import Card from "react-bootstrap/Card"
+
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 
 import { settingUpdated } from "../_actions"
 
@@ -46,11 +48,11 @@ const Settings = ({ settings }) => {
         <Row>
             <Col lg="6">
                 <Card>
-                    <Card.Body>
+                    <CardContent>
                         <SettingsEditableField name="favicon" type="file" accept=".ico" url="/settings/favicon" isImage label="Favicon" />
-                        <SettingsEditableField name="PAYPAL_CLIENT_ID" url="/settings/PAYPAL_CLIENT_ID" label="PayPal Client ID" type="textarea" />
-                        <SettingsEditableField name="PAYPAL_CLIENT_SECRET" url="/settings/PAYPAL_CLIENT_SECRET" label="PayPal Client Secret" type="password" />
-                    </Card.Body>
+                        <SettingsEditableField initialValue={settings.booking_paypal_client_id} name="booking_paypal_client_id" url="/settings/booking_paypal_client_id" label="PayPal Client ID" type="textarea" />
+                        <SettingsEditableField name="booking_paypal_client_secret" url="/settings/booking_paypal_client_secret" label="PayPal Client Secret" type="password" />
+                    </CardContent>
                 </Card>
             </Col>
         </Row>
@@ -59,7 +61,7 @@ const Settings = ({ settings }) => {
 
 const mapStateToProps = ({ settings }) => {
     return {
-        settings: settings
+        settings: settings,
     }
 }
 

@@ -12,8 +12,8 @@ import Helpers, { prezziFormatter } from '../_services/helpers';
 import Grid from '@material-ui/core/Grid';
 
 import Card from '@material-ui/core/Card';
-
 import CardContent from '@material-ui/core/CardContent';
+
 import OrdiniVociTabella from '../components/OrdiniVociTabella';
 import OrdiniTransazioniTabella from '../components/OrdiniTransazioniTabella';
 

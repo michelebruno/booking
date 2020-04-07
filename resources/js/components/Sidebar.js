@@ -42,12 +42,12 @@ const SideNavContent = ({ user }) => {
             icon: <i className="fas fa-shopping-cart " />,
             pathname: "/deals",
             roles: ['admin', 'account_manager'],
-            subItems: [
-                {
-                    pathname: "/deals/d-2",
-                    label: "Scheda deal",
-                },
-            ],
+            //    subItems: [
+            //        {
+            //            pathname: "/deals/d-2",
+            //            label: "Scheda deal",
+            //        },
+            //    ],
         },
         {
             label: "Ordini",

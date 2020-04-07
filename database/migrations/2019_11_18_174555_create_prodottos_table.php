@@ -21,7 +21,7 @@ class CreateProdottosTable extends Migration
             $table->longText('descrizione')
                 ->nullable()
                 ->default(null);
-            $table->bigInteger('esercente_id')
+            $table->bigInteger('fornitore_id')
                 ->unsigned()
                 ->nullable()
                 ->default(null);
@@ -36,7 +36,7 @@ class CreateProdottosTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('esercente_id')
+            $table->foreign('fornitore_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');

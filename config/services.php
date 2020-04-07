@@ -30,12 +30,4 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'paypal' => [
-        'webhooks' => [
-            'all' => "26R2292566757364T"
-        ],
-        'client_id' => env('PAYPAL_CLIENT_ID'),
-        'client_secret' => env('PAYPAL_CLIENT_SECRET')
-    ]
-
 ];

@@ -30,8 +30,9 @@ class SettingController extends Controller
                     return [$setting->chiave => $setting->valore];
                 })->toArray();
 
-                foreach (Setting::PUBLIC_DOTENV_VAR_KEYS as $chiave) {
-                    $array[$chiave] = env($chiave, null);
+                foreach (Setting::CONFIG_SETTINGS as $chiave => $data) {
+                    if (array_key_exists("public", $data) && $data["public"])
+                        $array[str_replace(".", "_", $chiave)] = config($chiave);
                 }
 
                 return $array;
@@ -91,14 +92,15 @@ class SettingController extends Controller
         if (!$request->user()->isSuperAdmin())
             throw new AuthorizationException("Solo un admin può cambiare le impostazioni.");
 
+
         switch ($setting) {
 
-            case key_exists($setting, Setting::EDITABLE_DOTENV_VAR):
+            case (bool) ($config_setting = Setting::getEditableConfig($setting)):
                 $data = $request->validate([
-                    $setting =>  array_merge(['required'], Setting::EDITABLE_DOTENV_VAR[$setting]['validation_rules'])
+                    $setting =>  array_merge(['required'], $config_setting['validation_rules'])
                 ]);
 
-                Setting::editEnvVariable($setting, $data[$setting]);
+                Setting::editEnvVariable($config_setting["env_key"], $data[$setting]);
 
                 break;
 
@@ -116,10 +118,8 @@ class SettingController extends Controller
                     Cache::delete('autoloaded_settings');
 
                     return $this->index($request);
-                } else {
-                    Log::error('Nessun file trovato', ["request" => $request]);
-                    abort(400, 'Non è stato mandato il file.');
                 }
+
                 break;
 
             default:

@@ -3,17 +3,22 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from "react-redux"
 import { Link } from 'react-router-dom'
 
-import { Row, Col, Card, Button } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import AddIcon from '@material-ui/icons/Add';
+
 
 import { setTopbarButtons, unsetTopbarButtons } from '../_actions';
 import PreLoaderWidget from '../components/Loader';
 import ServerDataTable from '../components/ServerDataTable';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const Fornitori = (props) => {
 
     useEffect(() => {
         props.setTopbarButtons(() => {
-            return <Button size="sm" as={Link} to="/fornitori/crea">Nuovo</Button>
+            return <Button size="small" variant="contained" color="primary" component={Link} to="/fornitori/crea" startIcon={<AddIcon />}>Nuovo</Button>
         })
         return () => {
             props.unsetTopbarButtons()
@@ -21,7 +26,6 @@ const Fornitori = (props) => {
     }, [])
 
     const [collection, setCollection] = useState()
-
 
     return (
         <React.Fragment>
@@ -49,8 +53,8 @@ const Fornitori = (props) => {
                     </ul>
                 </Col>
                 <Col lg="9">
-                    <Card>
-                        <Card.Body>
+                    <Card >
+                        <CardContent>
                             <ServerDataTable
                                 onCollectionChange={setCollection}
                                 title="Fornitori"
@@ -105,7 +109,7 @@ const Fornitori = (props) => {
                                     selectableRows: "none",
                                 }}
                             />
-                        </Card.Body>
+                        </CardContent>
                     </Card>
                 </Col>
             </Row>
