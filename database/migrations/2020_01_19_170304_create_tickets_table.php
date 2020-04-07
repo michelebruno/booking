@@ -21,19 +21,6 @@ class CreateTicketsTable extends Migration
             $table->unsignedBigInteger("prodotto_id");
             $table->unsignedBigInteger("variante_tariffa_id");
             $table->timestamps();
-
-            $table->foreign("voce_ordine_id")
-                ->on("ordini_voci")
-                ->references("id")
-                ->onDelete("cascade");
-
-            $table->foreign("prodotto_id")
-                ->on("prodotti")
-                ->references("id");
-
-            $table->foreign("variante_tariffa_id")
-                ->on("varianti_tariffa")
-                ->references("id");
         });
     }
 

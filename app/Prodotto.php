@@ -3,8 +3,8 @@
 namespace App;
 
 use App\VarianteTariffa;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 
@@ -67,7 +67,9 @@ class Prodotto extends Model
         self::TIPO_FORNITURA,
     ];
 
-    protected $table = "prodotti";
+    protected $connection = 'mongodb';
+
+    protected $collection = "prodotti";
 
     protected $hidden = [
         'fornitore_id', 'deleted_at', 'created_at', 'updated_at'

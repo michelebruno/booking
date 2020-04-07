@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateProdottosTable extends Migration
 {
+
+    protected $connection = "mongodb";
+
     /**
      * Run the migrations.
      *
@@ -13,7 +16,10 @@ class CreateProdottosTable extends Migration
      */
     public function up()
     {
-        Schema::create('prodotti', function (Blueprint $table) {
+        Schema::connection('mongodb')->create('prodotti', function ($collection) {
+            $collection->unique('codice');
+        });
+        /* Schema::create('prodotti', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('titolo');
             $table->string('codice')->unique();
@@ -54,7 +60,7 @@ class CreateProdottosTable extends Migration
                 ->references('id')
                 ->on('prodotti')
                 ->onDelete('cascade');
-        });
+        }); */
     }
 
     /**
@@ -64,7 +70,6 @@ class CreateProdottosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('prodotti_meta');
         Schema::dropIfExists('prodotti');
     }
 }

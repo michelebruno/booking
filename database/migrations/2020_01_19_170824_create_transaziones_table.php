@@ -27,13 +27,7 @@ class CreateTransazionesTable extends Migration
                 ->default(null);
             $table->timestamps();
 
-            $table->unique( ['transazione_id', 'gateway'] );
-
-            $table->foreign('ordine_id')
-                ->on('ordini')
-                ->references('id')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->unique(['transazione_id', 'gateway']);
         });
     }
 
