@@ -31,9 +31,16 @@ class VarianteTariffa extends Model
 {
     protected $table = "varianti_tariffa";
 
+    protected $connection = 'mysql';
+
     protected $hidden = [
         'created_at', 'updated_at'
     ];
+
+    public function getRouteKeyName()
+    {
+        return "slug";
+    }
 
     public function tariffe()
     {

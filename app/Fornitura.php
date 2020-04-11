@@ -93,6 +93,9 @@ class Fornitura extends Prodotto
         return $this->fornitore->nome . " - " . $this->codice . " - " . $this->titolo . $euro;
     }
 
+    /**
+     * ? Non è un po' inutile dato che si potrebbe usare Fornitore()->foniture ? 
+     */
     public function scopeFornitoDa($query, $id)
     {
         return $query->where('fornitore_id', $id);

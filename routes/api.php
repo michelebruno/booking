@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'API'], function () {
     Route::apiResource('deals', 'DealController');
     Route::patch('/deals/{deal}/restore', 'DealController@restore');
 
-    Route::apiResource('deals.tariffe', 'DealTariffeController', ['parameters' => ['tariffe' => 'tariffa']]);
+    Route::apiResource('deals.tariffe', 'DealTariffeController', ['parameters' => ['tariffe' => 'variante']]);
 
     Route::apiResource('deals.forniture', 'DealFornituraController', ['parameters' => ['forniture' => 'fornitura']]);
 

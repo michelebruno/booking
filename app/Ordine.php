@@ -5,7 +5,8 @@ namespace App;
 use App\Traits\HaAttributiMeta;
 use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
+
 /**
  * App\Ordine
  *
@@ -47,8 +48,10 @@ use Illuminate\Database\Eloquent\Model;
 class Ordine extends Model
 {
 
+    protected $connection = "mongodb";
+
     use HaAttributiMeta;
-    
+
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
     const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
@@ -68,7 +71,7 @@ class Ordine extends Model
     ];
 
     protected $appends = [
-        "_links" , "links"
+        "_links", "links"
     ];
 
     protected $year;
@@ -77,8 +80,7 @@ class Ordine extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('non_INIT', function (Builder $builder)
-        {
+        static::addGlobalScope('non_INIT', function (Builder $builder) {
             return $builder->where('stato', '<>', self::INIT);
         });
     }
@@ -90,7 +92,7 @@ class Ordine extends Model
 
     public function meta()
     {
-        return $this->hasMany(\App\OrdineMeta::class );
+        return $this->hasMany(\App\OrdineMeta::class);
     }
 
     public function cliente()
@@ -100,7 +102,7 @@ class Ordine extends Model
 
     public function transazioni()
     {
-        return $this->hasMany( \App\Transazione::class );
+        return $this->hasMany(\App\Transazione::class);
     }
 
     /* ATTRIBUTI */
@@ -120,35 +122,33 @@ class Ordine extends Model
      */
     public function completo()
     {
-        $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets', 'meta' ]);
+        $this->loadMissing(['cliente', 'transazioni', 'voci.tickets', 'meta']);
 
         return $this;
-
     }
 
     public function loadAll()
-    {        
-        return $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets']);
-    }
-
-    public static function withAll( $query )
-    {        
-        return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
-    }
-
-    public function calcola( $setAperto = true )
     {
-        $this->importo = $this->voci->sum( 'importo' );
+        return $this->loadMissing(['cliente', 'transazioni', 'voci.tickets']);
+    }
 
-        $this->dovuto = $this->voci->sum( 'importo' );
+    public static function withAll($query)
+    {
+        return $query->with(['cliente', 'transazioni', 'voci.tickets']);
+    }
 
-        $this->imponibile = round( $this->voci->sum( 'imponibile' ), 2);
+    public function calcola($setAperto = true)
+    {
+        $this->importo = $this->voci->sum('importo');
 
-        $this->imposta = round( $this->voci->sum( 'imposta' ) , 2 );
+        $this->dovuto = $this->voci->sum('importo');
+
+        $this->imponibile = round($this->voci->sum('imponibile'), 2);
+
+        $this->imposta = round($this->voci->sum('imposta'), 2);
 
         if ($setAperto) {
             $this->stato = Ordine::APERTO;
         }
     }
-
 }

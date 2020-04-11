@@ -40,20 +40,14 @@ class SettingController extends Controller
         });
 
 
-        $varianti = Cache::get('varianti_tariffe', function () {
+        $varianti = [];
 
-            return Cache::rememberForever('varianti_tariffe', function () {
-                $array = [];
+        $v = app('VariantiTariffe');
 
-                $varianti = app('VariantiTariffe');
+        foreach ($v as $variante) {
+            $varianti['varianti_tariffe'][$variante->slug] = $variante;
+        }
 
-                foreach ($varianti as $variante) {
-                    $array['varianti_tariffe'][$variante->slug] = $variante;
-                }
-
-                return $array;
-            });
-        });
 
         return response(array_merge($settings, $varianti));
     }

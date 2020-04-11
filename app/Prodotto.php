@@ -3,6 +3,7 @@
 namespace App;
 
 use App\VarianteTariffa;
+use Illuminate\Database\Eloquent\Collection;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
@@ -106,11 +107,6 @@ class Prodotto extends Model
         return 'codice';
     }
 
-    public function tariffe()
-    {
-        return $this->hasMany('App\Tariffa', 'prodotto_id');
-    }
-
     /**
      * 
      * @param  int  $quantità La quantità di cui ridurre la disponibiltà del prodotto.
@@ -123,6 +119,11 @@ class Prodotto extends Model
         if ($salva) {
             $this->save();
         }
+    }
+
+    public function tariffe()
+    {
+        return $this->embedsMany(Tariffa::class);
     }
 
     /* 
@@ -171,6 +172,9 @@ class Prodotto extends Model
 
     public function getCondensatoAttribute()
     {
+        if (!$this->tariffe instanceof Collection && !$this->tariffe->count())
+            return $this->codice . " - " . $this->titolo;
+
         $intero = $this->tariffe->firstWhere('slug', 'intero');
 
         $euro = $intero ? " | " . " €" . $intero->imponibile : '';

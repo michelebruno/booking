@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 /**
  * App\Tariffa
@@ -28,16 +28,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tariffa extends Model
 {
-    protected $table = "tariffe";
+    protected $collection = "prodotti.tariffe";
+
+    protected $connection = "mongodb";
 
     protected $appends = [
-        'imponibile', 'slug' , 'nome', 
-    ];    
+        'imponibile', 'slug', 'nome',
+    ];
 
     public $fillable = [
         'variante_tariffa_id',
-        'importo', 
-        'slug', 
+        'importo',
+        'slug',
         'imponibile'
     ];
 
@@ -52,19 +54,19 @@ class Tariffa extends Model
 
     public function prodotto()
     {
-        return $this->belongsTo( 'App\Prodotto', 'prodotto_id' )->withTrashed();
+        return $this->belongsTo('App\Prodotto', 'prodotto_id')->withTrashed();
     }
     /**
      * è usato per ridurre le query.
      */
     public function getVarianteAttribute()
-    {        
-        return app('VariantiTariffe')->firstWhere('id', $this->variante_tariffa_id );
+    {
+        return app('VariantiTariffe')->firstWhere('id', $this->variante_tariffa_id);
     }
 
     public function variante()
     {
-        return $this->belongsTo('App\VarianteTariffa', 'variante_tariffa_id');
+        return $this->belongsTo(VarianteTariffa::class, 'variante_tariffa_id', 'id');
     }
 
     public function getSlugAttribute()
@@ -72,14 +74,13 @@ class Tariffa extends Model
         return $this->variante->slug;
     }
 
-    public function setSlugAttribute( $slug )
+    public function setSlugAttribute($slug)
     {
         $varianti = app('VariantiTariffe');
 
-        if ( $variante = $varianti->has('slug', $slug )) {
+        if ($variante = $varianti->has('slug', $slug)) {
             return $this->attributes['variante_tariffa_id'] = $variante->id;
         } else abort(422, 'La variante indicata non esiste.');
-
     }
 
     public function getNomeAttribute()
@@ -89,29 +90,29 @@ class Tariffa extends Model
 
     public function getIvaAttribute()
     {
-        return app('Prodotti')->find( $this->prodotto_id)->iva;
+        return ($p = app('Prodotti')->find($this->prodotto_id)) ? $p->iva : null;
     }
-    
+
     public function getImponibileAttribute()
-    {        
-        return round( $this->importo / ( 1 + $this->iva / 100 ) , 2 );
-    }
-    
-    public function setImponibileAttribute( float $value )
     {
-        if ( ! $this->prodotto_id ) {
+        return round($this->importo / (1 + $this->iva / 100), 2);
+    }
+
+    public function setImponibileAttribute(float $value)
+    {
+        if (!$this->prodotto_id) {
             abort(500, "Non posso dedurre l'imposta di una tariffa di cui non conosco ancora il prodotto.");
         }
-        return $this->attributes['importo'] = self::includiIva( $value , $this->iva );
+        return $this->attributes['importo'] = self::includiIva($value, $this->iva);
     }
 
     public static function includiIva($importo, $iva)
     {
-        return round( $importo * ( 1 + $iva / 100 ) , 2 );
+        return round($importo * (1 + $iva / 100), 2);
     }
 
-    public static function escludiIva($imponibile, $iva )
+    public static function escludiIva($imponibile, $iva)
     {
-        return round( $imponibile / ( 1 + $iva / 100 ) , 2 );
+        return round($imponibile / (1 + $iva / 100), 2);
     }
 }
