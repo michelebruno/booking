@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\ValidaTariffe;
 use App\Deal;
 use App\Tariffa;
 use App\VarianteTariffa;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DealTariffeController extends Controller
 {
+    use ValidaTariffe;
+
     /**
      * Display a listing of the resource.
      *

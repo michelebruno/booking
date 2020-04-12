@@ -54,7 +54,7 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         $dati = $request->validate([
-            'email' => ['required', 'email', 'unique:users'],
+            'email' => ['required', 'email', 'unique:users', 'confirmed'],
             'ruolo' => ['required', Rule::in(\App\User::RUOLI)],
             'nome' => 'nullable',
             'cognome' => 'nullable',
@@ -66,20 +66,15 @@ class UserController extends Controller
 
         $user = new User($dati);
 
-        /**
-         * ? ha senso questo catch?
-         */
-        try {
-            $user->saveOrFail();
-
-            $user->markEmailAsVerified();
-
-            $user->notify(new Welcome(true));
-
-            return response(new UserResource($user));
-        } catch (\Throwable $e) {
-            abort(500, $e->getMessage());
+        if (!$user->save()) {
+            abort(500, "Non è stato possibile salvare l'utente creato.");
         }
+
+        $user->markEmailAsVerified();
+
+        $user->notify(new Welcome(true));
+
+        return response(new UserResource($user));
     }
 
     /**
@@ -88,10 +83,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-
         $this->authorize('view', $user);
 
         return response(new UserResource($user));
@@ -115,22 +108,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        $this->authorize('update', User::findOrFail($id));
+        $this->authorize('update', $user);
 
         if ($request->input('ruolo') == 'admin' && !$request->user()->isSuperAdmin())
             throw new AuthorizationException("Non hai i permessi per creare un amministratore.");
 
-        $user = User::updateOrCreate(["id" => $id], $request->only((new User())->getFillable()));
+        $user->update($request->all());
+        // $user = User::updateOrCreate(["_id" => $id], $request->only((new User())->getFillable()));
 
-        /*
-        if ( $request->has('meta') ) {
-            foreach ($request->input('meta') as $chiave => $valore) {
-                $user->meta()->updateOrCreate(["chiave" => $chiave], ["valore" => $valore]);
-            }
-        } 
-        */
         return response(new UserResource($user));
     }
 

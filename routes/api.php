@@ -57,5 +57,4 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'API'], function () {
     Route::apiResource('fornitori', 'FornitoreController', ['parameters' => ['fornitori' => 'fornitore']]);
 
     Route::patch('/fornitori/{fornitore}/restore', 'FornitoreController@restore');
-    Route::patch('/fornitori/{fornitore}/note', 'FornitoreController@setNote');
 });

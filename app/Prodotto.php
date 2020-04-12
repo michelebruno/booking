@@ -147,15 +147,25 @@ class Prodotto extends Model
         return $this->attributes['codice'] = strtoupper($value);
     }
 
-    public function setTariffeAttribute($tariffe)
+    public function setTariffeAttribute(array $tariffe)
     {
-        if (!$tariffe) return;
-
         foreach ($tariffe as $key => $value) {
+
+            if (!app('VariantiTariffe')->has($key)) {
+                return abort(400, "Il tipo di tariffa selezionato non esiste.");
+            }
 
             $etichetta = app('VariantiTariffe')[$key];
 
-            $this->tariffe()->updateOrCreate(['variante_tariffa_id' => $etichetta->id], $value);
+            Arr::forget($value, ['variante_tariffa_id', '_id']);
+
+            if (($tariffa = $this->tariffe->firstWhere("variante_tariffa_id", $etichetta->getKey()))) {
+                // La tariffa esiste già. Occorre solo aggiornarla
+                return $tariffa->update($value);
+            }
+
+            // Creamo una nuova tariffa.
+            $this->tariffe()->create(array_merge($value, ['variante_tariffa_id' => $etichetta->id]));
         }
     }
 

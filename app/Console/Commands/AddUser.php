@@ -6,6 +6,7 @@ use App\Notifications\Welcome;
 use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 
 class AddUser extends Command
 {
@@ -79,10 +80,13 @@ class AddUser extends Command
 
         $user->ruolo = $ruolo;
 
-        $user->saveOrFail();
+        if (!$user->save()) {
+            throw new \Exception("L'utente non è stato salvato correttamente.");
+        } else $this->info("Utente salvato correttamente.");
 
-        // Non ha senso inviare l'email se è stata inserita dal backend.
-
+        /**
+         * La validiamo in automatico perché è stata inserita dal backend.
+         */
         $user->markEmailAsVerified();
 
         $user->notify(new Welcome(true));

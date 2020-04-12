@@ -11,8 +11,6 @@ const UtenteForm = ({ onSuccess }) => {
 
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [passwordConfirmation, setPasswordConfirmation] = useState("")
     const [ruolo, setRuolo] = useState("account_manager");
     const [nome, setNome] = useState("")
 
@@ -27,9 +25,7 @@ const UtenteForm = ({ onSuccess }) => {
                 email,
                 username,
                 ruolo,
-                password,
-                password_confirmation: passwordConfirmation,
-                nome
+                nome,
             }).then(res => {
                 setApi({ status: "success", data: res.data })
                 if (typeof onSuccess === "function") onSuccess(res.data)
@@ -80,16 +76,6 @@ const UtenteForm = ({ onSuccess }) => {
                     <Form.Control required value={username} onChange={e => setUsername(e.target.value)} {...dynamicProps("username")} />
                     {showErrorsFeedback(errors, "username")}
                 </Form.Group>
-                <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" required value={password} onChange={e => setPassword(e.target.value)} {...dynamicProps("password")} />
-                    {showErrorsFeedback(errors, "password")}
-                </Form.Group>
-                <Form.Group controlId="password_confirmation">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" required value={passwordConfirmation} onChange={e => setPasswordConfirmation(e.target.value)} {...dynamicProps("password_confirmation")} />
-                    {showErrorsFeedback(errors, "password_confirmation")}
-                </Form.Group>
                 <Form.Group controlId="ruolo">
                     <Form.Label>Ruolo account</Form.Label>
                     <Form.Control as="select" required value={ruolo} onChange={e => setRuolo(e.target.value)} {...dynamicProps("ruolo")}>
@@ -113,7 +99,7 @@ const UtenteForm = ({ onSuccess }) => {
 }
 
 UtenteForm.propTypes = {
-    onSuccess: PropTypes.func
+    onSuccess: PropTypes.func,
 }
 
 export default UtenteForm

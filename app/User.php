@@ -6,9 +6,11 @@ use App\Traits\HaAttributiMeta;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+// use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+
+use Jenssegers\Mongodb\Auth\User as Authenticatable;
 
 /**
  * App\User
@@ -66,7 +68,7 @@ use Laravel\Passport\HasApiTokens;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable, SoftDeletes, HasApiTokens, HaAttributiMeta;
+    use Notifiable, SoftDeletes, HasApiTokens; //, HaAttributiMeta;
 
     const RUOLI = [
         "admin",
@@ -83,8 +85,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const RUOLO_FORNITORE = "fornitore";
 
+    protected $connection = "mongodb";
 
-    protected $table = 'users';
+    protected $collection = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -131,26 +134,28 @@ class User extends Authenticatable implements MustVerifyEmail
      * 
      */
 
-    public function scopeSuperAdmin(Builder $query)
+    public function scopeSuperAdmin($query)
     {
         return $query->where('ruolo', self::RUOLO_ADMIN);
     }
 
-    public function scopeAdmin(Builder $query)
+    public function scopeAdmin($query)
     {
         return $query->whereIn('ruolo', ['admin', 'account_manager']);
     }
 
 
-    public function scopeFornitori(Builder $query)
+    public function scopeFornitori($query)
     {
         return $query->where('ruolo', self::RUOLO_FORNITORE);
     }
 
+    /* 
     public function meta()
     {
         return $this->hasMany(UserMeta::class, 'user_id');
     }
+    */
 
     public function getLinksAttribute()
     {
@@ -159,7 +164,10 @@ class User extends Authenticatable implements MustVerifyEmail
         switch ($this->ruolo) {
             case self::RUOLO_ACCOUNT:
             case self::RUOLO_ADMIN:
-                $url_prefix = "/utenti";
+                /**
+                 * TODO creare una route "utenti"
+                 */
+                $url_prefix = "/users";
                 break;
 
             case self::RUOLO_FORNITORE:
@@ -172,7 +180,7 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         $links = [
-            "self" => $url_prefix . "/" . $this->id
+            "self" => $url_prefix . "/" . $this->getRouteKey()
         ];
 
         return $links;

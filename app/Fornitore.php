@@ -65,7 +65,7 @@ use Illuminate\Support\Arr;
  */
 class Fornitore extends User
 {
-    use HaIndirizzo;
+    // use HaIndirizzo;
 
     /**
      * The attributes that are mass assignable.
@@ -75,10 +75,14 @@ class Fornitore extends User
     protected $fillable = [
         'username',
         'email',
-        'password', 
-        'cf', 
-        'piva', 
-        'nome'
+        'password',
+        'cf',
+        'piva',
+        'nome',
+        'pec',
+        'ragione_sociale',
+        'sede_legale',
+        'indirizzo'
     ];
 
     protected $attributes = [
@@ -86,14 +90,8 @@ class Fornitore extends User
     ];
 
     protected $appends = [
-        'pec', 
-        'sdi', 
-        'indirizzo', 
-        'sede_legale', 
-        'ragione_sociale', 
-        '_links', 
-        'abilitato', 
-        'note'
+        '_links',
+        'abilitato',
     ];
 
     public static function boot()
@@ -101,32 +99,30 @@ class Fornitore extends User
         parent::boot();
 
         static::addGlobalScope('RUOLO_FORNITORE', function (Builder $builder) {
-            return $builder->where('ruolo', self::RUOLO_FORNITORE );
+            return $builder->where('ruolo', self::RUOLO_FORNITORE);
         });
     }
 
     public function forniture()
     {
-        return $this->hasMany( Fornitura::class );
+        return $this->hasMany(Fornitura::class);
     }
 
     public function toArray()
     {
         $array = parent::toArray();
 
-        $array['meta'] = Arr::except($this->meta, ['sdi', 'pec', 'ragione_sociale', 'sede_legale']);
-
         return $array;
     }
 
     public function getLinksAttribute()
     {
-        $base_uri = '/fornitori/'. $this->id;
+        $base_uri = '/fornitori/' . $this->getRouteKey();
 
         return [
-            'self' => $base_uri ,
+            'self' => $base_uri,
             'edit' => $base_uri  . '/modifica',
-            'delete' => $base_uri ,
+            'delete' => $base_uri,
             'restore' => $base_uri  . '/restore',
             'forniture' => $base_uri  . '/forniture'
         ];
@@ -139,45 +135,5 @@ class Fornitore extends User
     public function setCfAttribute($value)
     {
         return $this->attributes['cf'] = trim(strtoupper($value));
-    }
-
-    public function getRagioneSocialeAttribute()
-    {
-        return $this->getMeta('ragione_sociale');
-    }
-
-    public function setRagioneSocialeAttribute($value)
-    {
-        return $this->setMeta('ragione_sociale', $value);
-    }
-
-    public function getPecAttribute()
-    {
-        return $this->getMeta('pec');
-    }
-
-    public function setPecAttribute($value)
-    {
-        return $this->setMeta('pec', $value);
-    }
-
-    public function getNoteAttribute()
-    {
-        return $this->getMeta('note');
-    }
-
-    public function setNoteAttribute($value)
-    {
-        return $this->setMeta('note', $value);
-    }
-
-    public function getSDIAttribute()
-    {
-        return $this->getMeta('SDI');
-    }
-
-    public function setSDIAttribute($value)
-    {
-        return $this->setMeta('SDI', $value);
     }
 }
