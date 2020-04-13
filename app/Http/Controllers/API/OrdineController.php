@@ -12,6 +12,7 @@ use App\Tariffa;
 use App\VoceOrdine;
 use App\Ordine;
 use App\User;
+use App\VarianteTariffa;
 use Illuminate\Http\Request;
 
 /**
@@ -34,7 +35,9 @@ class OrdineController extends Controller
 
         $per_page = $request->query('per_page', 10);
 
-        $query = Ordine::with(['cliente', 'voci', 'transazioni']);
+        $query = Ordine::query();
+
+        $query->with(Ordine::getAllRelationshipArray());
 
         $query->orderBy($request->input('order_by', 'created_at'), $request->input('order', 'desc'));
 
@@ -65,7 +68,10 @@ class OrdineController extends Controller
      */
     public function store(StoreOrdineRequest $request)
     {
-        // TODO authorize
+        /**
+         * TODO authorize
+         * Probabilmente basterrebbe che sia autenticato.
+         */
         $request->authorize();
 
         $dati = $request->validated();
@@ -73,46 +79,51 @@ class OrdineController extends Controller
         if (in_array($request->user()->ruolo, [User::RUOLO_ACCOUNT, User::RUOLO_ADMIN])) {
 
             try {
-
                 $cliente = Cliente::whereEmail($dati["cliente"]["email"])->firstOrFail();
-            } catch (\Throwable $th) {
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
                 $cliente = new Cliente($dati['cliente']);
                 $cliente->save();
             }
+            
         } else $cliente = $request->user();
-
-        $voci = [];
-
-        foreach ($dati['voci'] as $voce) {
-
-            $tariffa = Tariffa::findOrFail($voce['tariffa_id']);
-
-            if ($tariffa->prodotto->disponibili < $voce["qta"]) {
-                throw new \Exception("Il prodotto non è più disponibile."); //TODO ?
-            }
-
-            $v = new VoceOrdine();
-
-            $v->tariffa_id = $voce['tariffa_id'];
-
-            $v->quantita = $voce["qta"];
-
-            $voci[] = $v;
-        }
 
         $ordine = new Ordine();
 
         $ordine->cliente()->associate($cliente);
 
-        $ordine->save();
+        foreach ($dati['voci'] as $voce) {
 
-        $ordine->voci()->saveMany($voci);
+            $prodotto = Deal::whereCodice($voce["prodotto"])->firstOrFail();
+
+            $tag = VarianteTariffa::whereSlug($voce["tariffa"])->firstOrFail();
+
+            $tariffa = $prodotto->tariffe->firstWhere("variante_tariffa_id" , $tag->id);
+
+            if ($prodotto->disponibili < $voce["qta"]) {
+                /**
+                 *
+                 * ? Forse è meglio una ValidationException con un messaggio. 
+                 */
+                throw new \Exception("Il prodotto non è più disponibile."); 
+            }
+
+            $v = new VoceOrdine();
+
+            $v->prodotto()->associate($prodotto);
+
+            $v->tariffa()->associate($tag);
+
+            $v->quantita = $voce["qta"];
+
+            $ordine->voci()->associate($v);
+        }
 
         $ordine->calcola();
 
-        $ordine->saveOrFail();
-
-        return response($ordine->fresh()->completo(), 201);
+        return $ordine->save() 
+            ? response($ordine->completo(), 201) 
+            : abort(500, "Non è stato possibile salvare l'ordine.");
+        
     }
 
     /**

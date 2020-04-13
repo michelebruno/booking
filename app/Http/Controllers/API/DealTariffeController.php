@@ -41,7 +41,11 @@ class DealTariffeController extends Controller
         $this->authorize('create', [Tariffa::class, $deal]);
 
         $dati = $request->validate([
-            'variante' => ['required', 'exists:varianti_tariffa,id', Rule::unique('mongodb.prodotti', 'tariffe.variante_tariffa_id')->where('_id', $deal->_id)],
+            'variante' => [
+                'required', 
+                Rule::exists( "mysql.varianti_tariffa", 'id' ), 
+                Rule::unique('mongodb.prodotti', 'tariffe.variante_tariffa_id')->where('_id', $deal->_id)
+            ],
             'importo' => 'numeric|required'
         ]);
 

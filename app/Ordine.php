@@ -47,10 +47,11 @@ use Jenssegers\Mongodb\Eloquent\Model;
  */
 class Ordine extends Model
 {
-
     protected $connection = "mongodb";
 
-    use HaAttributiMeta;
+    protected $collection = "ordini";
+
+    // use HaAttributiMeta;
 
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
@@ -59,8 +60,6 @@ class Ordine extends Model
     const PAGATO = "PAGATO"; //  se è stato pagato ma non sono stati generati i ticket
     const ELABORATO = "ELABORATO"; //  se i tickets stati generati e inviati
     const RIMBORSATO = "RIMBORSATO"; //  se è stato rimborsato 
-
-    protected $table = "ordini";
 
     public $incrementing = false;
 
@@ -74,7 +73,9 @@ class Ordine extends Model
         "_links", "links"
     ];
 
-    protected $year;
+    protected $hidden = [
+        "_id"
+    ];
 
     public static function boot()
     {
@@ -85,28 +86,27 @@ class Ordine extends Model
         });
     }
 
+    public function getRouteKeyName()
+    {
+        return "id";
+    }
+    
     public function voci()
     {
-        return $this->hasMany(VoceOrdine::class);
-    }
-
-    public function meta()
-    {
-        return $this->hasMany(\App\OrdineMeta::class);
+        return $this->embedsMany(VoceOrdine::class);
     }
 
     public function cliente()
     {
-        return $this->belongsTo('App\Cliente');
+        return $this->belongsTo(Cliente::class);
     }
 
     public function transazioni()
     {
-        return $this->hasMany(\App\Transazione::class);
+        return $this->hasMany(Transazione::class);
     }
 
     /* ATTRIBUTI */
-
     public function getLinksAttribute()
     {
 
@@ -122,19 +122,20 @@ class Ordine extends Model
      */
     public function completo()
     {
-        $this->loadMissing(['cliente', 'transazioni', 'voci.tickets', 'meta']);
+        return $this->loadMissing(self::getAllRelationshipArray());
+    }
 
-        return $this;
+    public static function getAllRelationshipArray()
+    {
+        return [
+            'cliente',
+            //'transazioni',
+        ];
     }
 
     public function loadAll()
     {
-        return $this->loadMissing(['cliente', 'transazioni', 'voci.tickets']);
-    }
-
-    public static function withAll($query)
-    {
-        return $query->with(['cliente', 'transazioni', 'voci.tickets']);
+        return $this->loadMissing(self::getAllRelationshipArray());
     }
 
     public function calcola($setAperto = true)
