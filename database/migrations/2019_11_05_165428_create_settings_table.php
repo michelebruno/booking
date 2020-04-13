@@ -13,11 +13,8 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) { 
-            $table->string('chiave')->primary();
-            $table->string('valore')->nullable();
-            $table->boolean('autoload')->default(false);
-            $table->timestamps();
+        Schema::connection("mongodb")->create('settings', function ( $collection ) { 
+            $collection->unique("chiave");
         });
     }
 
@@ -28,6 +25,6 @@ class CreateSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::connection("mongodb")->dropIfExists('settings');
     }
 }

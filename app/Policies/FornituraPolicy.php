@@ -30,6 +30,7 @@ class FornituraPolicy
      */
     public function view(User $user, Fornitura $fornitura)
     {
+        // TODO e se è stata cestinata?
         return $fornitura->fornitura_id == $user->id || $user->isAdmin();
     }
 

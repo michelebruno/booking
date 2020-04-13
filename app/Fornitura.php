@@ -60,7 +60,7 @@ class Fornitura extends Prodotto
     ];
 
     protected $fillable = [
-        'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
+        'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili', 'tariffe'
     ];
 
     public static function boot()
@@ -83,7 +83,7 @@ class Fornitura extends Prodotto
 
     public function fornitore()
     {
-        return $this->belongsTo('App\Fornitore', 'fornitore_id', 'id')->withTrashed();
+        return $this->belongsTo(Fornitore::class, 'fornitore_id')->withTrashed();
     }
 
     public function getCondensatoAttribute()
@@ -93,6 +93,9 @@ class Fornitura extends Prodotto
         return $this->fornitore->nome . " - " . $this->codice . " - " . $this->titolo . $euro;
     }
 
+    /**
+     * ? Non è un po' inutile dato che si potrebbe usare Fornitore()->foniture ? 
+     */
     public function scopeFornitoDa($query, $id)
     {
         return $query->where('fornitore_id', $id);

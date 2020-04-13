@@ -16,10 +16,6 @@ class UserResource extends JsonResource
     {
         $array = parent::toArray($request);
 
-        $array['meta'] = $this->meta->mapWithKeys(function ($item) {
-            return [ $item['chiave'] => $item["valore"] ];
-        });
-
         return $array;
     }
 }

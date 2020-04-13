@@ -8,6 +8,9 @@ use App\TransazionePayPal;
 use App\Ordine;
 use Illuminate\Http\Request;
 
+/**
+ * @group Ordini
+ */
 class OrdineTransazioneController extends Controller
 {
 
@@ -30,7 +33,7 @@ class OrdineTransazioneController extends Controller
      */
     public function storePayPal(Request $request, Ordine $ordine)
     {
-       /*  $dati = $request->validate([
+        /*  $dati = $request->validate([
             'id' => 'required|string',
             'intent' => 'required|in:CAPTURE',
             'purchase_units.0.amount.value' => 'required|numeric',
@@ -40,8 +43,8 @@ class OrdineTransazioneController extends Controller
         ]); */
 
 
-        event( new PaymentCapture( $request->all() ) );
-        
-        return response( $ordine->fresh()->completo() );
+        event(new PaymentCapture($request->all()));
+
+        return response($ordine->fresh()->completo());
     }
 }

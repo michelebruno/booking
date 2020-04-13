@@ -176,6 +176,11 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /**
+         * MongoDB
+         */
+        Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
+        DesignMyNight\Mongodb\MongodbPassportServiceProvider::class,
     ],
 
     /*

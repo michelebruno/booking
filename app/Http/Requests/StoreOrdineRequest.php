@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Prodotto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrdineRequest extends FormRequest
 {
@@ -25,12 +27,18 @@ class StoreOrdineRequest extends FormRequest
     {
         return [
             'voci' => [
-                'required'
+                'required',
+                'array'
             ],
-            'voci.*.qta' => 'required|int',
-            'voci.*.tariffa_id' => 'required|exists:tariffe,id',
+            'voci.*.qta' => 'required|int|gte:1',
+            'voci.*.tariffa' => 'required|exists:mysql.varianti_tariffa,slug',
+            'voci.*.prodotto' => [
+                'required',
+                Rule::exists("mongodb.prodotti", 'codice' )->where('tipo', Prodotto::TIPO_DEAL)
+            ],
             'cliente' => 'required',
-            'cliente.email' => 'email' // TODO
+            'cliente.email' => ['email' , 'required_if:cliente.id,null'],
+            'cliente.id' => [ 'nullable', 'sometimes']
         ];
     }
 }

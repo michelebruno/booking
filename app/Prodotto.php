@@ -3,8 +3,9 @@
 namespace App;
 
 use App\VarianteTariffa;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Collection;
+use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
+use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 
@@ -54,7 +55,7 @@ use Illuminate\Support\Facades\App;
  * @method static \Illuminate\Database\Query\Builder|\App\Prodotto withoutTrashed()
  * @mixin \Eloquent
  */
-class Prodotto extends Model
+class Prodotto extends MongoModel
 {
     use SoftDeletes;
 
@@ -67,7 +68,9 @@ class Prodotto extends Model
         self::TIPO_FORNITURA,
     ];
 
-    protected $table = "prodotti";
+    protected $connection = 'mongodb';
+
+    protected $collection = "prodotti";
 
     protected $hidden = [
         'fornitore_id', 'deleted_at', 'created_at', 'updated_at'
@@ -104,11 +107,6 @@ class Prodotto extends Model
         return 'codice';
     }
 
-    public function tariffe()
-    {
-        return $this->hasMany('App\Tariffa', 'prodotto_id');
-    }
-
     /**
      * 
      * @param  int  $quantità La quantità di cui ridurre la disponibiltà del prodotto.
@@ -121,6 +119,11 @@ class Prodotto extends Model
         if ($salva) {
             $this->save();
         }
+    }
+
+    public function tariffe()
+    {
+        return $this->embedsMany(Tariffa::class);
     }
 
     /* 
@@ -144,15 +147,25 @@ class Prodotto extends Model
         return $this->attributes['codice'] = strtoupper($value);
     }
 
-    public function setTariffeAttribute($tariffe)
+    public function setTariffeAttribute(array $tariffe)
     {
-        if (!$tariffe) return;
-
         foreach ($tariffe as $key => $value) {
+
+            if (!app('VariantiTariffe')->has($key)) {
+                return abort(400, "Il tipo di tariffa selezionato non esiste.");
+            }
 
             $etichetta = app('VariantiTariffe')[$key];
 
-            $this->tariffe()->updateOrCreate(['variante_tariffa_id' => $etichetta->id], $value);
+            Arr::forget($value, ['variante_tariffa_id', '_id']);
+
+            if (($tariffa = $this->tariffe->firstWhere("variante_tariffa_id", $etichetta->getKey()))) {
+                // La tariffa esiste già. Occorre solo aggiornarla
+                return $tariffa->update($value);
+            }
+
+            // Creamo una nuova tariffa.
+            $this->tariffe()->create(array_merge($value, ['variante_tariffa_id' => $etichetta->id]));
         }
     }
 
@@ -169,6 +182,9 @@ class Prodotto extends Model
 
     public function getCondensatoAttribute()
     {
+        if (!$this->tariffe instanceof Collection && !$this->tariffe->count())
+            return $this->codice . " - " . $this->titolo;
+
         $intero = $this->tariffe->firstWhere('slug', 'intero');
 
         $euro = $intero ? " | " . " €" . $intero->imponibile : '';

@@ -18,7 +18,7 @@ class TariffaPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function viewAny(User $user, ?Deal $deal, ?Fornitura $fornitura )
+    public function viewAny(User $user, ?Deal $deal)
     {
         //
     }
@@ -30,7 +30,7 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function view(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura )
+    public function view(User $user, Tariffa $tariffa, ?Deal $deal)
     {
         //
     }
@@ -41,9 +41,9 @@ class TariffaPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function create(User $user, ?Deal $deal, ?Fornitura $fornitura )
+    public function create(User $user, ?Deal $deal)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function update(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura )
+    public function update(User $user, Tariffa $tariffa, ?Deal $deal)
     {
         return $user->isAdmin();
     }
@@ -65,14 +65,12 @@ class TariffaPolicy
      * @param  \App\Tariffa  $tariffa
      * @return mixed
      */
-    public function delete(User $user, Tariffa $tariffa, ?Deal $deal, ?Fornitura $fornitura)
+    public function delete(User $user, Tariffa $tariffa, ?Deal $deal)
     {
-        if ( $tariffa->slug == "intero") {
+        if ($tariffa->slug == "intero") {
             return false;
-        } 
-        
+        }
 
         return $user->isAdmin();
-        
     }
 }

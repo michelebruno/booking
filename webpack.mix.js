@@ -18,8 +18,9 @@ mix.disableNotifications()
       proxy: {
          target: "https://localhost",
       },
-      https: true,
+      https: false,
       open: false,
+      port: 3010,
    })
    .react('resources/js/index.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')

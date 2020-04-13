@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'API'], function () {
     Route::apiResource('deals', 'DealController');
     Route::patch('/deals/{deal}/restore', 'DealController@restore');
 
-    Route::apiResource('deals.tariffe', 'DealTariffeController', ['parameters' => ['tariffe' => 'tariffa']]);
+    Route::apiResource('deals.tariffe', 'DealTariffeController', ['parameters' => ['tariffe' => 'variante']]);
 
     Route::apiResource('deals.forniture', 'DealFornituraController', ['parameters' => ['forniture' => 'fornitura']]);
 
@@ -57,5 +57,4 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'API'], function () {
     Route::apiResource('fornitori', 'FornitoreController', ['parameters' => ['fornitori' => 'fornitore']]);
 
     Route::patch('/fornitori/{fornitore}/restore', 'FornitoreController@restore');
-    Route::patch('/fornitori/{fornitore}/note', 'FornitoreController@setNote');
 });

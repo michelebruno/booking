@@ -58,7 +58,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Cliente extends User
 {
-    protected $table = 'users';
+    protected $attributes = [
+        "ruolo" => self::RUOLO_CLIENTE
+    ];
 
     public static function boot()
     {

@@ -5,9 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 
-class Setting extends Model
+class Setting extends MongoModel
 {
+    protected $connection = "mongodb";
 
     const CONFIG_SETTINGS = [
         'app.name' => [
@@ -133,7 +135,7 @@ class Setting extends Model
             "chiave" => $key,
             "valore" => true,
             "autoload" => false
-        ]))->saveOrFail();
+        ]))->save();
     }
 
     /**

@@ -5,7 +5,8 @@ namespace App;
 use App\Traits\HaAttributiMeta;
 use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
+
 /**
  * App\Ordine
  *
@@ -46,9 +47,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Ordine extends Model
 {
+    protected $connection = "mongodb";
 
-    use HaAttributiMeta;
-    
+    protected $collection = "ordini";
+
+    // use HaAttributiMeta;
+
     const INIT = "INIT"; //  se è in fase di creazione
     const APERTO = "APERTO"; //  quando deve essere pagato dal cliente
     const CHIUSO = "CHIUSO"; //  se tutti i tickets sono stati usati
@@ -56,8 +60,6 @@ class Ordine extends Model
     const PAGATO = "PAGATO"; //  se è stato pagato ma non sono stati generati i ticket
     const ELABORATO = "ELABORATO"; //  se i tickets stati generati e inviati
     const RIMBORSATO = "RIMBORSATO"; //  se è stato rimborsato 
-
-    protected $table = "ordini";
 
     public $incrementing = false;
 
@@ -68,43 +70,43 @@ class Ordine extends Model
     ];
 
     protected $appends = [
-        "_links" , "links"
+        "_links", "links"
     ];
 
-    protected $year;
+    protected $hidden = [
+        "_id"
+    ];
 
     public static function boot()
     {
         parent::boot();
 
-        static::addGlobalScope('non_INIT', function (Builder $builder)
-        {
+        static::addGlobalScope('non_INIT', function (Builder $builder) {
             return $builder->where('stato', '<>', self::INIT);
         });
     }
 
+    public function getRouteKeyName()
+    {
+        return "id";
+    }
+    
     public function voci()
     {
-        return $this->hasMany(VoceOrdine::class);
-    }
-
-    public function meta()
-    {
-        return $this->hasMany(\App\OrdineMeta::class );
+        return $this->embedsMany(VoceOrdine::class);
     }
 
     public function cliente()
     {
-        return $this->belongsTo('App\Cliente');
+        return $this->belongsTo(Cliente::class);
     }
 
     public function transazioni()
     {
-        return $this->hasMany( \App\Transazione::class );
+        return $this->hasMany(Transazione::class);
     }
 
     /* ATTRIBUTI */
-
     public function getLinksAttribute()
     {
 
@@ -120,35 +122,34 @@ class Ordine extends Model
      */
     public function completo()
     {
-        $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets', 'meta' ]);
+        return $this->loadMissing(self::getAllRelationshipArray());
+    }
 
-        return $this;
-
+    public static function getAllRelationshipArray()
+    {
+        return [
+            'cliente',
+            //'transazioni',
+        ];
     }
 
     public function loadAll()
-    {        
-        return $this->loadMissing(['cliente' , 'transazioni', 'voci.tickets']);
-    }
-
-    public static function withAll( $query )
-    {        
-        return $query->with(['cliente' , 'transazioni', 'voci.tickets']);
-    }
-
-    public function calcola( $setAperto = true )
     {
-        $this->importo = $this->voci->sum( 'importo' );
+        return $this->loadMissing(self::getAllRelationshipArray());
+    }
 
-        $this->dovuto = $this->voci->sum( 'importo' );
+    public function calcola($setAperto = true)
+    {
+        $this->importo = $this->voci->sum('importo');
 
-        $this->imponibile = round( $this->voci->sum( 'imponibile' ), 2);
+        $this->dovuto = $this->voci->sum('importo');
 
-        $this->imposta = round( $this->voci->sum( 'imposta' ) , 2 );
+        $this->imponibile = round($this->voci->sum('imponibile'), 2);
+
+        $this->imposta = round($this->voci->sum('imposta'), 2);
 
         if ($setAperto) {
             $this->stato = Ordine::APERTO;
         }
     }
-
 }

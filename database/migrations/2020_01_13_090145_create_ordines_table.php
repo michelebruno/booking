@@ -14,32 +14,8 @@ class CreateOrdinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ordini', function (Blueprint $table) {
-            $table->string('id')
-                ->primary();
-            $table->string('stato');
-            $table->float('imponibile', 12, 2)
-                ->nullable()
-                ->default(null);
-            $table->float('imposta', 12, 2)
-                ->nullable()
-                ->default(null);
-            $table->float('importo', 12, 2)
-                ->nullable()
-                ->default(null);
-            $table->float('dovuto', 12, 2)
-                ->nullable()
-                ->default(null);
-            $table->unsignedBigInteger('cliente_id');
-            $table->date('data')
-                ->nullable()
-                ->default(null);
-            $table->string('paypal_order_id')
-                ->nullable()
-                ->default(null);
-            $table->timestamps();
-
-            $table->foreign('cliente_id')->on('users')->references('id');
+        Schema::connection('mongodb')->create('ordini', function ($collection) {
+            $collection->unique('id');
         });
     }
 
@@ -50,6 +26,6 @@ class CreateOrdinesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ordini');
+        Schema::connection("mongodb")->dropIfExists('ordini');
     }
 }

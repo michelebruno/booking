@@ -117,7 +117,7 @@ const DealsScheda = ({ varianti, location, history, ...props }) => {
     }
 
 
-    if (!deal || !deal.id) return <PreLoaderWidget />
+    if (!deal || !deal.codice) return <PreLoaderWidget />
 
     let editableFieldProps = deal && deal._links && { url: deal._links.self, onSuccess: (r) => setDeal(r) }
 
@@ -125,7 +125,7 @@ const DealsScheda = ({ varianti, location, history, ...props }) => {
         editableFieldProps.readOnly = true
     }
 
-    return deal && deal.id && <>
+    return deal && deal.codice && <>
         <Row>
             <Col xs="12" md="6">
                 <Card>
@@ -157,7 +157,7 @@ const DealsScheda = ({ varianti, location, history, ...props }) => {
             <Col xs="12" md="6">
                 <Card>
                     <Card.Body>
-                        <TariffeTabella tariffe={deal.tariffe} url={deal._links && deal._links.tariffe} iva={iva} onSuccess={setDeal} editable={!deal.cestinato && props.currentUser.ruolo !== "fornitore"} reloadResource={reloadDeal} />
+                        <TariffeTabella tariffe={deal.tariffe || {}} url={deal._links && deal._links.tariffe} iva={iva} onSuccess={setDeal} editable={!deal.cestinato && props.currentUser.ruolo !== "fornitore"} reloadResource={reloadDeal} />
                     </Card.Body>
                 </Card>
             </Col>

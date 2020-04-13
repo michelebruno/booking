@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
 
 /**
  * App\VoceOrdine
@@ -46,9 +46,8 @@ use Illuminate\Support\Facades\Cache;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class VoceOrdine extends Model
+class VoceOrdine extends EloquentModel
 {
-    protected $table = "ordini_voci";
 
     protected $fillable = [
         'tariffa_id', 'quantita'
@@ -59,7 +58,7 @@ class VoceOrdine extends Model
     ];
 
     protected $appends = [
-        "riscattati"
+        // "riscattati"
     ];
 
     public function riduciDisponibili( int $quantità, bool $salva = true )
@@ -69,12 +68,12 @@ class VoceOrdine extends Model
 
     public function prodotto()
     {
-        return $this->belongsTo('App\Prodotto');
+        return $this->belongsTo(Prodotto::class);
     }
 
     public function tariffa()
     {
-        return $this->belongsTo('App\Tariffa');
+        return $this->belongsTo(VarianteTariffa::class);
     }
 
     public function tickets()
@@ -106,22 +105,21 @@ class VoceOrdine extends Model
 
     public function setTariffaIdAttribute($t)
     {
-        $tariffa = Tariffa::findOrFail($t);
+        $tag = VarianteTariffa::findOrFail($t);
 
-        // ? o meglio $this->tariffa()->associate($tariffa); 
-        $this->attributes['tariffa_id'] = $tariffa->id;
+        $prezzo = $this->prodotto->tariffe->where("variante_tariffa_id", $tag->getKey())->first();
 
-        $prodotto = $tariffa->prodotto; 
+        if (!$prezzo) {
+            throw new \Exception("Il prodotto non ha questa tariffa impostata.");
+        }
+
+        $this->codice = $this->prodotto->codice;
         
-        $this->prodotto_id = $prodotto->id;
+        $this->descrizione = $this->prodotto->titolo . " - " . $tag->nome;
 
-        $this->codice = $prodotto->codice;
+        $this->costo_unitario = $prezzo->importo;
         
-        $this->descrizione = $prodotto->titolo . " - " . $tariffa->variante->nome;
-
-        $this->costo_unitario = $tariffa->importo;
-        
-        $this->iva = $prodotto->iva;
+        $this->iva = $this->prodotto->iva;
     }
 
     // TODO dovrebbe essere self::creating() ?

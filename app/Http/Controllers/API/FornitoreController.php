@@ -5,11 +5,16 @@ namespace App\Http\Controllers\API;
 use App\Fornitore;
 use App\Http\Controllers\Controller;
 use App\Notifications\Welcome;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+
+/**
+ * @group Fornitori
+ */
 class FornitoreController extends Controller
 {
     /**
@@ -41,43 +46,30 @@ class FornitoreController extends Controller
         // TODO Validazione della richiesta
         $dati = $request->validate([
             'email' => ['required', 'email', 'unique:users'],
-            'meta.*' => 'nullable',
-            'indirizzo.cap' => 'nullable|numeric|digits:5',
-            'indirizzo.via' => 'nullable|string',
-            'indirizzo.civico' => 'nullable|string',
-            'indirizzo.provincia' => 'nullable|string',
-            'indirizzo.citta' => 'nullable|string',
-            'sede_legale.cap' => 'required|numeric|digits:5',
-            'sede_legale.via' => 'required|string',
-            'sede_legale.civico' => 'required|string',
-            'sede_legale.provincia' => 'required|string',
-            'sede_legale.citta' => 'required|string',
+            'indirizzo.cap' => ['sometimes', 'numeric', 'digits:5'],
+            'indirizzo.via' => ['sometimes', 'string'],
+            'indirizzo.civico' => ['sometimes', 'string'],
+            'indirizzo.provincia' => ['sometimes', 'string'],
+            'indirizzo.citta' => ['sometimes', 'string'],
+            'sede_legale.cap' => ['required', 'numeric', 'digits:5'],
+            'sede_legale.via' => ['required', 'string'],
+            'sede_legale.civico' => ['required', 'string'],
+            'sede_legale.provincia' => ['required', 'string'],
+            'sede_legale.citta' => ['required', 'string'],
             'username' => ['required', 'unique:users'],
             'piva' => ['required', 'digits:11', 'unique:users'],
             'cf' => ['required', 'max:16', 'unique:users'], // ? TODO verificare il formato
-            'nome' => 'string|required',
-            'sdi' => 'sometimes|nullable|max:7',
-            'pec' => 'sometimes|nullable|email',
-            'ragione_sociale' => 'required|sometimes|string'
+            'nome' => ['string', 'required'],
+            'sdi' => ['sometimes', 'nullable', 'max:7'],
+            'pec' => ['sometimes', 'nullable', 'email'],
+            'ragione_sociale' => ['required', 'sometimes', 'string']
         ]);
 
         $user = new Fornitore($dati);
 
-        $user->saveOrFail();
-
-        $user->nome = $dati['nome'];
-
-        $user->sdi = $dati['sdi'];
-
-        $user->pec = $dati['pec'];
-
-        $user->indirizzo = $dati['indirizzo'];
-
-        $user->sede_legale = $dati['sede_legale'];
-
-        $user->ragione_sociale = $dati['ragione_sociale'];
-
-        $user->save();
+        if (!$user->save()) {
+            return abort(500, "Non sono riuscito a salvare il fornitore.");
+        }
 
         $user->markEmailAsVerified();
 
@@ -119,9 +111,9 @@ class FornitoreController extends Controller
             'username' => ['required', Rule::unique('users', 'username')->ignore($fornitore->username, 'username')],
             'piva' => ['required', 'digits:11', Rule::unique('users', 'piva')->ignore($fornitore->piva, 'piva')],
             'cf' => ['required', 'max:16', Rule::unique('users', 'cf')->ignore($fornitore->cf, 'cf')],
-            'nome' => 'string|required',
-            'sdi' => 'sometimes|nullable|max:7',
-            'pec' => 'sometimes|nullable|email'
+            'nome' => ['string', 'required'],
+            'sdi' => ['sometimes', 'nullable', 'max:7'],
+            'pec' => ['sometimes', 'nullable', 'email']
         ]);
 
         $fornitore->fill($dati); // ? TODO: quanto è sicuro? L'attributo fillable come è impostato?
@@ -167,20 +159,5 @@ class FornitoreController extends Controller
         if ($fornitore->restore()) {
             return response($fornitore);
         } else abort(400);
-    }
-
-    public function setNote(Fornitore $fornitore, Request $request)
-    {
-        // TODO : authorize
-        // ? e per gli altri campi?
-        $dati = $request->validate([
-            'note' => 'required|string'
-        ]);
-
-        $fornitore->note = $dati['note'];
-
-        $fornitore->save();
-
-        return response($fornitore);
     }
 }

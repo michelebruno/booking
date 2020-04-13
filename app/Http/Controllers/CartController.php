@@ -55,9 +55,10 @@ class CartController extends Controller
 
             $ordine->calcola();
 
-            $ordine->saveOrFail();
+            if ($ordine->save()) {
+                return redirect(route('cart.payment', ['ordine' => $ordine->id]));
+            };
 
-            return redirect(route('cart.payment', ['ordine' => $ordine->id]));
         } else {
             /**
              * ? Un'array vuota porta soddisfa la condizione per arrivare qui?

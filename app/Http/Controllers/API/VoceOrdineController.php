@@ -7,6 +7,9 @@ use App\VoceOrdine;
 use App\Ordine;
 use Illuminate\Http\Request;
 
+/**
+ * @group Ordini - Voci
+ */
 class VoceOrdineController extends Controller
 {
     /**

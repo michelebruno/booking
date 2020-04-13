@@ -13,27 +13,8 @@ class CreateTicketsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tickets', function (Blueprint $table) {
-            $table->string("token")
-                ->primary();
-            $table->string("stato");
-            $table->unsignedBigInteger("voce_ordine_id");
-            $table->unsignedBigInteger("prodotto_id");
-            $table->unsignedBigInteger("variante_tariffa_id");
-            $table->timestamps();
-
-            $table->foreign("voce_ordine_id")
-                ->on("ordini_voci")
-                ->references("id")
-                ->onDelete("cascade");
-
-            $table->foreign("prodotto_id")
-                ->on("prodotti")
-                ->references("id");
-
-            $table->foreign("variante_tariffa_id")
-                ->on("varianti_tariffa")
-                ->references("id");
+        Schema::connection("mongodb")->create('tickets', function ( $table) {
+            $table->unique("token");
         });
     }
 
@@ -44,6 +25,6 @@ class CreateTicketsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tickets');
+        Schema::connection("mongodb")->dropIfExists('tickets');
     }
 }
