@@ -92,10 +92,8 @@ return [
         ],
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('MONGODB_DSN'),
-            'database' => env('MONGODB_DATABASE', 'homestead'),
-            'username' => env('MONGODB_USERNAME', 'homestead'),
-            'password' => env('MONGODB_PASSWORD', 'secret'),
+            'dsn' => env('MONGODB_DSN', 'mongodb://127.0.0.1:27017/'),
+            'database' => env('MONGODB_DATABASE', 'booking'),
             'options' => [
                 // here you can pass more settings to the Mongo Driver Manager
                 // see https://www.php.net/manual/en/mongodb-driver-manager.construct.php under "Uri Options" for a list of complete parameters that you can use
