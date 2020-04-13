@@ -179,7 +179,7 @@ return [
         /**
          * MongoDB
          */
-        // Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
+        Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
         DesignMyNight\Mongodb\MongodbPassportServiceProvider::class,
     ],
 

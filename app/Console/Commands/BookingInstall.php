@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Setting;
 use App\User;
+use App\VarianteTariffa;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
@@ -71,6 +72,19 @@ class BookingInstall extends Command
             }
         } else {
             $this->comment('Esiste già un admin. Non verrà ne verrà creato uno nuovo.', 'v');
+        }
+
+        $this->info('Controllo se esiste una tariffa.', 'vv');
+
+        if (!VarianteTariffa::query()->count()) {
+            $tariffa = new VarianteTariffa();
+            $tariffa->slug = "intero";
+            $tariffa->nome = "Intero";
+            $tariffa->save() 
+                ? $this->info('Tariffa creata.')
+                : $this->error("Non è stato possibile creare la tariffa.");
+        } else {
+            $this->comment('Esiste già una tariffa base.', 'v');
         }
 
         $this->info('Provo ad installare Laravel Passport.', 'vvv');

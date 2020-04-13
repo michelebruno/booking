@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 
 /**
  * App\Tariffa
@@ -26,7 +26,7 @@ use Jenssegers\Mongodb\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa whereVarianteTariffaId($value)
  * @mixin \Eloquent
  */
-class Tariffa extends Model
+class Tariffa extends MongoModel
 {
     protected $collection = "prodotti.tariffe";
 

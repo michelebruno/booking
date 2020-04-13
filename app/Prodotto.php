@@ -4,7 +4,7 @@ namespace App;
 
 use App\VarianteTariffa;
 use Illuminate\Database\Eloquent\Collection;
-use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\App;
  * @method static \Illuminate\Database\Query\Builder|\App\Prodotto withoutTrashed()
  * @mixin \Eloquent
  */
-class Prodotto extends Model
+class Prodotto extends MongoModel
 {
     use SoftDeletes;
 
