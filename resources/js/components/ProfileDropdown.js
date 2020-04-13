@@ -13,13 +13,7 @@ const menuItems = [{
     label: 'Impostazione',
     icon: 'fe-settings',
     redirectTo: "/account/modifica"
-  },
-  {
-    label: 'Logout',
-    icon: 'fe-log-out',
-    redirectTo: "/logout",
-    hasDivider: true
-  }]
+  },]
 
 const ProfileDropdown = props => {
     const profilePic = props.profilePic || null;
@@ -45,6 +39,16 @@ const ProfileDropdown = props => {
                             </Link>
                         </Dropdown.Item>
                     })}
+                    <Dropdown.Item as="span" >
+                             <Dropdown.Divider /> 
+                            <form action={ props.settings.app_url + "/logout"} >
+
+                            <button type="submit" className="dropdown-item notify-item">
+                                <i className={` mr-1`}></i>
+                                <span>Logout</span>
+                            </button>
+                            </form>
+                        </Dropdown.Item>
                 </div>
             </Dropdown.Menu>
         </Dropdown>
@@ -52,6 +56,6 @@ const ProfileDropdown = props => {
 }
 
 const mapStateToProps = state => {
-    return {currentUser : state.currentUser}
+    return {currentUser : state.currentUser, settings : state.settings }
 }
 export default connect( mapStateToProps )(ProfileDropdown);
