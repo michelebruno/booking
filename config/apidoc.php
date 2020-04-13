@@ -97,7 +97,7 @@ return [
                  * Match only routes whose paths match this pattern (use * as a wildcard to match any characters).
                  */
                 'prefixes' => [
-                    '*',
+                    'api/v1/*',
                     // 'users/*',
                 ],
 
@@ -138,7 +138,7 @@ return [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
-                    // 'Authorization' => 'Bearer {token}',
+                    'Authorization' => 'Bearer {{token}}',
                     // 'Api-Version' => 'v2',
                 ],
 
