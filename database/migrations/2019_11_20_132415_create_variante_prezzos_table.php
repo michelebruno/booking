@@ -13,7 +13,7 @@ class CreateVariantePrezzosTable extends Migration
      */
     public function up()
     {
-        Schema::create('varianti_tariffa', function (Blueprint $table) {
+        Schema::connection("mysql")->create('varianti_tariffa', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('slug')->unique();
             $table->string('nome');
@@ -28,10 +28,6 @@ class CreateVariantePrezzosTable extends Migration
      */
     public function down()
     {
-        Schema::table('tariffe', function (Blueprint $table) {
-            $table->dropForeign(['variante_tariffa_id']);
-        });
-
-        Schema::dropIfExists('varianti_prezzo');
+        Schema::connection("mysql")->dropIfExists('varianti_prezzo');
     }
 }

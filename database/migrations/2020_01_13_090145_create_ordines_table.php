@@ -26,6 +26,6 @@ class CreateOrdinesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ordini');
+        Schema::connection("mongodb")->dropIfExists('ordini');
     }
 }
