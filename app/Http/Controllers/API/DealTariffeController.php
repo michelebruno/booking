@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+
+/**
+ * @group Deal
+ */
 class DealTariffeController extends Controller
 {
     use ValidaTariffe;

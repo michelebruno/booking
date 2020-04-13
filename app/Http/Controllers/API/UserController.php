@@ -11,6 +11,9 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+/**
+ * @group Users
+ */
 class UserController extends Controller
 {
     /**

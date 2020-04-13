@@ -14,6 +14,9 @@ use App\Ordine;
 use App\User;
 use Illuminate\Http\Request;
 
+/**
+ * @group Ordini
+ */
 class OrdineController extends Controller
 {
     /**

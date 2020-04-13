@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+
+/**
+ * @group Fornitori
+ */
 class FornitoreController extends Controller
 {
     /**

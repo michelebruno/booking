@@ -7,6 +7,10 @@ use App\Fornitura;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+
+/**
+ * @group Fornitura
+ */
 class FornituraController extends Controller
 {
     /**
@@ -14,39 +18,35 @@ class FornituraController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( Request $request )
+    public function index(Request $request)
     {
-        $this->authorize( 'viewAny' , Fornitura::class );
+        $this->authorize('viewAny', Fornitura::class);
 
         $query = false;
 
-        if ( $s = $request->query('s', false ) ) {
+        if ($s = $request->query('s', false)) {
 
             $s = urldecode($s);
-            $servizi = Fornitura::where('titolo', 'LIKE', '%' . $s . '%' )->get();
+            $servizi = Fornitura::where('titolo', 'LIKE', '%' . $s . '%')->get();
             $response = $servizi->loadMissing('deals');
-
         }
-        
-        if ( $notAttachedToDeals = $request->query('notAttachedToDeals', false ) ) { // Separati con la virgola
 
-            if ( ! $query ) $query = Fornitura::whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
-            {
-                return $query->whereIn('padre' , explode(',' ,  $notAttachedToDeals ) );
+        if ($notAttachedToDeals = $request->query('notAttachedToDeals', false)) { // Separati con la virgola
+
+            if (!$query) $query = Fornitura::whereDoesntHave('deals', function (Builder $query) use ($notAttachedToDeals) {
+                return $query->whereIn('padre', explode(',',  $notAttachedToDeals));
             });
 
-            else $query->whereDoesntHave('deals' , function (Builder $query ) use ( $notAttachedToDeals )
-            {
-                return $query->whereIn('padre' , explode(',' ,  $notAttachedToDeals ) );
+            else $query->whereDoesntHave('deals', function (Builder $query) use ($notAttachedToDeals) {
+                return $query->whereIn('padre', explode(',',  $notAttachedToDeals));
             });
+        }
 
-        }   
-
-        if ( $query ) { 
-            $response = $query->get(); 
+        if ($query) {
+            $response = $query->get();
         } else $response = Fornitura::all()->loadMissing('deals');
 
-        return response( $response );
+        return response($response);
     }
 
     /**
@@ -57,7 +57,6 @@ class FornituraController extends Controller
      */
     public function store(Request $request)
     {
-        
     }
 
     /**
@@ -70,7 +69,7 @@ class FornituraController extends Controller
     {
         $this->authorize('view', $fornitura);
 
-        return response( $fornitura );
+        return response($fornitura);
     }
 
     /**

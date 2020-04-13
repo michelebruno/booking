@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+
+/**
+ * @group Settings
+ */
 class SettingController extends Controller
 {
     /**

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Cliente;
 use Illuminate\Http\Request;
 
+/**
+ * @group Cliente
+ */
 class ClienteController extends Controller
 {
     /**

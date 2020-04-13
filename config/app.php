@@ -177,10 +177,10 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /**
-     * MongoDB
-     */
+         * MongoDB
+         */
         // Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
-
+        DesignMyNight\Mongodb\MongodbPassportServiceProvider::class,
     ],
 
     /*
