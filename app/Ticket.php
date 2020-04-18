@@ -2,34 +2,12 @@
 
 namespace App;
 
-use App\VoceOrdine;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
+use Arr;
 
 /**
  * App\Ticket
  *
- * @property string $token
- * @property string $stato
- * @property int $voce_ordine_id
- * @property int $prodotto_id
- * @property int $variante_tariffa_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Ordine $ordine
- * @property-read \App\VarianteTariffa $varianteTariffa
- * @property-read \App\VoceOrdine $voce
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereProdottoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereStato($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereVarianteTariffaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ticket whereVoceOrdineId($value)
- * @mixin \Eloquent
  */
 class Ticket extends Model
 {
@@ -46,7 +24,7 @@ class Ticket extends Model
     protected $guarded = [
         "token"
     ];
-    
+
     const APERTO = "APERTO";
     const SCADUTO = "SCADUTO";
     const CHIUSO = "CHIUSO";
@@ -59,8 +37,7 @@ class Ticket extends Model
          * Imposta il token unico.
          */
 
-        self::creating(function($ticket)
-        {
+        self::creating(function ($ticket) {
             $ticket->token = self::generaToken();
         });
 
@@ -90,7 +67,7 @@ class Ticket extends Model
 
         $token = self::_token();
 
-        while ( Ticket::find($token) ) {
+        while (Ticket::find($token)) {
             $token = self::_token($lenght);
         }
 
@@ -99,13 +76,13 @@ class Ticket extends Model
 
     protected static function _token(int $lenght = 10)
     {
-        $alfabenumerici = [ "A", "B", "C", "D", "E", "F", "G", "H", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "Z", "2", "3", "4", "5", "6", "7", "8", "9" ];
-        
-        $set = Arr::random( $alfabenumerici, $lenght );
+        $alfabenumerici = ["A", "B", "C", "D", "E", "F", "G", "H", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "Z", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+        $set = Arr::random($alfabenumerici, $lenght);
 
         $token = "";
 
-        for ($i=0; $i < $lenght; $i++) { 
+        for ($i = 0; $i < $lenght; $i++) {
             $token .= Arr::random($set, 1)[0];
         }
 

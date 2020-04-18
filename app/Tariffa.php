@@ -7,24 +7,6 @@ use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 /**
  * App\Tariffa
  *
- * @property int $id
- * @property int $prodotto_id
- * @property int $variante_tariffa_id
- * @property float $importo
- * @property mixed $imponibile
- * @property-read mixed $iva
- * @property-read mixed $nome
- * @property mixed $slug
- * @property-read \App\VarianteTariffa $variante
- * @property-read \App\Prodotto $prodotto
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa whereImporto($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa whereProdottoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Tariffa whereVarianteTariffaId($value)
- * @mixin \Eloquent
  */
 class Tariffa extends MongoModel
 {
@@ -56,6 +38,7 @@ class Tariffa extends MongoModel
     {
         return $this->belongsTo('App\Prodotto', 'prodotto_id')->withTrashed();
     }
+
     /**
      * è usato per ridurre le query.
      */
@@ -74,12 +57,16 @@ class Tariffa extends MongoModel
         return $this->variante->slug;
     }
 
+    /**
+     * @param $slug
+     * @return void
+     */
     public function setSlugAttribute($slug)
     {
         $varianti = app('VariantiTariffe');
 
         if ($variante = $varianti->has('slug', $slug)) {
-            return $this->attributes['variante_tariffa_id'] = $variante->id;
+            $this->attributes['variante_tariffa_id'] = $variante->id;
         } else abort(422, 'La variante indicata non esiste.');
     }
 

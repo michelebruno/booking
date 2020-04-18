@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 /**
+ * Gestisce le richieste di risorse Utente.
+ *
+ * @todo dovrebbe esserci un UtentiController più specifico per admin/account_manager/fornitori.
  * @group Users
  */
 class UserController extends Controller
@@ -19,8 +22,10 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @todo Impostare i filtri
+     * @param Request $request
      * @return \Illuminate\Http\Response
+     * @throws AuthorizationException
+     * @todo Impostare i filtri
      */
     public function index(Request $request)
     {
@@ -47,10 +52,11 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Salva un nuovo utente nel database.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -81,9 +87,9 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostra un utente specifico.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
@@ -105,11 +111,13 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Aggiorna i dati di un utente nel database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param \App\User $user
      * @return \Illuminate\Http\Response
+     * @throws AuthorizationException
+     * @todo Non è il caso di $request->all(). Meglio validare i dati.
      */
     public function update(Request $request, User $user)
     {
@@ -127,14 +135,16 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
      */
     public function destroy($id)
     {
-        if ($user = User::findOrFail($id)) {
-            $user->delete();
-            return response()->json(['message' => 'Eliminato']);
-        }
+        $user = User::findOrFail($id);
+
+        $user->delete();
+
+        return response("Eliminato", 204);
+
+
     }
 }

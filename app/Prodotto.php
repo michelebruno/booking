@@ -2,58 +2,38 @@
 
 namespace App;
 
-use App\VarianteTariffa;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
+use Arr;
+use App;
 
 /**
  * App\Prodotto
  *
- * @property int $id
- * @property string $titolo
- * @property string $codice
- * @property string $tipo
- * @property string|null $descrizione
- * @property int|null $fornitore_id
- * @property string $stato
- * @property int|null $disponibili
- * @property int $iva
- * @property int|null $wp
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property $titolo
+ * @property $descrizione
+ * @property $codice
+ * @property $stato
+ * @property $iva
+ * @property int $wp
+ * @property $disponibili
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read mixed $cestinato
- * @property-read mixed $condensato
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $condensato
+ * @property-read bool $cestinato
  * @property-read array $links
- * @property-read string $smart
- * @property \Illuminate\Database\Eloquent\Collection|\App\Tariffa[] $tariffe
- * @property-read int|null $tariffe_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto disponibili($more_than = 0)
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Prodotto onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereCodice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDescrizione($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereDisponibili($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereFornitoreId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereIva($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereStato($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereTipo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereTitolo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Prodotto whereWp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Prodotto withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Prodotto withoutTrashed()
- * @mixin \Eloquent
+ * @property Collection|Tariffa[] tariffe
+ * @method static whereCodice($prodotto)
+ * @method static whereTipo($prodotto)
+ * @method static whereRuolo($prodotto)
+ * @method static whereWp($prodotto)
+ * @method static where($prodotto)
+ * @method static whereTitolo($prodotto)
+ * @method static whereStato($prodotto)
+ * @method static whereDisponibili($prodotto)
  */
 class Prodotto extends MongoModel
 {
@@ -102,37 +82,39 @@ class Prodotto extends MongoModel
             App::forgetInstance('Prodotti');
         });
     }
+
     public function getRouteKeyName()
     {
         return 'codice';
     }
 
     /**
-     * 
-     * @param  int  $quantità La quantità di cui ridurre la disponibiltà del prodotto.
+     * @param int $quantita La quantità di cui ridurre la disponibiltà del prodotto.
+     * @param bool $salva Decide se aggiornare subito il database.
+     * @return bool|int|void
      */
-    public function riduciDisponibili(int $quantità, bool $salva = true)
+    public function riduciDisponibili(int $quantita, bool $salva = true)
     {
-        // TODO controllare che ce ne siano abbastanza...
-        $this->disponibili -= $quantità;
-
-        if ($salva) {
-            $this->save();
+        if ($this->disponibili >= $quantita) {
+            $this->disponibili -= $quantita;
+            return $salva ? $this->save() : $quantita;
         }
+        return abort(400, "Attenzione, non ci sono abbastanza prodotti per quest'ordine.
+        Tuttavia dovrebbe esserci già stato un check da parte del controller.");
     }
 
+    /**
+     * @return \Jenssegers\Mongodb\Relations\EmbedsMany
+     */
     public function tariffe()
     {
         return $this->embedsMany(Tariffa::class);
     }
 
-    /* 
-     *  
-     * * MUTATORS *
-     * 
-     */
-    /**
-     * 
+    /* MUTATORS *
+
+   /**
+     *
      * @abstract
      * @return array
      */
@@ -147,6 +129,10 @@ class Prodotto extends MongoModel
         return $this->attributes['codice'] = strtoupper($value);
     }
 
+    /**
+     * @param array $tariffe
+     * @return void
+     */
     public function setTariffeAttribute(array $tariffe)
     {
         foreach ($tariffe as $key => $value) {
@@ -169,17 +155,6 @@ class Prodotto extends MongoModel
         }
     }
 
-    /**
-     * getSmartAttribute
-     * @todo Scegliere come compilarlo.
-     * @todo Aggiungere agli append.
-     * @return string
-     */
-    public function getSmartAttribute()
-    {
-        # code...
-    }
-
     public function getCondensatoAttribute()
     {
         if (!$this->tariffe instanceof Collection && !$this->tariffe->count())
@@ -197,12 +172,18 @@ class Prodotto extends MongoModel
         return $this->trashed();
     }
 
-    /* 
+    /*
      *
-     * * SCOPES *
-     * 
+     *
+     *
      */
-
+    /**
+     *
+     * @param Builder $query
+     * @param int $more_than
+     * @return mixed
+     * @todo Probabilmente si dovrebbe rifattorizzare il conteggio dei disponibili in base alla disponibilità delle forniture e un overbooking.
+     */
     public function scopeDisponibili($query, $more_than = 0)
     {
         return $query->where('disponibili', '>', $more_than);
@@ -216,6 +197,7 @@ class Prodotto extends MongoModel
 
         /**
          * Se non dovesse avere tariffe, deve comunque restituire un oggetto quando trasformato in json
+         * @todo forse basta un array vuota?
          */
         $array["tariffe"] = count($tariffe) ? $tariffe : new \stdClass;
 

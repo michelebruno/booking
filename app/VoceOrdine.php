@@ -8,8 +8,6 @@ use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
 /**
  * App\VoceOrdine
  *
- * @property int $id
- * @property string $ordine_id
  * @property int|null $prodotto_id
  * @property string $codice
  * @property string|null $descrizione
@@ -23,86 +21,94 @@ use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $riscattati
- * @property-read \App\Prodotto|null $prodotto
- * @property-read \App\Tariffa|null $tariffa
+ * @property-read Deal|null $prodotto
+ * @property-read VarianteTariffa|null $tariffa
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Ticket[] $tickets
  * @property-read int|null $tickets_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCodice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCostoUnitario($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereDescrizione($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImponibile($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImporto($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereImposta($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereIva($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereOrdineId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereProdottoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereQuantita($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereTariffaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoceOrdine whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 class VoceOrdine extends EloquentModel
 {
-
+    /**
+     *
+     * @var array
+     * @todo è adeguato che siano fillable?
+     */
     protected $fillable = [
-        'tariffa_id', 'quantita'
+        'prodotto_id',
+        'quantita',
+        'tariffa'
     ];
 
     protected $hidden = [
-        'created_at' , 'updated_at'
+        'created_at', 'updated_at'
     ];
 
     protected $appends = [
         // "riscattati"
     ];
 
-    public function riduciDisponibili( int $quantità, bool $salva = true )
+    /**
+     * @param int $quantita
+     * @param bool $salva Set to true if you want to save immediatly the product.
+     * @return mixed
+     */
+    public function riduciDisponibili(int $quantita, bool $salva = true)
     {
-        return $this->prodotto->riduciDisponibili( $quantità , $salva );
+        return $this->prodotto->riduciDisponibili($quantita, $salva);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function prodotto()
     {
         return $this->belongsTo(Prodotto::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function tariffa()
     {
         return $this->belongsTo(VarianteTariffa::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function tickets()
     {
         return $this->hasMany(Ticket::class, "voce_ordine_id");
     }
 
+    /**
+     * @return int
+     */
     public function getRiscattatiAttribute()
     {
         $cache_key = 'voci_ordini_' . $this->id . "_riscattati";
 
-        return Cache::get( $cache_key , function() use ( $cache_key )
-        {
+        return Cache::get($cache_key, function () use ($cache_key) {
             $r = 0;
 
             foreach ($this->tickets as $value) {
 
-                if ($value->stato !== "APERTO" ) {
+                if ($value->stato !== "APERTO") {
                     $r++;
                 }
             }
 
-            Cache::rememberForever($cache_key, function () use ( $r ) {
+            Cache::rememberForever($cache_key, function () use ($r) {
                 return $r;
             });
             return $r;
         });
     }
 
+    /**
+     * @param $t
+     * @throws \Exception
+     */
     public function setTariffaIdAttribute($t)
     {
         $tag = VarianteTariffa::findOrFail($t);
@@ -114,11 +120,11 @@ class VoceOrdine extends EloquentModel
         }
 
         $this->codice = $this->prodotto->codice;
-        
+
         $this->descrizione = $this->prodotto->titolo . " - " . $tag->nome;
 
         $this->costo_unitario = $prezzo->importo;
-        
+
         $this->iva = $this->prodotto->iva;
     }
 
@@ -130,11 +136,11 @@ class VoceOrdine extends EloquentModel
 
         $this->importo = $this->costo_unitario * $quantita;
 
-        $this->imponibile = round( $this->importo / ( 1 + $this->iva / 100 ) , 2 );
+        $this->imponibile = round($this->importo / (1 + $this->iva / 100), 2);
 
-        $this->imposta = round( $this->importo - $this->imponibile , 2 );
+        $this->imposta = round($this->importo - $this->imponibile, 2);
 
     }
 
-    
+
 }

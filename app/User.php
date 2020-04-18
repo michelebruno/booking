@@ -2,9 +2,7 @@
 
 namespace App;
 
-use App\Traits\HaAttributiMeta;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -14,60 +12,22 @@ use Jenssegers\Mongodb\Auth\User as Authenticatable;
 /**
  * App\User
  *
- * @property int $id
- * @property string $email
- * @property string|null $username
- * @property string|null $nome
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string|null $password
- * @property string|null $api_token
- * @property string|null $cf
- * @property string|null $piva
- * @property string $ruolo
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
- * @property-read int|null $clients_count
- * @property-read mixed $abilitato
- * @property-read mixed $links
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\UserMeta[] $meta
- * @property-read int|null $meta_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User admin()
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User fornitori()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\User onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User superAdmin()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereApiToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCf($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereNome($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePiva($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRuolo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
- * @mixin \Eloquent
+ * @property $_id  L'id unico assegnato da Mongo DB.
+ * @property $email
+ * @property $password
+ * @property $ruolo
+ * @property $indirizzo
+ * @property $nome
+ * @property $username
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable, SoftDeletes, HasApiTokens; //, HaAttributiMeta;
+    use Notifiable, SoftDeletes, HasApiTokens;
+
+    protected $connection = "mongodb";
+
+    protected $collection = 'users';
 
     const RUOLI = [
         "admin",
@@ -84,9 +44,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const RUOLO_FORNITORE = "fornitore";
 
-    protected $connection = "mongodb";
-
-    protected $collection = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -94,13 +51,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'cf',
         'email',
-        'username',
-        'password',
-        'piva',
-        'ruolo',
-        'nome'
+        'nome',
     ];
 
     /**
@@ -109,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
+        '_id',
         'password',
         'remember_token'
     ];
@@ -127,39 +80,43 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    /* 
+    /**
      *
      * SCOPES
-     * 
+     *
      */
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeSuperAdmin($query)
     {
         return $query->where('ruolo', self::RUOLO_ADMIN);
     }
 
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeAdmin($query)
     {
         return $query->whereIn('ruolo', ['admin', 'account_manager']);
     }
 
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeFornitori($query)
     {
         return $query->where('ruolo', self::RUOLO_FORNITORE);
     }
 
-    /* 
-    public function meta()
-    {
-        return $this->hasMany(UserMeta::class, 'user_id');
-    }
-    */
-
     public function getLinksAttribute()
     {
-        $url_prefix = "";
-
         switch ($this->ruolo) {
             case self::RUOLO_ACCOUNT:
             case self::RUOLO_ADMIN:
@@ -178,21 +135,30 @@ class User extends Authenticatable implements MustVerifyEmail
                 break;
         }
 
-        $links = [
+        return [
             "self" => $url_prefix . "/" . $this->getRouteKey()
         ];
-
-        return $links;
     }
 
     public function getAbilitatoAttribute()
     {
         return $this->attributes['abilitato'] = !$this->trashed();
     }
-    /**
-     * * CUSTOM FUNCTIONS
-     */
 
+    /**
+     * Questa è la funzione che si occupa del binding nella route. Si potrebbe pensare di
+     * sostituirlo per comprendere i
+     * @param mixed $value
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value)
+    {
+        return parent::resolveRouteBinding($value); // TODO: Change the autogenerated stub
+    }
+
+    /**
+     * CUSTOM FUNCTIONS
+     */
     public function isSuperAdmin()
     {
         return $this->ruolo === self::RUOLO_ADMIN;
@@ -200,10 +166,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Verifica se l'utente è un gestore del sistema.
-     * 
+     *
      * Ritorna true se appartiene ai ruoli: admin, account_manager.
      *
-     * @return bool 
+     * @return bool
      */
     public function isAdmin()
     {
@@ -220,6 +186,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->ruolo === self::RUOLO_ACCOUNT;
     }
 
+    /**
+     * Verifica se è un fornitore.
+     *
+     * @return bool
+     */
     public function isFornitore()
     {
         return $this->ruolo === self::RUOLO_FORNITORE;
