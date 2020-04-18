@@ -8,7 +8,6 @@ use App\Deal;
 use App\Tariffa;
 use App\VarianteTariffa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -20,9 +19,15 @@ class DealTariffeController extends Controller
 {
     use ValidaTariffe;
 
+    public function __construct()
+    {
+        $this->middleware("auth:api");
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param Deal $deal
      * @return \Illuminate\Http\Response
      */
     public function index(Deal $deal)
@@ -33,8 +38,10 @@ class DealTariffeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     * @param Deal $deal
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request, Deal $deal)
     {
@@ -42,8 +49,8 @@ class DealTariffeController extends Controller
 
         $dati = $request->validate([
             'variante' => [
-                'required', 
-                Rule::exists( "mysql.varianti_tariffa", 'id' ), 
+                'required',
+                Rule::exists( "mysql.varianti_tariffa", 'id' ),
                 Rule::unique('mongodb.prodotti', 'tariffe.variante_tariffa_id')->where('_id', $deal->_id)
             ],
             'importo' => 'numeric|required'

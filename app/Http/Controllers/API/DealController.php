@@ -14,9 +14,15 @@ use Illuminate\Validation\Rule;
  */
 class DealController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api')->except(["index"]);
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -33,7 +39,7 @@ class DealController extends Controller
         $query =  Deal::query();
 
         /**
-         * Filtro dello stato. 
+         * Filtro dello stato.
          * "Cestinato" è uno stato fittizio
          */
         if ($request->query("stato") == "cestinato") {
@@ -67,7 +73,7 @@ class DealController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

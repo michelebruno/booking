@@ -3,7 +3,9 @@
 namespace App;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\ValidationException;
 use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
+use function foo\func;
 
 /**
  * App\VoceOrdine
@@ -46,6 +48,19 @@ class VoceOrdine extends EloquentModel
     protected $appends = [
         // "riscattati"
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function (self $item){
+            if (! isset($item->quantita, $item->tariffa_id))
+                throw new ValidationException("Attenzione, prima di salvare la voce di un ordine occorre impostare la tariffa e la quantità.");
+
+            $item->calcolaImporti();
+        });
+    }
+
 
     /**
      * @param int $quantita
@@ -134,7 +149,14 @@ class VoceOrdine extends EloquentModel
     {
         $this->attributes['quantita'] = $quantita;
 
-        $this->importo = $this->costo_unitario * $quantita;
+        $this->calcolaImporti();
+
+    }
+
+    public function calcolaImporti()
+    {
+
+        $this->importo = $this->costo_unitario * $this->quantita;
 
         $this->imponibile = round($this->importo / (1 + $this->iva / 100), 2);
 

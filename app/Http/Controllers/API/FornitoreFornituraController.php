@@ -16,6 +16,10 @@ use Illuminate\Validation\Rule;
  */
 class FornitoreFornituraController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware("auth:api");
+    }
 
     use ValidaTariffe;
     /**

@@ -23,7 +23,8 @@
         "paypal/paypal-checkout-sdk": "^1.0",
         "paypal/rest-api-sdk-php": "*",
         "predis/predis": "^1.1",
-        "schuppo/password-strength": "~1.5"
+        "schuppo/password-strength": "~1.5",
+        "ext-mongodb": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
@@ -41,7 +42,8 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-                "laravel/dusk"
+                "laravel/dusk",
+                "laravel/telescope"
             ]
         }
     },

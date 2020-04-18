@@ -20,6 +20,11 @@ use Illuminate\Http\Request;
  */
 class OrdineController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware("auth:api");
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -84,7 +89,7 @@ class OrdineController extends Controller
                 $cliente = new Cliente($dati['cliente']);
                 $cliente->save();
             }
-            
+
         } else $cliente = $request->user();
 
         $ordine = new Ordine();
@@ -102,9 +107,9 @@ class OrdineController extends Controller
             if ($prodotto->disponibili < $voce["qta"]) {
                 /**
                  *
-                 * ? Forse è meglio una ValidationException con un messaggio. 
+                 * ? Forse è meglio una ValidationException con un messaggio.
                  */
-                throw new \Exception("Il prodotto non è più disponibile."); 
+                throw new \Exception("Il prodotto non è più disponibile.");
             }
 
             $v = new VoceOrdine();
@@ -120,10 +125,10 @@ class OrdineController extends Controller
 
         $ordine->calcola();
 
-        return $ordine->save() 
-            ? response($ordine->completo(), 201) 
+        return $ordine->save()
+            ? response($ordine->completo(), 201)
             : abort(500, "Non è stato possibile salvare l'ordine.");
-        
+
     }
 
     /**

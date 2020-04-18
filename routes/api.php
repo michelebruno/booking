@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/webhooks/paypal', 'PaypalController@store');
 
-Route::group(['middleware' => ['auth:api'], 'namespace' => 'API'], function () {
+Route::group([ 'namespace' => 'API'], function () {
 
     Route::get('account', 'UserController@showCurrent');
 

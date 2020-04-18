@@ -8,10 +8,12 @@ use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Arr;
 use App;
+use MongoDB\BSON\ObjectId;
 
 /**
  * App\Prodotto
  *
+ * @property ObjectId $_id
  * @property $titolo
  * @property $descrizione
  * @property $codice
