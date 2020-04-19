@@ -1,9 +1,9 @@
 <?php
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
+
 use App\User;
 use Faker\Generator as Faker;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /*
@@ -17,31 +17,26 @@ use Illuminate\Support\Str;
 |
 */
 $factory->define(User::class, function (Faker $faker) {
-    $data = [
+    return [
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
         'password' => Hash::make('password'), // password
-        'remember_token' => Str::random(10),
-        'cf' => $faker->unique()->numerify('0##########'),
-        'ruolo' => $faker->randomElement(User::RUOLI)
+        'ruolo' => $faker->randomElement([User::RUOLO_ADMIN, User::RUOLO_ACCOUNT])
     ];
-    
-    switch ($data['ruolo']) {
-        case 'fornitore':
-            $data['piva'] = $faker->numerify('###########');
-            break;
-    }
-
-    return $data;
 
 });
 
-$factory->define(App\UserMeta::class, function (Faker $faker)
-{
+$factory->define(\App\Fornitore::class, function (Faker $faker) {
     return [
-        'chiave' => $faker->randomElement(['indirizzo', 'pec', 'wow']),
-        'valore' => $faker->text()
+        'username' => $faker->userName,
+        'email' => $faker->unique()->safeEmail,
+        'email_verified_at' => now(),
+        "cf" => $faker->password(11,16),
+        "piva" => $faker->numerify('###########'),
+        'password' => Hash::make('password'), // password
+        'ruolo' => \App\Fornitore::RUOLO_FORNITORE
     ];
 
 });
+
