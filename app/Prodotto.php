@@ -2,13 +2,13 @@
 
 namespace App;
 
+use App;
+use Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
-use Arr;
-use App;
 use MongoDB\BSON\ObjectId;
 
 /**
@@ -19,6 +19,7 @@ use MongoDB\BSON\ObjectId;
  * @property $descrizione
  * @property $codice
  * @property $stato
+ * @property string tipo
  * @property $iva
  * @property int $wp
  * @property $disponibili
@@ -54,6 +55,14 @@ class Prodotto extends MongoModel
     protected $connection = 'mongodb';
 
     protected $collection = "prodotti";
+
+    /**
+     * @todo Impostare un iva di default modificale dal backend.
+     */
+    protected $attributes = [
+        "iva" => 22,
+        "stato" => "privato"
+    ];
 
     protected $hidden = [
         'fornitore_id', 'deleted_at', 'created_at', 'updated_at'

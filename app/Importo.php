@@ -2,10 +2,10 @@
 
 namespace App;
 
+use Arr;
 use Jenssegers\Mongodb\Collection;
 use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use MongoDB\BSON\ObjectId;
-use Arr;
 
 /**
  * App\Importo
@@ -44,8 +44,7 @@ class Importo extends MongoModel
     public $timestamps = false;
 
     /**
-     * @todo Rinominarlo.
-     * è usato per ridurre le query.
+     * è usato per ridurre le query al database.
      */
     public function getTariffaAttribute()
     {

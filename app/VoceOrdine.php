@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\ValidationException;
 use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
 
 /**
@@ -55,8 +54,8 @@ class VoceOrdine extends EloquentModel
         /**
          * Se l'oggetto è embeddato probabilmente non vengono genereate queste
          */
-        self::creating(function ($item){
-            if (! isset($item->quantita, $item->tariffa, $item->prodotto))
+        self::creating(function ($item) {
+            if (!isset($item->quantita, $item->tariffa, $item->prodotto))
                 throw new \Exception("Attenzione, prima di salvare la voce di un ordine occorre impostare la tariffa e la quantità.");
 
             $item->salvaDescrizioni();
@@ -65,7 +64,6 @@ class VoceOrdine extends EloquentModel
             return $item;
         });
     }
-
 
     /**
      * @param int $quantita
@@ -127,7 +125,7 @@ class VoceOrdine extends EloquentModel
 
     public function salvaDescrizioni()
     {
-        $prezzo = $this->prodotto->tariffe->firstWhere("tariffa_id" , $this->tariffa->id);
+        $prezzo = $this->prodotto->tariffe->firstWhere("tariffa_id", $this->tariffa->id);
 
         $this->codice = $this->prodotto->codice;
         $this->descrizione = $this->prodotto->titolo . " - " . $this->tariffa->nome;

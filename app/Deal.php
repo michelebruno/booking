@@ -13,9 +13,6 @@ class Deal extends Prodotto
 
     const TIPO = self::TIPO_DEAL;
 
-    protected $attributes = [
-        'tipo' => self::TIPO_DEAL
-    ];
 
     protected $fillable = [
         'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili'
@@ -25,14 +22,21 @@ class Deal extends Prodotto
     {
         parent::boot();
 
+        self::creating(function (self $model ) {
+            $model->tipo = self::TIPO_DEAL;
+        });
         static::addGlobalScope('tipo_deal', function (Builder $builder) {
             return $builder->where("tipo", self::TIPO_DEAL);
         });
     }
 
+    /**
+     * @todo Da adattare a MongoDB.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany|\Jenssegers\Mongodb\Relations\BelongsToMany
+     */
     public function forniture()
     {
-        return $this->belongsToMany(Fornitura::class, 'prodotti_pivot', 'padre', 'figlio');
+        return $this->belongsToMany(Fornitura::class, "deal_ids");
     }
 
     public function getLinksAttribute()

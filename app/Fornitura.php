@@ -13,10 +13,6 @@ class Fornitura extends Prodotto
 {
     const TIPO = self::TIPO_FORNITURA;
 
-    protected $attributes = [
-        'tipo' => self::TIPO_FORNITURA
-    ];
-
     protected $fillable = [
         'titolo', 'descrizione', 'codice', 'stato', 'iva', 'wp', 'disponibili', 'tariffe'
     ];
@@ -24,6 +20,10 @@ class Fornitura extends Prodotto
     public static function boot()
     {
         parent::boot();
+
+        self::creating(function (self $model) {
+            $model->tipo = self::TIPO_FORNITURA;
+        });
 
         static::addGlobalScope('TIPO_FORNITURA', function (Builder $builder) {
             return $builder->where('tipo', self::TIPO_FORNITURA);
@@ -36,9 +36,12 @@ class Fornitura extends Prodotto
 
     public function deals()
     {
-        return $this->belongsToMany('App\Deal', 'prodotti_pivot', 'figlio', 'padre');
+        return $this->belongsToMany(Deal::class );
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\Jenssegers\Mongodb\Relations\BelongsTo
+     */
     public function fornitore()
     {
         /** @noinspection PhpUndefinedMethodInspection */
