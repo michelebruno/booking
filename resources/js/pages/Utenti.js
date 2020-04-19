@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useRef } from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router-dom"
+import React, {useEffect, useRef, useState} from "react"
+import {connect} from "react-redux"
+import {Link} from "react-router-dom"
 
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
@@ -15,8 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 
-
-import { setTopbarButtons, unsetTopbarButtons } from "../_actions"
+import {setTopbarButtons, unsetTopbarButtons} from "../_actions"
 import UtenteForm from "../components/UtenteForm"
 import ServerDataTable from "../components/ServerDataTable"
 import Helpers from "../_services/helpers"

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import store from "./_store";
 
 // lazy load all the views
@@ -62,8 +62,8 @@ const routes = [
   { path: '/forniture/:id', component: ServiziScheda, route: PrivateRoute, roles: ['admin'], title: 'Scheda fornitura' },
   { path: '/settings', component: Settings, route: PrivateRoute, roles: ['admin'], title: 'Impostazioni' },
   { path: '/tickets', component: Tickets, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Scheda deal' },
-  { path: '/utenti/:id', component: UtentiProfilo, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Profilo Utente' },
-  { path: '/utenti', component: Utenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Utenti' },
+  { path: '/users/:id', component: UtentiProfilo, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Profilo Utente' },
+  { path: '/users', component: Utenti, route: PrivateRoute, roles: ['admin', 'account_manager'], title: 'Utenti' },
   {
     path: "/",
     exact: true,

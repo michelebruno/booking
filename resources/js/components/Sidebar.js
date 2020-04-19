@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import {Link, useRouteMatch} from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { connect } from "react-redux"
+import {connect} from "react-redux"
 
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
@@ -10,7 +10,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -21,8 +21,6 @@ import StorefrontIcon from '@material-ui/icons/Storefront';
 import StoreIcon from '@material-ui/icons/Store';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PeopleIcon from '@material-ui/icons/People';
-
-
 
 const SideNavContent = ({ user }) => {
 
@@ -65,7 +63,7 @@ const SideNavContent = ({ user }) => {
         },
         {
             label: "Utenti",
-            pathname: "/utenti",
+            pathname: "/users",
             icon: <SupervisorAccountIcon />,
             roles: ["admin", "account_manager"],
         },

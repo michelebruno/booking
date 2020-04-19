@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        if (\App\User::whereEmail(config('booking.webmaster.email'))) {
+        if (!\App\User::whereEmail(config('booking.webmaster.email'))->count()) {
 
             factory(\App\User::class)->create([
                 "email" => config("booking.webmaster.email"),
