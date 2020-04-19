@@ -4,7 +4,6 @@
 
 use App\User;
 use Faker\Generator as Faker;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,18 +23,34 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => Hash::make('password'), // password
         'ruolo' => $faker->randomElement([User::RUOLO_ADMIN, User::RUOLO_ACCOUNT])
     ];
-
 });
 
 $factory->define(\App\Fornitore::class, function (Faker $faker) {
     return [
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
+        "nome" => $faker->name,
         'email_verified_at' => now(),
-        "cf" => $faker->password(11,16),
-        "piva" => $faker->numerify('###########'),
+        "cf" => $faker->bothify('??????##?##?###?'),
+        "piva" => $faker->numerify('0##########'),
         'password' => Hash::make('password'), // password
-        'ruolo' => \App\Fornitore::RUOLO_FORNITORE
+        'ruolo' => \App\Fornitore::RUOLO_FORNITORE,
+        "SDI" => strtoupper($faker->bothify("##?#???")),
+        'ragione_sociale' => $faker->company,
+        "indirizzo" => [
+            "via" => $faker->streetName,
+            "citta" => $faker->city,
+            "provincia" => $faker->countryCode,
+            "CAP" => $faker->postcode,
+            "civico" => $faker->randomNumber(3)
+        ],
+        "sede_legale" => [
+            "via" => $faker->streetName,
+            "citta" => $faker->city,
+            "provincia" => $faker->countryCode,
+            "CAP" => $faker->postcode,
+            "civico" => $faker->randomNumber(3)
+        ]
     ];
 
 });

@@ -23,6 +23,6 @@ $factory->define(\App\Fornitura::class, function (Faker $faker) {
 
 $factory->define(\App\Importo::class, function (Faker $faker) {
     return [
-        "importo" => $faker->randomFloat(2, 0.3, 10000)
+        "importo" => $faker->randomFloat(2, 0.3, 1000)
     ];
 });
