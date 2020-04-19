@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React, {useEffect, useState} from "react"
 import PropTypes from 'prop-types'
 
 import NuovaTariffaPopover from "./NuovaTariffaPopover"
-import AxiosConfirmModal from "./AxiosConfirmModal";
 
 import MUIDataTable from 'mui-datatables'
 import AddIcon from '@material-ui/icons/Add';
@@ -16,7 +15,11 @@ const TariffeTabella = ({ tariffe, url, onSuccess, ivaInclusa, iva, editable, re
 
     const [tooltipAnchorEl, setTooltipAnchorEl] = useState()
 
-    const [data, setData] = useState(Object.values(tariffe))
+    const [data, setData] = useState()
+
+    useEffect(() => {
+        setData(Object.values(tariffe))
+    }, [tariffe])
 
     const deleteRows = (rowsIndexes) => {
         const promises = rowsIndexes.data.map(i => {

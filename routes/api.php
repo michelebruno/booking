@@ -40,7 +40,11 @@ Route::group([ 'namespace' => 'API'], function () {
     Route::apiResource('ordini.transazioni', 'OrdineTransazioneController', ['parameters' => ['ordini' => 'ordine', 'transazioni' => 'transazione']])
         ->only(['post']);
 
-    Route::apiResource('settings', 'SettingController');
+    Route::apiResource('settings', 'SettingController')->only([
+        "index",
+        "update",
+        "destroy",
+    ]);
 
     Route::apiResource('forniture', 'FornituraController', ['parameters' => ['forniture' => 'fornitura']])
         ->only(['get', 'head']);

@@ -19,6 +19,12 @@ use Jenssegers\Mongodb\Auth\User as Authenticatable;
  * @property $indirizzo
  * @property $nome
  * @property $username
+ * @method static whereEmail
+ * @method static wherePassword
+ * @method static whereRuolo
+ * @method static whereIndirizzo
+ * @method static whereNome
+ * @method static whereUsername
  * @mixin \Illuminate\Database\Eloquent\Model
  */
 class User extends Authenticatable implements MustVerifyEmail

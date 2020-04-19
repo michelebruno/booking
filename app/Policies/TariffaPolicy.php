@@ -3,8 +3,7 @@
 namespace App\Policies;
 
 use App\Deal;
-use App\Fornitura;
-use App\Tariffa;
+use App\Importo;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -20,19 +19,19 @@ class TariffaPolicy
      */
     public function viewAny(User $user, ?Deal $deal)
     {
-        //
+        return true;
     }
 
     /**
      * Determine whether the user can view the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Tariffa  $tariffa
+     * @param  \App\Importo  $tariffa
      * @return mixed
      */
-    public function view(User $user, Tariffa $tariffa, ?Deal $deal)
+    public function view(User $user, Importo $tariffa, ?Deal $deal)
     {
-        //
+        return true;
     }
 
     /**
@@ -50,10 +49,10 @@ class TariffaPolicy
      * Determine whether the user can update the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Tariffa  $tariffa
+     * @param  \App\Importo  $tariffa
      * @return mixed
      */
-    public function update(User $user, Tariffa $tariffa, ?Deal $deal)
+    public function update(User $user, Importo $tariffa, ?Deal $deal)
     {
         return $user->isAdmin();
     }
@@ -62,10 +61,10 @@ class TariffaPolicy
      * Determine whether the user can delete the tariffa.
      *
      * @param  \App\User  $user
-     * @param  \App\Tariffa  $tariffa
+     * @param  \App\Importo  $tariffa
      * @return mixed
      */
-    public function delete(User $user, Tariffa $tariffa, ?Deal $deal)
+    public function delete(User $user, Importo $tariffa, ?Deal $deal)
     {
         if ($tariffa->slug == "intero") {
             return false;

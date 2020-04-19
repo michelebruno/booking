@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
-use function foo\func;
 
 /**
  * App\VoceOrdine
@@ -23,8 +22,8 @@ use function foo\func;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $riscattati
- * @property-read Deal|null $prodotto
- * @property-read VarianteTariffa|null $tariffa
+ * @property-read Prodotto|null $prodotto
+ * @property-read Tariffa|null $tariffa
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Ticket[] $tickets
  * @property-read int|null $tickets_count
  */
@@ -53,11 +52,17 @@ class VoceOrdine extends EloquentModel
     {
         parent::boot();
 
-        self::creating(function (self $item){
-            if (! isset($item->quantita, $item->tariffa_id))
-                throw new ValidationException("Attenzione, prima di salvare la voce di un ordine occorre impostare la tariffa e la quantità.");
+        /**
+         * Se l'oggetto è embeddato probabilmente non vengono genereate queste
+         */
+        self::creating(function ($item){
+            if (! isset($item->quantita, $item->tariffa, $item->prodotto))
+                throw new \Exception("Attenzione, prima di salvare la voce di un ordine occorre impostare la tariffa e la quantità.");
 
+            $item->salvaDescrizioni();
             $item->calcolaImporti();
+
+            return $item;
         });
     }
 
@@ -85,7 +90,7 @@ class VoceOrdine extends EloquentModel
      */
     public function tariffa()
     {
-        return $this->belongsTo(VarianteTariffa::class);
+        return $this->belongsTo(Tariffa::class);
     }
 
     /**
@@ -120,37 +125,14 @@ class VoceOrdine extends EloquentModel
         });
     }
 
-    /**
-     * @param $t
-     * @throws \Exception
-     */
-    public function setTariffaIdAttribute($t)
+    public function salvaDescrizioni()
     {
-        $tag = VarianteTariffa::findOrFail($t);
-
-        $prezzo = $this->prodotto->tariffe->where("variante_tariffa_id", $tag->getKey())->first();
-
-        if (!$prezzo) {
-            throw new \Exception("Il prodotto non ha questa tariffa impostata.");
-        }
+        $prezzo = $this->prodotto->tariffe->firstWhere("tariffa_id" , $this->tariffa->id);
 
         $this->codice = $this->prodotto->codice;
-
-        $this->descrizione = $this->prodotto->titolo . " - " . $tag->nome;
-
+        $this->descrizione = $this->prodotto->titolo . " - " . $this->tariffa->nome;
         $this->costo_unitario = $prezzo->importo;
-
         $this->iva = $this->prodotto->iva;
-    }
-
-    // TODO dovrebbe essere self::creating() ?
-
-    public function setQuantitaAttribute($quantita)
-    {
-        $this->attributes['quantita'] = $quantita;
-
-        $this->calcolaImporti();
-
     }
 
     public function calcolaImporti()

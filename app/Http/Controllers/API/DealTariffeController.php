@@ -5,15 +5,15 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\ValidaTariffe;
 use App\Deal;
+use App\Importo;
 use App\Tariffa;
-use App\VarianteTariffa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 /**
  * @group Deal
+ * @authenticated
  */
 class DealTariffeController extends Controller
 {
@@ -42,21 +42,36 @@ class DealTariffeController extends Controller
      * @param Deal $deal
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @bodyParams variante string è lo slug della tariffa che si vuole aggiungere. Example: intero
+     * @bodyParams importo float è lo slug della tariffa che si vuole aggiungere. Example: 12.40
+     * @todo Authorize.
      */
     public function store(Request $request, Deal $deal)
     {
-        $this->authorize('create', [Tariffa::class, $deal]);
+
+        $alreadyAssignedTariffe = $deal->tariffe->map(function ($tariffa) {
+            return $tariffa->slug;
+        });
 
         $dati = $request->validate([
             'variante' => [
                 'required',
-                Rule::exists( "mysql.varianti_tariffa", 'id' ),
-                Rule::unique('mongodb.prodotti', 'tariffe.variante_tariffa_id')->where('_id', $deal->_id)
+                Rule::exists("mysql.varianti_tariffa", 'slug'),
+                Rule::notIn($alreadyAssignedTariffe),
             ],
             'importo' => 'numeric|required'
         ]);
 
-        $deal->tariffe()->create(['variante_tariffa_id' => $dati['variante'], 'importo' => $dati['importo']]);
+        $tariffa = new Importo();
+
+        $tariffa->importo = $dati["importo"];
+
+        $tariffa->tariffa()->associate(app('Tariffe')->firstWhere('slug', $dati['variante']));
+
+        $deal->tariffe()->associate($tariffa);
+
+        $deal->save();
 
         return response($deal->loadMissing('forniture'), 201);
     }
@@ -64,49 +79,45 @@ class DealTariffeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Deal  $deal
+     * @param \App\Deal $deal
+     * @param Tariffa $variante
      * @return \Illuminate\Http\Response
      */
-    public function show(Deal $deal, VarianteTariffa $variante)
+    public function show(Deal $deal, Tariffa $variante)
     {
-        $tariffa = $deal->tariffe->firstWhere('variante_tariffa_id', $variante->id);
-
-        if (!$tariffa instanceof Tariffa) {
-            throw new NotFoundHttpException("La tariffa non è stata trovata.");
-        }
-
-        $this->authorize('show', [Tariffa::class, $tariffa, $deal]);
-
-        return response($tariffa);
+        return response($deal->getImportoFromTariffa($variante));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Deal  $deal
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Deal $deal
+     * @param Tariffa $tariffa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Deal $deal, VarianteTariffa $variante)
+    public function update(Request $request, Deal $deal, Tariffa $variante)
     {
-        $tariffa = $deal->tariffe->firstWhere('variante_tariffa_id', $variante->id);
-
-        if (!$tariffa instanceof Tariffa) {
-            throw new NotFoundHttpException("La tariffa non è stata trovata.");
-        }
-
-        $this->authorize('update', [$tariffa, $deal]);
-
-
-        // TODO può essere veramente nullable?
+        $importo = $deal->getImportoFromTariffa($variante);
 
         $d = $request->validate([
-            'importo' => 'numeric|nullable'
+            'importo' => [
+                'required_if:imponibile,null',
+                'numeric',
+                'gte:0',
+            ],
+            "imponibile" => [
+                'numeric',
+                'gte:0',
+                'sometimes'
+            ]
         ]);
 
-        $tariffa->importo = $d['importo'];
+        if ($request->has('imponibile') && $d["imponibile"])
+            $importo->imponibile = $d['imponibile'];
+        else $importo->importo = $d["importo"];
 
-        $tariffa->save();
+        $importo->save();
 
         return response($deal->loadMissing('forniture'));
     }
@@ -114,20 +125,18 @@ class DealTariffeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Deal  $deal
+     * @param \App\Deal $deal
+     * @param Tariffa $variante
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy(Deal $deal, VarianteTariffa $variante)
+    public function destroy(Deal $deal, Tariffa $variante)
     {
-        $tariffa = $deal->tariffe->firstWhere('variante_tariffa_id', $variante->id);
+        $importo = $deal->getImportoFromTariffa($variante);
 
-        if (!$tariffa instanceof Tariffa) {
-            throw new NotFoundHttpException("La tariffa non è stata trovata.");
-        }
+        // $this->authorize('delete', [$importo, $deal]);
 
-        $this->authorize('delete', [$tariffa, $deal]);
-
-        $tariffa->forceDelete();
+        $importo->delete();
 
         return response($deal->loadMissing('forniture'));
     }

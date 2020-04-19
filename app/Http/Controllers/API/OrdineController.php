@@ -4,15 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrdineRequest;
-use App\Http\Resources\OrdineCollection;
-use App\Http\Resources\OrdineResource;
 use App\Cliente;
 use App\Deal;
-use App\Tariffa;
 use App\VoceOrdine;
 use App\Ordine;
 use App\User;
-use App\VarianteTariffa;
+use App\Tariffa;
 use Illuminate\Http\Request;
 
 /**
@@ -68,7 +65,7 @@ class OrdineController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\StoreOrdineRequest $request
+     * @param  \App\Http\Requests\StoreOrdineRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreOrdineRequest $request)
@@ -100,9 +97,9 @@ class OrdineController extends Controller
 
             $prodotto = Deal::whereCodice($voce["prodotto"])->firstOrFail();
 
-            $tag = VarianteTariffa::whereSlug($voce["tariffa"])->firstOrFail();
+            $tag = Tariffa::whereSlug($voce["tariffa"])->firstOrFail();
 
-            $tariffa = $prodotto->tariffe->firstWhere("variante_tariffa_id" , $tag->id);
+            $tariffa = $prodotto->tariffe->firstWhere("tariffa_id" , $tag->id);
 
             if ($prodotto->disponibili < $voce["qta"]) {
                 /**
@@ -120,13 +117,16 @@ class OrdineController extends Controller
 
             $v->quantita = $voce["qta"];
 
+            $v->salvaDescrizioni();
+            $v->calcolaImporti();
+
             $ordine->voci()->associate($v);
         }
 
         $ordine->calcola();
 
         return $ordine->save()
-            ? response($ordine->completo(), 201)
+            ? response($ordine->loadAll(), 201)
             : abort(500, "Non è stato possibile salvare l'ordine.");
 
     }

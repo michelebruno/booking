@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>API Reference</title>
 
-    <link rel="stylesheet" href="/docs/css/style.css" />
-    <script src="/docs/js/all.js"></script>
+    <link rel="stylesheet" href="{{ asset('/docs/css/style.css') }}" />
+    <script src="{{ asset('/docs/js/all.js') }}"></script>
 
 
           <script>
@@ -76,10 +76,33 @@ fetch(url, {
     .then(response =&gt; response.json())
     .then(json =&gt; console.log(json));</code></pre>
 <blockquote>
-<p>Example response (401):</p>
+<p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">{
-    "message": "Unauthenticated."
+    "current_page": 1,
+    "data": [
+        {
+            "ruolo": "cliente",
+            "email": "cliente@example.com",
+            "updated_at": "2020-04-19 00:29:11",
+            "created_at": "2020-04-19 00:29:11",
+            "abilitato": true,
+            "_links": {
+                "self": "\/clienti\/5e9b9b57f52800006e007fc3",
+                "forceDelete": "\/clienti\/5e9b9b57f52800006e007fc3\/forceDelete"
+            }
+        }
+    ],
+    "first_page_url": "http:\/\/localhost\/api\/v1\/clienti?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http:\/\/localhost\/api\/v1\/clienti?page=1",
+    "next_page_url": null,
+    "path": "http:\/\/localhost\/api\/v1\/clienti",
+    "per_page": 10,
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
 }</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/v1/clienti</code></p>
@@ -140,10 +163,10 @@ fetch(url, {
     .then(response =&gt; response.json())
     .then(json =&gt; console.log(json));</code></pre>
 <blockquote>
-<p>Example response (401):</p>
+<p>Example response (404):</p>
 </blockquote>
 <pre><code class="language-json">{
-    "message": "Unauthenticated."
+    "message": "No query results for model [App\\Cliente] 1"
 }</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/v1/clienti/{cliente}</code></p>
@@ -267,10 +290,53 @@ fetch(url, {
     .then(response =&gt; response.json())
     .then(json =&gt; console.log(json));</code></pre>
 <blockquote>
-<p>Example response (401):</p>
+<p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">{
-    "message": "Unauthenticated."
+    "current_page": 1,
+    "data": [
+        {
+            "_id": "5e9b880efb7c000022002ec5",
+            "tipo": "deal",
+            "stato": "pubblico",
+            "titolo": "Deal",
+            "descrizione": null,
+            "disponibili": "20",
+            "codice": "D-1",
+            "iva": 22,
+            "tariffe": {
+                "intero": {
+                    "importo": "10",
+                    "imponibile": 8.2,
+                    "slug": "intero",
+                    "nome": "Intero",
+                    "iva_ereditata": false,
+                    "tariffa": {
+                        "id": 1,
+                        "slug": "intero",
+                        "nome": "Intero"
+                    }
+                }
+            },
+            "condensato": "D-1 - Deal |  €8.2",
+            "cestinato": false,
+            "_links": {
+                "self": "\/deals\/D-1",
+                "tariffe": "\/deals\/D-1\/tariffe",
+                "forniture": "\/deals\/D-1\/forniture"
+            }
+        }
+    ],
+    "first_page_url": "http:\/\/localhost\/api\/v1\/deals?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http:\/\/localhost\/api\/v1\/deals?page=1",
+    "next_page_url": null,
+    "path": "http:\/\/localhost\/api\/v1\/deals",
+    "per_page": 10,
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
 }</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/v1/deals</code></p>
@@ -429,6 +495,7 @@ fetch(url, {
 <!-- END_8156d6bcb82ab3e64ca2f132090d65f9 -->
 <!-- START_3cdbdf8014b29aa039a7569f567c5557 -->
 <h2>Display a listing of the resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -464,6 +531,7 @@ fetch(url, {
 <!-- END_3cdbdf8014b29aa039a7569f567c5557 -->
 <!-- START_9a5b52b379a7401ecd2eddf68cdda6c6 -->
 <h2>Store a newly created resource in storage.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -493,6 +561,7 @@ fetch(url, {
 <!-- END_9a5b52b379a7401ecd2eddf68cdda6c6 -->
 <!-- START_194e2a9b316758a2b3633d5754cbd6b7 -->
 <h2>Display the specified resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -528,6 +597,7 @@ fetch(url, {
 <!-- END_194e2a9b316758a2b3633d5754cbd6b7 -->
 <!-- START_b00f5a4410b481caffff65e5a69396bc -->
 <h2>Update the specified resource in storage.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -558,6 +628,7 @@ fetch(url, {
 <!-- END_b00f5a4410b481caffff65e5a69396bc -->
 <!-- START_3d5637444e2dca712aef86c1a9a7ef53 -->
 <h2>Remove the specified resource from storage.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -1821,7 +1892,7 @@ fetch(url, {
 <p><code>GET api/v1/users</code></p>
 <!-- END_1aff981da377ba9a1bbc56ff8efaec0d -->
 <!-- START_4194ceb9a20b7f80b61d14d44df366b4 -->
-<h2>Store a newly created resource in storage.</h2>
+<h2>Salva un nuovo utente nel database.</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -1850,7 +1921,7 @@ fetch(url, {
 <p><code>POST api/v1/users</code></p>
 <!-- END_4194ceb9a20b7f80b61d14d44df366b4 -->
 <!-- START_cedc85e856362e0e3b46f5dcd9f8f5d0 -->
-<h2>Display the specified resource.</h2>
+<h2>Mostra un utente specifico.</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -1885,7 +1956,7 @@ fetch(url, {
 <p><code>GET api/v1/users/{user}</code></p>
 <!-- END_cedc85e856362e0e3b46f5dcd9f8f5d0 -->
 <!-- START_296fac4bf818c99f6dd42a4a0eb56b58 -->
-<h2>Update the specified resource in storage.</h2>
+<h2>Aggiorna i dati di un utente nel database.</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>

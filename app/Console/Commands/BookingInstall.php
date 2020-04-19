@@ -4,10 +4,9 @@ namespace App\Console\Commands;
 
 use App\Setting;
 use App\User;
-use App\VarianteTariffa;
+use App\Tariffa;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Hash;
+use Artisan;
 
 class BookingInstall extends Command
 {
@@ -38,7 +37,6 @@ class BookingInstall extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      */
     public function handle()
     {
@@ -76,11 +74,11 @@ class BookingInstall extends Command
 
         $this->info('Controllo se esiste una tariffa.', 'vv');
 
-        if (!VarianteTariffa::query()->count()) {
-            $tariffa = new VarianteTariffa();
+        if (!Tariffa::query()->count()) {
+            $tariffa = new Tariffa();
             $tariffa->slug = "intero";
             $tariffa->nome = "Intero";
-            $tariffa->save() 
+            $tariffa->save()
                 ? $this->info('Tariffa creata.')
                 : $this->error("Non è stato possibile creare la tariffa.");
         } else {
@@ -103,7 +101,6 @@ class BookingInstall extends Command
         if (in_array("optimize", $artisanCommands)) {
             Artisan::call("optimize");
         }
-
 
         $this->info("Fine del setup.");
     }

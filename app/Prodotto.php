@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Jenssegers\Mongodb\Eloquent\Model as MongoModel;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 use Arr;
@@ -27,7 +28,7 @@ use MongoDB\BSON\ObjectId;
  * @property-read string $condensato
  * @property-read bool $cestinato
  * @property-read array $links
- * @property Collection|Tariffa[] tariffe
+ * @property Collection|Importo[] tariffe
  * @method static whereCodice($prodotto)
  * @method static whereTipo($prodotto)
  * @method static whereRuolo($prodotto)
@@ -110,7 +111,7 @@ class Prodotto extends MongoModel
      */
     public function tariffe()
     {
-        return $this->embedsMany(Tariffa::class);
+        return $this->embedsMany(Importo::class);
     }
 
     /* MUTATORS *
@@ -125,6 +126,21 @@ class Prodotto extends MongoModel
         return [];
     }
 
+    /**
+     * @param Tariffa $tariffa
+     * @return mixed
+     */
+    public function getImportoFromTariffa(Tariffa $tariffa)
+    {
+
+        $t = $this->tariffe->firstWhere("tariffa_id", $tariffa->id);
+
+        if (!$t)
+            throw new ModelNotFoundException("La tariffa non è associata a questo prodotto.");
+
+        return $t;
+    }
+
     public function setCodiceAttribute($value)
     {
         $value = preg_replace('/\s+/', '-', $value);
@@ -134,8 +150,9 @@ class Prodotto extends MongoModel
     /**
      * @param array $tariffe
      * @return void
+     * @deprecated
      */
-    public function setTariffeAttribute(array $tariffe)
+    public function _setTariffeAttribute(array $tariffe)
     {
         foreach ($tariffe as $key => $value) {
 

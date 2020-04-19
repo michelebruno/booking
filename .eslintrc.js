@@ -30,6 +30,7 @@ module.exports = {
     "rules": {
         "react/display-name": "off",
         "react-hooks/rules-of-hooks": "error",
+        "react/prop-types" : ["warn"],
         "comma-dangle": ["error", "always-multiline"],
         "comma-style": ["error", "last"],
         "no-else-return": "error",

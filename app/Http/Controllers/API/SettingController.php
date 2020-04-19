@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Setting;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -51,7 +49,7 @@ class SettingController extends Controller
 
         $varianti = [];
 
-        $v = app('VariantiTariffe');
+        $v = app('Tariffe');
 
         foreach ($v as $variante) {
             $varianti['varianti_tariffe'][$variante->slug] = $variante;
@@ -61,33 +59,12 @@ class SettingController extends Controller
         return response(array_merge($settings, $varianti));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        // TODO: AUTHORIZE e tutto il resto
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Setting  $setting
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Setting $setting)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  setting
+     * @param \Illuminate\Http\Request $request
+     * @param setting
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $setting)
@@ -98,9 +75,9 @@ class SettingController extends Controller
 
         switch ($setting) {
 
-            case (bool) ($config_setting = Setting::getEditableConfig($setting)):
+            case (bool)($config_setting = Setting::getEditableConfig($setting)):
                 $data = $request->validate([
-                    $setting =>  array_merge(['required'], $config_setting['validation_rules'])
+                    $setting => array_merge(['required'], $config_setting['validation_rules'])
                 ]);
 
                 Setting::editEnvVariable($config_setting["env_key"], $data[$setting]);
@@ -112,11 +89,9 @@ class SettingController extends Controller
                     "favicon" => "required|file|mimetypes:image/x-icon"
                 ]);
 
-                if ($file = $request->file('favicon')) {
+                if (($file = $request->file('favicon') ) && $path = $file->storeAs('public', 'favicon.ico')) {
 
-                    $path = $file->storeAs('public', 'favicon.ico');
-
-                    Setting::updateOrCreate(["chiave" => "favicon"], ["valore" => "storage/favicon.jpg"]);
+                    Setting::updateOrCreate(["chiave" => "favicon"], ["valore" => $path]);
 
                     Cache::delete('autoloaded_settings');
 
@@ -129,9 +104,6 @@ class SettingController extends Controller
                 throw new NotFoundHttpException();
                 break;
         }
-
-        Cache::forget('autoloaded_settings');
-        return $this->index();
     }
 
 
@@ -144,11 +116,12 @@ class SettingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Setting  $setting
+     * @param \App\Setting $setting
      * @return \Illuminate\Http\Response
      */
     public function destroy(Setting $setting)
     {
-        //
+        // TODO
+        throw abort(404);
     }
 }

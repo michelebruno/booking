@@ -8,7 +8,6 @@ use Tests\TestCase;
 
 class OrdineTest extends TestCase
 {
-    use RefreshDatabase;
 
     public function testNonAutorizzato()
     {

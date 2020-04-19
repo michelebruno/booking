@@ -16,8 +16,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Setting::class, function ($app) {
-            
+
+        /**
+         * Serve per creare con Blade le pagine di ApiDoc Generator.
+         */
+        if (!defined('URL'))
+            define('URL', env('APP_URL'));
+        if (!defined('token'))
+            define('token', env('{{token}}'));
+
+        $this->app->singleton(Setting::class, function () {
+
             $s = Setting::all();
 
             $n = new \stdClass();
@@ -27,18 +36,27 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $n;
-        } ); 
-        
-        $this->app->singleton('VariantiTariffe', function ($app)
+        } );
+
+
+        $this->app->singleton('Tariffe', function ()
         {
-            return \App\VarianteTariffa::all()->keyBy('slug');
+            return \App\Tariffa::all()->keyBy('slug');
         });
 
-        $this->app->singleton('Prodotti', function ($app)
+        /**
+         * @deprecated
+         */
+        $this->app->singleton('VariantiTariffe', function ()
+        {
+            return app("Tariffe");
+        });
+
+        $this->app->singleton('Prodotti', function ()
         {
             return \App\Prodotto::withTrashed()->get();
         });
-        $this->app->singleton(\PayPal\Rest\ApiContext::class, function ( $app )
+        $this->app->singleton(\PayPal\Rest\ApiContext::class, function ()
         {
             return new \PayPal\Rest\ApiContext(
                 new \PayPal\Auth\OAuthTokenCredential(
@@ -48,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, function ($app)
+        $this->app->singleton(\PayPalCheckoutSdk\Core\PayPalHttpClient::class, function ()
         {
             $environment = new \PayPalCheckoutSdk\Core\SandboxEnvironment(
                 config( 'services.paypal.client_id' ),     // ClientID
@@ -67,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
+        // Schema::defaultStringLength(191);
 
         DB::connection("mongodb")->enableQueryLog();
 

@@ -4,11 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Fornitore;
 use App\Fornitura;
-use App\Tariffa;
+use App\Importo;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\ValidaTariffe;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /**
@@ -153,12 +152,12 @@ class FornitoreFornituraController extends Controller
             'imponibile' => 'required|numeric'
         ]);
 
-        $fornitura->tariffe()->create(['variante_tariffa_id' => $dati['variante'], 'importo' => Tariffa::includiIva($dati['imponibile'], $fornitura->iva)]);
+        $fornitura->tariffe()->create(['variante_tariffa_id' => $dati['variante'], 'importo' => Importo::includiIva($dati['imponibile'], $fornitura->iva)]);
 
         return response($fornitura->loadMissing('deals'), 201);
     }
 
-    public function editTariffa(Request $request, Fornitore $fornitore, Fornitura $fornitura, Tariffa $tariffa)
+    public function editTariffa(Request $request, Fornitore $fornitore, Fornitura $fornitura, Importo $tariffa)
     {
         if ($fornitore->id !== $fornitura->fornitore_id) abort(404, 'Questo fornitura non è associato a questo fornitore.');
 
@@ -170,13 +169,13 @@ class FornitoreFornituraController extends Controller
 
         if ($tariffa->prodotto_id !== $fornitura->id) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");
 
-        $tariffa->importo = Tariffa::includiIva($d['imponibile'], $fornitura->iva);
+        $tariffa->importo = Importo::includiIva($d['imponibile'], $fornitura->iva);
         $tariffa->save();
 
         return response($fornitura->loadMissing('deals'));
     }
 
-    public function deleteTariffa(Request $request, Fornitore $fornitore, Fornitura $fornitura, Tariffa $tariffa)
+    public function deleteTariffa( Fornitore $fornitore, Fornitura $fornitura, Importo $tariffa)
     {
         if ($fornitore->id !== $fornitura->fornitore_id) abort(404, 'Questo fornitura non è associato a questo fornitore.');
         if ($tariffa->prodotto_id !== $fornitura->id) return abort(404, "L'id del prodotto non è associato a questa tariffa tariffa.");

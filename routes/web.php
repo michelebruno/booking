@@ -31,7 +31,6 @@ Route::post('cart', 'CartController@store')->name('cart.store');
 Route::delete('cart', 'CartController@destroy')->name('cart.destroy');
 Route::delete('cart/{index}', 'CartController@deleteIndex')->name('cart.delete');
 
-ApiDoc::routes();
 
 Auth::routes(['verify' => true]);
 

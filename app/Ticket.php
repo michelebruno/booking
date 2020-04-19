@@ -55,7 +55,7 @@ class Ticket extends Model
 
     public function varianteTariffa()
     {
-        return $this->belongsTo(VarianteTariffa::class, 'variante_tariffa_id');
+        return $this->belongsTo(Tariffa::class, 'variante_tariffa_id');
     }
 
     /**

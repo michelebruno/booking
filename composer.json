@@ -24,6 +24,8 @@
         "paypal/rest-api-sdk-php": "*",
         "predis/predis": "^1.1",
         "schuppo/password-strength": "~1.5",
+        "ext-mongodb": "*",
+        "ext-json": "*",
         "ext-mongodb": "*"
     },
     "require-dev": {
