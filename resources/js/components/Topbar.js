@@ -1,61 +1,54 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Link } from 'react-router-dom';
-import { connect } from "react-redux"
+import {Link} from 'react-router-dom';
+import {connect} from "react-redux"
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import { makeStyles } from '@material-ui/core/styles';
+
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from '@material-ui/core/Typography';
 
 import ProfileDropdown from './ProfileDropdown';
-// import logoSm from '../../images/logo-sm.png'; 
+// import logoSm from '../../images/logo-sm.png';
 
-const Topbar = ({ TopbarButtons, ...props }) => {
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+}));
+const Topbar = ({TopbarButtons, ...props}) => {
 
-	return (
-		<>
-			<div className="navbar-custom">
-				<ul className="list-unstyled topnav-menu float-right mb-0">
+    const classes = useStyles()
+    return (
+        <>
+            <AppBar position={"fixed"}>
+                <Toolbar>
+                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                        News
+                    </Typography>
+                    <TopbarButtons />
+                    <Button color="inherit">Login</Button>
 
-					<li>
-						<ProfileDropdown />
-					</li>
-
-
-					<li className="dropdown notification-list">
-						<button className="btn btn-link nav-link right-bar-toggle waves-effect waves-light" onClick={props.rightSidebarToggle}>
-							<i className="fe-settings noti-icon"></i>
-						</button>
-					</li>
-				</ul>
-
-				<div className="logo-box">
-					<Link to="/" className="logo text-center">
-						<span className="logo-lg">
-							<img src="https://www.turismo.bologna.it/wp-content/uploads/2019/03/OSCARD-Turismo-Bologna-Logo_Landscape_-Png.png" alt="" height="16" />
-						</span>
-						<span className="logo-sm">
-							{/* <img src={logoSm} alt="" height="24" /> */}
-						</span>
-					</Link>
-				</div>
-
-				<ul className="list-unstyled topnav-menu topnav-menu-left m-0">
-					<li>
-						<button className="button-menu-mobile disable-btn waves-effect" onClick={props.menuToggle}>
-							<i className="mdi mdi-menu"></i>
-						</button>
-					</li>
-
-					<li>
-						<h4 className="page-title-main d-none d-md-inline-block">{props.title}</h4>
-						<div className="d-none d-md-inline-block p-2 p-md-0">
-							<TopbarButtons />
-						</div>
-					</li>
-				</ul>
-
-			</div>
-		</ >
-	);
+                </Toolbar>
+            </AppBar>
+        </ >
+    );
 }
 
 
-export default connect(state => { return { TopbarButtons: state.TopbarButtons } })(Topbar);
+export default connect(state => {
+    return {TopbarButtons: state.TopbarButtons}
+})(Topbar);
 

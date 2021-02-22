@@ -17,9 +17,9 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
     const [_columns, setColumns] = useState(columns)
 
     /**
-     * 
-     * * Filtro Server-side
-     * 
+     *
+     * Filtro Server-side
+     *
      */
     const [searchInput, setSearchInput] = useState()
 
@@ -119,9 +119,9 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
     )
 
     /**
-     * 
+     *
      * * COLONNE
-     * 
+     *
      */
 
     const customBodyRender = useCallback(
@@ -158,9 +158,9 @@ const ServerDataTable = forwardRef(function ServerDataTable({ defaultFilter, url
     }, [filter, collection, collection.data])
 
     /**
-     * 
+     *
      * * OPTIONS
-     * 
+     *
      */
 
     const cNames = columns.map(c => c.name)
@@ -270,9 +270,9 @@ ServerDataTable.propTypes = {
     onCollectionChange: PropTypes.func,
     defaultFilter: PropTypes.object,
     editable: PropTypes.bool,
-    /** 
-     * 
-     * MUIDataTable.propTypes from https://github.com/gregnb/mui-datatables/blob/master/src/MUIDataTable.js 
+    /**
+     *
+     * MUIDataTable.propTypes from https://github.com/gregnb/mui-datatables/blob/master/src/MUIDataTable.js
      * -- data
      */
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,

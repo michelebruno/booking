@@ -41,7 +41,7 @@ $factory->define(\App\Fornitore::class, function (Faker $faker) {
             "via" => $faker->streetName,
             "citta" => $faker->city,
             "provincia" => $faker->countryCode,
-            "CAP" => $faker->postcode,
+            "cap" => $faker->postcode,
             "civico" => $faker->randomNumber(3)
         ],
         "sede_legale" => [
